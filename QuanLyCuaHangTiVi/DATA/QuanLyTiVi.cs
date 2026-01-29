@@ -8,27 +8,45 @@ using System.Threading.Tasks;
 
 namespace QuanLyCuaHangTiVi.DATA
 {
+    [Table("QuanLyTiVi")]
     public class QuanLyTiVi
     {
         [Key]
-        [StringLength(20, ErrorMessage = "Mã quá dài!")]
+        [StringLength(20, ErrorMessage = "Mã TiVi không được quá 20 ký tự")]
         public string MaTiVi { get; set; }
 
+        [Required]
         [StringLength(100)]
         public string TenTiVi { get; set; }
 
-        [StringLength(100)]
-        public string TenKhachHang { get; set; }
+        [StringLength(50)]
+        public string HangSanXuat { get; set; }
 
-        public DateTime NgayThangNam { get; set; } = DateTime.Now;
-
-        // --- SỬA LỖI DECIMAL Ở ĐÂY ---
-
-        // (18, 0) nghĩa là: Tổng 18 số, lấy 0 số sau dấu phẩy (Vì tiền Việt Nam không dùng số lẻ hào/xu)
-        [Column(TypeName = "decimal(18, 0)")]
-        public decimal DonGia { get; set; }
+        public DateTime NgayNhap { get; set; } = DateTime.Now;
 
         [Column(TypeName = "decimal(18, 0)")]
-        public decimal KhuyenMai { get; set; }
+        public decimal DonGiaBan { get; set; }
+
+        public double KhuyenMai { get; set; } // % hoặc số tiền
+
+        public int SoLuongTon { get; set; }
+
+        
+
+        // --- Logic hiển thị (Không lưu vào database - NotMapped) ---
+        [NotMapped]
+        public string TrangThai
+        {
+            get
+            {
+                if (SoLuongTon == 0) return "Hết hàng";
+                if (SoLuongTon > 0 && SoLuongTon < 5) return "Sắp hết";
+                return "Còn hàng";
+            }
+        }
+
+        // Quan hệ
+        public virtual ICollection<HoaDonChiTiet> HoaDonChiTiets { get; set; }
+        public virtual ICollection<ChiTietPhieuNhap> ChiTietPhieuNhaps { get; set; }
     }
 }
