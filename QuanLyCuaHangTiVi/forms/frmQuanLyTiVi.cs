@@ -147,7 +147,7 @@ namespace QuanLyCuaHangTiVi.forms
 
         private void dataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            
+
         }
 
         private void btnXoa_Click(object sender, EventArgs e)
@@ -231,6 +231,11 @@ namespace QuanLyCuaHangTiVi.forms
             {
                 MessageBox.Show("Lỗi định dạng số hoặc dữ liệu: " + ex.Message);
             }
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
