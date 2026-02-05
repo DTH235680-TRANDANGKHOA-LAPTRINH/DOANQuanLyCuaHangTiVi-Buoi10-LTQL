@@ -103,6 +103,7 @@
             btnThoat.TabIndex = 39;
             btnThoat.Text = "Thoát";
             btnThoat.UseVisualStyleBackColor = true;
+            btnThoat.Click += btnThoat_Click;
             // 
             // btnHuyBo
             // 
@@ -112,6 +113,7 @@
             btnHuyBo.TabIndex = 38;
             btnHuyBo.Text = "Hủy Bỏ";
             btnHuyBo.UseVisualStyleBackColor = true;
+            btnHuyBo.Click += btnHuyBo_Click;
             // 
             // btnLuu
             // 
@@ -121,6 +123,7 @@
             btnLuu.TabIndex = 37;
             btnLuu.Text = "Lưu";
             btnLuu.UseVisualStyleBackColor = true;
+            btnLuu.Click += btnLuu_Click;
             // 
             // btnSua
             // 
@@ -130,6 +133,7 @@
             btnSua.TabIndex = 36;
             btnSua.Text = "Sửa";
             btnSua.UseVisualStyleBackColor = true;
+            btnSua.Click += btnSua_Click;
             // 
             // btnXoa
             // 
@@ -139,6 +143,7 @@
             btnXoa.TabIndex = 35;
             btnXoa.Text = "Xóa";
             btnXoa.UseVisualStyleBackColor = true;
+            btnXoa.Click += btnXoa_Click;
             // 
             // dtpNgayThangNamSinh
             // 
@@ -237,6 +242,7 @@
             btnThem.TabIndex = 23;
             btnThem.Text = "Thêm";
             btnThem.UseVisualStyleBackColor = true;
+            btnThem.Click += btnThem_Click;
             // 
             // groupBox2
             // 
