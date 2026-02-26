@@ -13,10 +13,10 @@ namespace QuanLyCuaHangTiVi.DATA
     {
         [Key]
         [StringLength(20)]
-        public string MaNV { get; set; }
+        public string MaNhanVien { get; set; }
 
         [StringLength(100)]
-        public string HoTen { get; set; }
+        public string HoTenNhanVien { get; set; }
 
         [Required]
         [StringLength(50)]
