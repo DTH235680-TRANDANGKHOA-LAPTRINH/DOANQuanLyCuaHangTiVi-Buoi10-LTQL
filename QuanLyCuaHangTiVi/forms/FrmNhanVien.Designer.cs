@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             panel1 = new Panel();
+            btnChonAnh = new Button();
+            picAnhNhanVien = new PictureBox();
             cboQuyenHan = new ComboBox();
             btnThoat = new Button();
             btnHuyBo = new Button();
@@ -47,16 +49,20 @@
             btnThem = new Button();
             dgvDanhSachNhanVien = new DataGridView();
             MaNhanVien = new DataGridViewTextBoxColumn();
+            CotHinhAnh = new DataGridViewImageColumn();
             TenDangNhap = new DataGridViewTextBoxColumn();
             HoTenNhanVien = new DataGridViewTextBoxColumn();
             MatKhau = new DataGridViewTextBoxColumn();
             QuyenHan = new DataGridViewTextBoxColumn();
             panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)picAnhNhanVien).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvDanhSachNhanVien).BeginInit();
             SuspendLayout();
             // 
             // panel1
             // 
+            panel1.Controls.Add(btnChonAnh);
+            panel1.Controls.Add(picAnhNhanVien);
             panel1.Controls.Add(cboQuyenHan);
             panel1.Controls.Add(btnThoat);
             panel1.Controls.Add(btnHuyBo);
@@ -78,6 +84,25 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(1690, 233);
             panel1.TabIndex = 1;
+            // 
+            // btnChonAnh
+            // 
+            btnChonAnh.Location = new Point(1388, 48);
+            btnChonAnh.Name = "btnChonAnh";
+            btnChonAnh.Size = new Size(112, 34);
+            btnChonAnh.TabIndex = 20;
+            btnChonAnh.Text = "Chọn Ảnh";
+            btnChonAnh.UseVisualStyleBackColor = true;
+            btnChonAnh.Click += btnChonAnh_Click;
+            // 
+            // picAnhNhanVien
+            // 
+            picAnhNhanVien.Location = new Point(1182, 20);
+            picAnhNhanVien.Name = "picAnhNhanVien";
+            picAnhNhanVien.Size = new Size(150, 207);
+            picAnhNhanVien.SizeMode = PictureBoxSizeMode.StretchImage;
+            picAnhNhanVien.TabIndex = 19;
+            picAnhNhanVien.TabStop = false;
             // 
             // cboQuyenHan
             // 
@@ -228,7 +253,7 @@
             dgvDanhSachNhanVien.AllowUserToDeleteRows = false;
             dgvDanhSachNhanVien.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvDanhSachNhanVien.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvDanhSachNhanVien.Columns.AddRange(new DataGridViewColumn[] { MaNhanVien, TenDangNhap, HoTenNhanVien, MatKhau, QuyenHan });
+            dgvDanhSachNhanVien.Columns.AddRange(new DataGridViewColumn[] { MaNhanVien, CotHinhAnh, TenDangNhap, HoTenNhanVien, MatKhau, QuyenHan });
             dgvDanhSachNhanVien.Dock = DockStyle.Fill;
             dgvDanhSachNhanVien.Location = new Point(0, 233);
             dgvDanhSachNhanVien.MultiSelect = false;
@@ -236,6 +261,8 @@
             dgvDanhSachNhanVien.RowHeadersWidth = 62;
             dgvDanhSachNhanVien.Size = new Size(1690, 311);
             dgvDanhSachNhanVien.TabIndex = 2;
+            dgvDanhSachNhanVien.CellClick += dgvDanhSachNhanVien_CellClick;
+            dgvDanhSachNhanVien.CellFormatting += dgvDanhSachNhanVien_CellFormatting;
             // 
             // MaNhanVien
             // 
@@ -243,6 +270,14 @@
             MaNhanVien.HeaderText = "Mã Nhân Viên";
             MaNhanVien.MinimumWidth = 8;
             MaNhanVien.Name = "MaNhanVien";
+            // 
+            // CotHinhAnh
+            // 
+            CotHinhAnh.DataPropertyName = "CotHinhAnh";
+            CotHinhAnh.HeaderText = "Hình ảnh";
+            CotHinhAnh.ImageLayout = DataGridViewImageCellLayout.Zoom;
+            CotHinhAnh.MinimumWidth = 8;
+            CotHinhAnh.Name = "CotHinhAnh";
             // 
             // TenDangNhap
             // 
@@ -285,6 +320,7 @@
             Load += FrmNhanVien_Load;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)picAnhNhanVien).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvDanhSachNhanVien).EndInit();
             ResumeLayout(false);
         }
@@ -309,7 +345,10 @@
         private Button btnThem;
         private DataGridView dgvDanhSachNhanVien;
         private ComboBox cboQuyenHan;
+        private Button btnChonAnh;
+        private PictureBox picAnhNhanVien;
         private DataGridViewTextBoxColumn MaNhanVien;
+        private DataGridViewImageColumn CotHinhAnh;
         private DataGridViewTextBoxColumn TenDangNhap;
         private DataGridViewTextBoxColumn HoTenNhanVien;
         private DataGridViewTextBoxColumn MatKhau;

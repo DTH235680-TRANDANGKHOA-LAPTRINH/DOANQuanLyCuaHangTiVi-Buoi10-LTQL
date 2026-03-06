@@ -15,19 +15,17 @@ namespace QuanLyCuaHangTiVi.DATA
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int MaCTPN { get; set; }
 
-        // Khóa ngoại Phiếu Nhập
         [StringLength(20)]
         public string MaPhieuNhap { get; set; }
         [ForeignKey("MaPhieuNhap")]
         public virtual PhieuNhap PhieuNhap { get; set; }
 
-        // Khóa ngoại TiVi
         [StringLength(20)]
         public string MaTiVi { get; set; }
         [ForeignKey("MaTiVi")]
         public virtual QuanLyTiVi QuanLyTiVi { get; set; }
 
-        public int SoLuongNhap { get; set; } // Số lượng sẽ cộng vào kho
+        public int SoLuongNhap { get; set; }
 
         [Column(TypeName = "decimal(18, 0)")]
         public decimal DonGiaNhap { get; set; }

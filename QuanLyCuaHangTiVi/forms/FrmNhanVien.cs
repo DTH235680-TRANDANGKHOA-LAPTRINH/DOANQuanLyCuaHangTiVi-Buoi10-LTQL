@@ -16,6 +16,9 @@ namespace QuanLyCuaHangTiVi.forms
     {
         AppDbContext db = new AppDbContext();
         bool isThem = false;
+
+        string tenFileAnhNV = ""; // Lưu tên file ảnh đang chọn
+
         public FrmNhanVien()
         {
             InitializeComponent();
@@ -61,6 +64,13 @@ namespace QuanLyCuaHangTiVi.forms
             // Gán dữ liệu cho DataGridView
             dgvDanhSachNhanVien.AutoGenerateColumns = false;
             dgvDanhSachNhanVien.DataSource = bindingSource;
+
+            // Chỉnh chiều cao dòng giống bên TiVi
+            dgvDanhSachNhanVien.RowTemplate.Height = 80;
+
+            // Nếu bạn muốn ẩn cột văn bản "AnhChanDung" tự động hiện ra
+            if (dgvDanhSachNhanVien.Columns.Contains("AnhChanDung"))
+                dgvDanhSachNhanVien.Columns["AnhChanDung"].Visible = false;
 
             // --- CẤU HÌNH CỘT CHO LƯỚI ---
             // (Bạn nhớ kiểm tra Property Name của các cột trong giao diện Design nhé)
@@ -140,7 +150,7 @@ namespace QuanLyCuaHangTiVi.forms
 
         private void btnLuu_Click(object sender, EventArgs e)
         {
-            // 1. Kiểm tra dữ liệu bắt buộc
+            // 1. Kiểm tra các trường dữ liệu bắt buộc (Validation)
             if (string.IsNullOrWhiteSpace(txtMaNhanVien.Text))
             {
                 MessageBox.Show("Vui lòng nhập Mã Nhân Viên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -162,62 +172,77 @@ namespace QuanLyCuaHangTiVi.forms
 
             try
             {
-                if (isThem)
+                if (isThem) // TRƯỜNG HỢP THÊM MỚI
                 {
-                    // --- THÊM MỚI ---
+                    // Kiểm tra trùng mã ID trước khi thêm
                     var checkID = db.NhanViens.Find(txtMaNhanVien.Text);
                     if (checkID != null)
                     {
-                        MessageBox.Show("Mã nhân viên này đã tồn tại!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Mã nhân viên này đã tồn tại!", "Lỗi trùng mã", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
 
+                    // Bắt buộc nhập mật khẩu khi tạo tài khoản mới
                     if (string.IsNullOrWhiteSpace(txtMatKhau.Text))
                     {
-                        MessageBox.Show("Vui lòng nhập Mật Khẩu cho nhân viên mới!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Nhân viên mới cần phải có mật khẩu!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         txtMatKhau.Focus();
                         return;
                     }
 
+                    // Tạo đối tượng nhân viên mới
                     NhanVien nv = new NhanVien();
-                    nv.MaNhanVien = txtMaNhanVien.Text;
-                    nv.HoTenNhanVien = txtHoTenNhanVien.Text;
-                    nv.TenDangNhap = txtTenDangNhap.Text;
-                    nv.MatKhau = txtMatKhau.Text; // Lưu mật khẩu thường, không mã hóa nữa
+                    nv.MaNhanVien = txtMaNhanVien.Text.Trim();
+                    nv.HoTenNhanVien = txtHoTenNhanVien.Text.Trim();
+                    nv.TenDangNhap = txtTenDangNhap.Text.Trim();
+                    nv.MatKhau = txtMatKhau.Text;
                     nv.QuyenHan = cboQuyenHan.Text;
+
+                    // LƯU TÊN ẢNH: Gán tên file ảnh đã chọn vào cột trong DB
+                    nv.AnhChanDung = tenFileAnhNV;
 
                     db.NhanViens.Add(nv);
                 }
-                else
+                else // TRƯỜNG HỢP SỬA (UPDATE)
                 {
-                    // --- SỬA ---
                     var nvSua = db.NhanViens.Find(txtMaNhanVien.Text);
-                    if (nvSua == null)
+                    if (nvSua != null)
                     {
-                        MessageBox.Show("Không tìm thấy nhân viên để sửa!");
-                        return;
+                        nvSua.HoTenNhanVien = txtHoTenNhanVien.Text.Trim();
+                        nvSua.TenDangNhap = txtTenDangNhap.Text.Trim();
+                        nvSua.QuyenHan = cboQuyenHan.Text;
+
+                        // Nếu người dùng có nhập mật khẩu mới thì mới cập nhật
+                        if (!string.IsNullOrWhiteSpace(txtMatKhau.Text))
+                        {
+                            nvSua.MatKhau = txtMatKhau.Text;
+                        }
+
+                        // CẬP NHẬT ẢNH: Chỉ cập nhật nếu người dùng có chọn ảnh mới
+                        if (!string.IsNullOrEmpty(tenFileAnhNV))
+                        {
+                            nvSua.AnhChanDung = tenFileAnhNV;
+                        }
                     }
-
-                    nvSua.HoTenNhanVien = txtHoTenNhanVien.Text;
-                    nvSua.TenDangNhap = txtTenDangNhap.Text;
-                    nvSua.QuyenHan = cboQuyenHan.Text;
-
-                    // Chỉ đổi mật khẩu nếu người dùng nhập vào ô TextBox
-                    if (!string.IsNullOrWhiteSpace(txtMatKhau.Text))
+                    else
                     {
-                        nvSua.MatKhau = txtMatKhau.Text;
+                        MessageBox.Show("Không tìm thấy dữ liệu nhân viên để cập nhật!");
+                        return;
                     }
                 }
 
+                // Lưu tất cả thay đổi xuống Database
                 db.SaveChanges();
-                MessageBox.Show("Lưu dữ liệu thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Đã lưu thông tin nhân viên thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // Reset lại form
-                FrmNhanVien_Load(sender, e);
+                // 3. Reset trạng thái Form
+                tenFileAnhNV = ""; // Reset biến tạm sau khi lưu xong
+                FrmNhanVien_Load(sender, e); // Tải lại danh sách lên lưới
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi khi lưu: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Hiển thị chi tiết lỗi nếu có (lỗi DB, lỗi kết nối...)
+                MessageBox.Show("Lỗi khi lưu dữ liệu: " + (ex.InnerException?.Message ?? ex.Message), "Lỗi Hệ Thống", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -230,6 +255,89 @@ namespace QuanLyCuaHangTiVi.forms
         private void btnThoat_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void btnChonAnh_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFile = new OpenFileDialog();
+            openFile.Filter = "Ảnh|*.jpg;*.jpeg;*.png";
+
+            if (openFile.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    // Đường dẫn "nhảy" ngược ra thư mục Images của Solution Explorer
+                    string projectDir = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName;
+                    string thuMucAnh = Path.Combine(projectDir, "images");
+
+                    if (!Directory.Exists(thuMucAnh)) Directory.CreateDirectory(thuMucAnh);
+
+                    // Lấy tên file và copy vào thư mục Images
+                    tenFileAnhNV = Path.GetFileName(openFile.FileName);
+                    string duongDanDich = Path.Combine(thuMucAnh, tenFileAnhNV);
+                    File.Copy(openFile.FileName, duongDanDich, true);
+
+                    // Hiển thị ảnh lên Form để xem trước
+                    if (picAnhNhanVien.Image != null) picAnhNhanVien.Image.Dispose();
+                    picAnhNhanVien.Image = Image.FromFile(duongDanDich);
+                }
+                catch (Exception ex) { MessageBox.Show("Lỗi xử lý ảnh: " + ex.Message); }
+            }
+        }
+
+        private void dgvDanhSachNhanVien_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                var nv = dgvDanhSachNhanVien.Rows[e.RowIndex].DataBoundItem as NhanVien;
+                if (nv != null && !string.IsNullOrEmpty(nv.AnhChanDung))
+                {
+                    try
+                    {
+                        string projectDir = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName;
+                        string path = Path.Combine(projectDir, "Images", nv.AnhChanDung);
+
+                        if (picAnhNhanVien.Image != null) picAnhNhanVien.Image.Dispose();
+                        if (File.Exists(path)) picAnhNhanVien.Image = Image.FromFile(path);
+                        else picAnhNhanVien.Image = null;
+                    }
+                    catch { picAnhNhanVien.Image = null; }
+                }
+            }
+        }
+
+        private void dgvDanhSachNhanVien_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            // Kiểm tra đúng tên cột "CotHinhAnh" mà bạn đã đặt trong Design
+            if (dgvDanhSachNhanVien.Columns[e.ColumnIndex].Name == "CotHinhAnh" && e.RowIndex >= 0)
+            {
+                // Lấy đối tượng nhân viên của dòng hiện tại
+                var nv = dgvDanhSachNhanVien.Rows[e.RowIndex].DataBoundItem as NhanVien;
+
+                if (nv != null && !string.IsNullOrEmpty(nv.AnhChanDung))
+                {
+                    try
+                    {
+                        // Đường dẫn trỏ vào folder Images trong Solution (giống code TiVi của bạn)
+                        string projectDir = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName;
+                        string path = Path.Combine(projectDir, "Images", nv.AnhChanDung);
+
+                        if (File.Exists(path))
+                        {
+                            // Dùng MemoryStream để tránh chiếm dụng file (giống hệt bên TiVi)
+                            byte[] bytes = File.ReadAllBytes(path);
+                            using (MemoryStream ms = new MemoryStream(bytes))
+                            {
+                                e.Value = Image.FromStream(ms);
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        e.Value = null;
+                    }
+                }
+            }
         }
     }
 }

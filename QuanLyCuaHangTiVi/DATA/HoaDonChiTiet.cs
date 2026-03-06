@@ -32,7 +32,9 @@ namespace QuanLyCuaHangTiVi.DATA
         [Column(TypeName = "decimal(18, 0)")]
         public decimal DonGia { get; set; }
 
-        public double KhuyenMai { get; set; }
+        // SỬA Ở ĐÂY: Đổi double thành decimal(18, 2) cho đồng bộ với bảng QuanLyTiVi
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal KhuyenMai { get; set; }
 
         [Column(TypeName = "decimal(18, 0)")]
         public decimal ThanhTien { get; set; }

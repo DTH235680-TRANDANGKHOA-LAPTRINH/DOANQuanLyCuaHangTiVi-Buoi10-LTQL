@@ -21,7 +21,9 @@ namespace QuanLyCuaHangTiVi.DATA
         [ForeignKey("MaHoaDon")]
         public virtual HoaDon HoaDon { get; set; }
 
-        public double LaiSuat { get; set; } // % Lãi suất
+        // Đổi double thành decimal(18,2) để tính tiền lãi không bị sai số
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal LaiSuat { get; set; } // % Lãi suất
 
         [Column(TypeName = "decimal(18, 0)")]
         public decimal SoTienTraTruoc { get; set; }
@@ -29,7 +31,7 @@ namespace QuanLyCuaHangTiVi.DATA
         [Column(TypeName = "decimal(18, 0)")]
         public decimal SoTienConNo { get; set; } // = (Tổng + Lãi) - Trả trước
 
-        [StringLength(50)]
-        public string KyHanTra { get; set; }
+        // Đổi thành kiểu số nguyên để dễ làm phép chia tiền trả góp hàng tháng
+        public int KyHanTra { get; set; } // Ví dụ nhập: 6, 9, 12 (tháng)
     }
 }

@@ -22,16 +22,19 @@ namespace QuanLyCuaHangTiVi.DATA
         [StringLength(50)]
         public string HangSanXuat { get; set; }
 
-        public DateTime NgayNhap { get; set; } = DateTime.Now;
+        public DateTime NgayTao { get; set; } = DateTime.Now;   
 
         [Column(TypeName = "decimal(18, 0)")]
         public decimal DonGiaBan { get; set; }
 
-        public double KhuyenMai { get; set; } // % hoặc số tiền
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal KhuyenMai { get; set; } // % hoặc số tiền
 
         public int SoLuongTon { get; set; }
 
-        
+        [StringLength(255)]
+        public string AnhMinhHoa { get; set; }
+
 
         // --- Logic hiển thị (Không lưu vào database - NotMapped) ---
         [NotMapped]

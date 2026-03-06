@@ -28,6 +28,7 @@ namespace QuanLyCuaHangTiVi.DATA
 
         [StringLength(50)]
         public string QuyenHan { get; set; } // Ví dụ: "Quản lý", "Nhân viên"
+        public string AnhChanDung { get; set; } // Thêm dòng này vào class NhanVien
 
         // Quan hệ
         public virtual ICollection<HoaDon> HoaDons { get; set; }

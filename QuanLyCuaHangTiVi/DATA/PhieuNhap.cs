@@ -15,18 +15,17 @@ namespace QuanLyCuaHangTiVi.DATA
         [StringLength(20)]
         public string MaPhieuNhap { get; set; }
 
-        // Khóa ngoại Nhân Viên (Ai nhập?)
-        [StringLength(20)]
-        public string MaNV { get; set; }
-        [ForeignKey("MaNV")]
-        public virtual NhanVien NhanVien { get; set; }
-
         public DateTime NgayNhap { get; set; } = DateTime.Now;
+
+        [StringLength(100)]
+        public string NguoiGiaoHang { get; set; } // Ai giao hàng đến
+
+        [StringLength(255)]
+        public string GhiChu { get; set; }
 
         [Column(TypeName = "decimal(18, 0)")]
         public decimal TongTienNhap { get; set; }
 
-        // Quan hệ
         public virtual ICollection<ChiTietPhieuNhap> ChiTietPhieuNhaps { get; set; }
     }
 }

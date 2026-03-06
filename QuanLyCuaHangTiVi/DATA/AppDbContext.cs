@@ -21,8 +21,12 @@ namespace QuanLyCuaHangTiVi.DATA
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // Chuỗi kết nối đến SQL Server Express
-            optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=QuanLyCuaHangTiVi;Trusted_Connection=True;TrustServerCertificate=True;");
+            // Best Practice: Kiểm tra xem optionsBuilder đã được cấu hình từ trước chưa
+            if (!optionsBuilder.IsConfigured)
+            {
+                // Chuỗi kết nối đến SQL Server Express (Máy local)
+                optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=QuanLyCuaHangTiVi;Trusted_Connection=True;TrustServerCertificate=True;");
+            }
         }
     }
 }

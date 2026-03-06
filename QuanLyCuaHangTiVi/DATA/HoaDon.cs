@@ -23,8 +23,10 @@ namespace QuanLyCuaHangTiVi.DATA
 
         // Khóa ngoại Nhân Viên
         [StringLength(20)]
-        public string MaNV { get; set; }
-        [ForeignKey("MaNV")]
+        public string MaNhanVien { get; set; }
+
+        // SỬA Ở ĐÂY: Đổi "MaNV" thành "MaNhanVien" cho khớp với biến phía trên
+        [ForeignKey("MaNhanVien")]
         public virtual NhanVien NhanVien { get; set; }
 
         public DateTime NgayLapHoaDon { get; set; } = DateTime.Now;
@@ -32,6 +34,7 @@ namespace QuanLyCuaHangTiVi.DATA
         [StringLength(50)]
         public string LoaiThanhToan { get; set; } // Tiền mặt / Trả góp
 
+        // decimal(18, 0) rất chuẩn nếu cửa hàng của bạn chỉ tính tiền Việt (VND)
         [Column(TypeName = "decimal(18, 0)")]
         public decimal TongTienHoaDon { get; set; }
 
