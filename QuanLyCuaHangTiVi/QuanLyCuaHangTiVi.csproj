@@ -24,9 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="images\samsum4k.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Folder Include="images\" />
   </ItemGroup>
 
 </Project>

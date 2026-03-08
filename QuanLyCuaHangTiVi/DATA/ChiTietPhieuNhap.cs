@@ -29,5 +29,18 @@ namespace QuanLyCuaHangTiVi.DATA
 
         [Column(TypeName = "decimal(18, 0)")]
         public decimal DonGiaNhap { get; set; }
+
+        [NotMapped]
+        public decimal ThanhTien
+        {
+            get { return SoLuongNhap * DonGiaNhap; }
+        }
+
+        [NotMapped]
+        public DateTime? NgayNhap
+        {
+            // Lấy Ngày Nhập từ bảng cha (PhieuNhap) sang
+            get { return PhieuNhap != null ? PhieuNhap.NgayNhap : (DateTime?)null; }
+        }
     }
 }

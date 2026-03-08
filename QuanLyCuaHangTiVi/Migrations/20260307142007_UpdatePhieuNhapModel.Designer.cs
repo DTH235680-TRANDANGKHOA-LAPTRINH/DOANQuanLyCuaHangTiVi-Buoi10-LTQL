@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuanLyCuaHangTiVi.DATA;
 
@@ -11,9 +12,11 @@ using QuanLyCuaHangTiVi.DATA;
 namespace QuanLyCuaHangTiVi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260307142007_UpdatePhieuNhapModel")]
+    partial class UpdatePhieuNhapModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -209,9 +212,6 @@ namespace QuanLyCuaHangTiVi.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime>("NgayNhap")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("NguoiGiaoHang")
                         .IsRequired()

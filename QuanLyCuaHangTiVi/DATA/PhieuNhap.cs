@@ -15,17 +15,24 @@ namespace QuanLyCuaHangTiVi.DATA
         [StringLength(20)]
         public string MaPhieuNhap { get; set; }
 
-        public DateTime NgayNhap { get; set; } = DateTime.Now;
-
         [StringLength(100)]
         public string NguoiGiaoHang { get; set; } // Ai giao hàng đến
+
+        // BỔ SUNG CỘT NGÀY NHẬP VÀO ĐÂY
+        public DateTime NgayNhap { get; set; }
+
+        
 
         [StringLength(255)]
         public string GhiChu { get; set; }
 
-        [Column(TypeName = "decimal(18, 0)")]
-        public decimal TongTienNhap { get; set; }
-
+     
         public virtual ICollection<ChiTietPhieuNhap> ChiTietPhieuNhaps { get; set; }
+
+        // (Tùy chọn) Khởi tạo danh sách tránh lỗi NullReference
+        public PhieuNhap()
+        {
+            ChiTietPhieuNhaps = new HashSet<ChiTietPhieuNhap>();
+        }
     }
 }

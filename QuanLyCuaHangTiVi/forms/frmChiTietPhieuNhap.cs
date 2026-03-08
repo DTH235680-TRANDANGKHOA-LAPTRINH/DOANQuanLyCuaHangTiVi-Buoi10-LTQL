@@ -158,20 +158,37 @@ namespace QuanLyCuaHangTiVi.forms
             {
                 if (xuLyThem)
                 {
-                    ChiTietPhieuNhap newCT = new ChiTietPhieuNhap();
-                    newCT.MaPhieuNhap = cboMaPhieuNhap.SelectedValue.ToString();
-                    newCT.MaTiVi = cboMaTiVi.SelectedValue.ToString();
-                    newCT.SoLuongNhap = int.Parse(txtSoLuong.Text);
-                    newCT.DonGiaNhap = decimal.Parse(txtDonGiaNhap.Text);
+                    ChiTietPhieuNhap ctpn = new ChiTietPhieuNhap();
+                    ctpn.MaPhieuNhap = cboMaPhieuNhap.SelectedValue.ToString();
+                    ctpn.MaTiVi = cboMaTiVi.SelectedValue.ToString();
+                    ctpn.SoLuongNhap = int.Parse(txtSoLuong.Text);
+                    ctpn.DonGiaNhap = decimal.Parse(txtDonGiaNhap.Text);
 
-                    context.ChiTietPhieuNhaps.Add(newCT);
+                    context.ChiTietPhieuNhaps.Add(ctpn);
+                    // BỔ SUNG: CỘNG THÊM SỐ LƯỢNG VÀO KHO TIVI
+                    var tivi = context.QuanLyTiVis.Find(ctpn.MaTiVi);
+                    if (tivi != null)
+                    {
+                        tivi.SoLuongTon += ctpn.SoLuongNhap; // Cộng dồn số lượng
+                    }
                 }
                 else
                 {
-                    int maCT = int.Parse(txtMaCTPN.Text);
-                    var ctSua = context.ChiTietPhieuNhaps.Find(maCT);
+                    int maCTPN = int.Parse(txtMaCTPN.Text);
+                    var ctSua = context.ChiTietPhieuNhaps.Find(maCTPN);
                     if (ctSua != null)
                     {
+                        ctSua.MaPhieuNhap = cboMaPhieuNhap.SelectedValue.ToString();
+                        ctSua.MaTiVi = cboMaTiVi.SelectedValue.ToString();
+                        ctSua.SoLuongNhap = int.Parse(txtSoLuong.Text);
+                        ctSua.DonGiaNhap = decimal.Parse(txtDonGiaNhap.Text);
+                        var tivi = context.QuanLyTiVis.Find(ctSua.MaTiVi);
+                        if (tivi != null)
+                        {
+                            // Công thức: Lấy số tồn hiện tại - đi số nhập cũ + số nhập mới
+                            int soLuongMoi = int.Parse(txtSoLuong.Text);
+                            tivi.SoLuongTon = tivi.SoLuongTon - ctSua.SoLuongNhap + soLuongMoi;
+                        }
                         ctSua.MaPhieuNhap = cboMaPhieuNhap.SelectedValue.ToString();
                         ctSua.MaTiVi = cboMaTiVi.SelectedValue.ToString();
                         ctSua.SoLuongNhap = int.Parse(txtSoLuong.Text);

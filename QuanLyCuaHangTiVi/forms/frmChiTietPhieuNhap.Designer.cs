@@ -57,7 +57,7 @@
             MaPhieuNhap = new DataGridViewTextBoxColumn();
             NgayNhap = new DataGridViewTextBoxColumn();
             MaTiVi = new DataGridViewTextBoxColumn();
-            SoLuong = new DataGridViewTextBoxColumn();
+            SoLuongNhap = new DataGridViewTextBoxColumn();
             DonGiaNhap = new DataGridViewTextBoxColumn();
             ThanhTien = new DataGridViewTextBoxColumn();
             panel1.SuspendLayout();
@@ -276,7 +276,7 @@
             dgvChiTietPhieuNhap.AllowUserToDeleteRows = false;
             dgvChiTietPhieuNhap.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvChiTietPhieuNhap.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvChiTietPhieuNhap.Columns.AddRange(new DataGridViewColumn[] { MaCTPN, MaPhieuNhap, NgayNhap, MaTiVi, SoLuong, DonGiaNhap, ThanhTien });
+            dgvChiTietPhieuNhap.Columns.AddRange(new DataGridViewColumn[] { MaCTPN, MaPhieuNhap, NgayNhap, MaTiVi, SoLuongNhap, DonGiaNhap, ThanhTien });
             dgvChiTietPhieuNhap.Dock = DockStyle.Fill;
             dgvChiTietPhieuNhap.Location = new Point(0, 233);
             dgvChiTietPhieuNhap.MultiSelect = false;
@@ -314,15 +314,15 @@
             MaTiVi.MinimumWidth = 8;
             MaTiVi.Name = "MaTiVi";
             // 
-            // SoLuong
+            // SoLuongNhap
             // 
-            SoLuong.DataPropertyName = "SoLuong";
+            SoLuongNhap.DataPropertyName = "SoLuongNhap";
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
             dataGridViewCellStyle1.Format = "N0";
-            SoLuong.DefaultCellStyle = dataGridViewCellStyle1;
-            SoLuong.HeaderText = "Số Lượng";
-            SoLuong.MinimumWidth = 8;
-            SoLuong.Name = "SoLuong";
+            SoLuongNhap.DefaultCellStyle = dataGridViewCellStyle1;
+            SoLuongNhap.HeaderText = "Số Lượng";
+            SoLuongNhap.MinimumWidth = 8;
+            SoLuongNhap.Name = "SoLuongNhap";
             // 
             // DonGiaNhap
             // 
@@ -389,7 +389,7 @@
         private DataGridViewTextBoxColumn MaPhieuNhap;
         private DataGridViewTextBoxColumn NgayNhap;
         private DataGridViewTextBoxColumn MaTiVi;
-        private DataGridViewTextBoxColumn SoLuong;
+        private DataGridViewTextBoxColumn SoLuongNhap;
         private DataGridViewTextBoxColumn DonGiaNhap;
         private DataGridViewTextBoxColumn ThanhTien;
     }

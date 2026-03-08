@@ -19,20 +19,20 @@ namespace QuanLyCuaHangTiVi.forms
         // 1. Khởi tạo Context và biến toàn cục
         AppDbContext context = new AppDbContext();
         bool xuLyThem = false;
-        // 2. Hàm Bật/Tắt các nút và ô nhập
-        //Biến lưu đường dẫn ảnh khi chọn
-        // Đảm bảo biến này nằm ở ngoài các hàm
+
+        // Biến lưu tên file ảnh đang chọn
         string tenFileAnhHienTai = "";
+
+        // ĐƯỜNG DẪN ẢNH: 
+        string imagesFolder = Application.StartupPath.Replace("bin\\Debug\\net8.0-windows", "images\\");
+
+        // KHO LƯU ẢNH TẠM: Giải pháp dứt điểm lỗi "Out of Memory" khi cuộn DataGridView
+        Dictionary<string, Image> khoAnhTam = new Dictionary<string, Image>();
 
         private void BatTatChucNang(bool giaTri)
         {
-            // true: Đang nhập liệu (Hiện Lưu/Hủy)
-            // false: Đang xem (Hiện Thêm/Sửa/Xóa)
-
             btnLuu.Enabled = giaTri;
             btnHuyBo.Enabled = giaTri;
-
-            // Các ô nhập liệu
             txtMaTiVi.Enabled = giaTri;
             txtTenTiVi.Enabled = giaTri;
             cboHangSanXuat.Enabled = giaTri;
@@ -42,13 +42,12 @@ namespace QuanLyCuaHangTiVi.forms
             txtSoLuongTon.Enabled = giaTri;
             btnChonAnh.Enabled = giaTri;
 
-            // Các nút chức năng
             btnThem.Enabled = !giaTri;
             btnSua.Enabled = !giaTri;
             btnXoa.Enabled = !giaTri;
             btnThoat.Enabled = !giaTri;
         }
-        // Hàm phụ để nạp ComboBox
+
         private void LoadComboBoxHang()
         {
             cboHangSanXuat.Items.Clear();
@@ -66,22 +65,23 @@ namespace QuanLyCuaHangTiVi.forms
 
         private void frmQuanLyTiVi_Load(object sender, EventArgs e)
         {
+            // Tạo thư mục images nếu nó chưa tồn tại để tránh lỗi
+            if (!Directory.Exists(imagesFolder))
+            {
+                Directory.CreateDirectory(imagesFolder);
+            }
+
             BatTatChucNang(false);
-            LoadComboBoxHang(); // Nạp dữ liệu cho ComboBox trước
+            LoadComboBoxHang();
 
-            // 1. Load dữ liệu từ DB
             var listTiVi = context.QuanLyTiVis.ToList();
-
-            // 2. Tạo BindingSource (Cầu nối dữ liệu)
             BindingSource bindingSource = new BindingSource();
             bindingSource.DataSource = listTiVi;
 
-            // 3. Cấu hình DataGridView
             dgvDanhSachTiVi.AutoGenerateColumns = false;
             dgvDanhSachTiVi.DataSource = bindingSource;
             dgvDanhSachTiVi.RowTemplate.Height = 80;
 
-            // Ánh xạ cột
             if (dgvDanhSachTiVi.Columns.Contains("Ma")) dgvDanhSachTiVi.Columns["Ma"].DataPropertyName = "MaTiVi";
             if (dgvDanhSachTiVi.Columns.Contains("Ten")) dgvDanhSachTiVi.Columns["Ten"].DataPropertyName = "TenTiVi";
             if (dgvDanhSachTiVi.Columns.Contains("Hang")) dgvDanhSachTiVi.Columns["Hang"].DataPropertyName = "HangSanXuat";
@@ -90,11 +90,9 @@ namespace QuanLyCuaHangTiVi.forms
             if (dgvDanhSachTiVi.Columns.Contains("KM")) dgvDanhSachTiVi.Columns["KM"].DataPropertyName = "KhuyenMai";
             if (dgvDanhSachTiVi.Columns.Contains("SL")) dgvDanhSachTiVi.Columns["SL"].DataPropertyName = "SoLuongTon";
 
-            // Ẩn cột chữ AnhMinhHoa nếu nó tự hiện ra
             if (dgvDanhSachTiVi.Columns.Contains("AnhMinhHoa"))
                 dgvDanhSachTiVi.Columns["AnhMinhHoa"].Visible = false;
 
-            // Binding dữ liệu
             txtMaTiVi.DataBindings.Clear();
             txtTenTiVi.DataBindings.Clear();
             cboHangSanXuat.DataBindings.Clear();
@@ -117,17 +115,15 @@ namespace QuanLyCuaHangTiVi.forms
             xuLyThem = true;
             BatTatChucNang(true);
 
-            // Xóa trắng các ô nhập
             txtMaTiVi.Clear();
             txtTenTiVi.Clear();
             txtDonGiaBan.Clear();
             txtKhuyenMai.Clear();
             txtSoLuongTon.Clear();
 
-            // Xóa ảnh cũ trên giao diện và reset biến lưu tên file
             if (picAnhMinhHoa.Image != null) picAnhMinhHoa.Image.Dispose();
             picAnhMinhHoa.Image = null;
-            tenFileAnhHienTai = ""; // Bắt buộc người dùng phải nhấn chọn ảnh lại
+            tenFileAnhHienTai = "";
         }
 
         private void btnHuyBo_Click(object sender, EventArgs e)
@@ -163,20 +159,26 @@ namespace QuanLyCuaHangTiVi.forms
                 var tv = context.QuanLyTiVis.Find(txtMaTiVi.Text);
                 if (tv != null && MessageBox.Show("Bạn có chắc chắn muốn xóa TiVi này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    string fileAnhCanXoa = tv.AnhMinhHoa; // Lưu tên file lại trước khi xóa record
+                    string fileAnhCanXoa = tv.AnhMinhHoa;
 
                     context.QuanLyTiVis.Remove(tv);
                     context.SaveChanges();
 
-                    // Xóa file ảnh vật lý nếu nó tồn tại
                     try
                     {
-                        string path = Path.Combine(Application.StartupPath, "Images", fileAnhCanXoa);
+                        // Dùng imagesFolder
+                        string path = Path.Combine(imagesFolder, fileAnhCanXoa);
                         if (File.Exists(path))
                         {
-                            // Giải phóng ảnh đang hiển thị trên PictureBox nếu đó là ảnh sắp xóa
                             if (picAnhMinhHoa.Image != null) picAnhMinhHoa.Image.Dispose();
                             picAnhMinhHoa.Image = null;
+
+                            // Xóa luôn trong kho tạm để dọn dẹp RAM
+                            if (khoAnhTam.ContainsKey(fileAnhCanXoa))
+                            {
+                                khoAnhTam[fileAnhCanXoa]?.Dispose();
+                                khoAnhTam.Remove(fileAnhCanXoa);
+                            }
 
                             File.Delete(path);
                         }
@@ -189,26 +191,24 @@ namespace QuanLyCuaHangTiVi.forms
         }
 
         private void btnLuu_Click(object sender, EventArgs e)
-        {// 1. Kiểm tra các trường văn bản cơ bản
+        {
             if (string.IsNullOrWhiteSpace(txtMaTiVi.Text) || string.IsNullOrWhiteSpace(txtTenTiVi.Text))
             {
                 MessageBox.Show("Vui lòng nhập đầy đủ Mã và Tên TiVi!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // 2. BẮT BUỘC CHỌN ẢNH: Kiểm tra biến lưu tên file ảnh
-            if (string.IsNullOrEmpty(tenFileAnhHienTai))
+            if (xuLyThem == true && string.IsNullOrEmpty(tenFileAnhHienTai))
             {
                 MessageBox.Show("Bạn chưa chọn ảnh minh họa cho TiVi. Vui lòng chọn ảnh trước khi lưu!", "Yêu cầu chọn ảnh", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                btnChonAnh.Focus(); // Trỏ chuột vào nút chọn ảnh để nhắc người dùng
-                return; // Dừng hàm tại đây, không cho lưu xuống Database
+                btnChonAnh.Focus();
+                return;
             }
 
             try
             {
                 if (xuLyThem)
                 {
-                    // Kiểm tra trùng mã
                     if (context.QuanLyTiVis.Any(x => x.MaTiVi == txtMaTiVi.Text))
                     {
                         MessageBox.Show("Mã TiVi đã tồn tại!"); return;
@@ -222,13 +222,11 @@ namespace QuanLyCuaHangTiVi.forms
                     tv.DonGiaBan = decimal.Parse(txtDonGiaBan.Text);
                     tv.KhuyenMai = decimal.Parse(txtKhuyenMai.Text);
                     tv.SoLuongTon = int.Parse(txtSoLuongTon.Text);
-
-                    // Gán tên file ảnh đã chọn chắc chắn không null nhờ lệnh kiểm tra ở trên
                     tv.AnhMinhHoa = tenFileAnhHienTai;
 
                     context.QuanLyTiVis.Add(tv);
                 }
-                else // Trường hợp Sửa
+                else
                 {
                     var tvSua = context.QuanLyTiVis.Find(txtMaTiVi.Text);
                     if (tvSua != null)
@@ -238,7 +236,6 @@ namespace QuanLyCuaHangTiVi.forms
                         tvSua.DonGiaBan = decimal.Parse(txtDonGiaBan.Text);
                         tvSua.SoLuongTon = int.Parse(txtSoLuongTon.Text);
 
-                        // Nếu sửa mà chọn ảnh mới thì cập nhật, không thì giữ ảnh cũ (tùy bạn muốn bắt buộc chọn mới hay không)
                         if (!string.IsNullOrEmpty(tenFileAnhHienTai))
                         {
                             tvSua.AnhMinhHoa = tenFileAnhHienTai;
@@ -249,7 +246,7 @@ namespace QuanLyCuaHangTiVi.forms
                 context.SaveChanges();
                 MessageBox.Show("Lưu dữ liệu thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                tenFileAnhHienTai = ""; // Reset biến sau khi hoàn tất
+                tenFileAnhHienTai = "";
                 frmQuanLyTiVi_Load(sender, e);
             }
             catch (Exception ex)
@@ -277,27 +274,35 @@ namespace QuanLyCuaHangTiVi.forms
             {
                 try
                 {
-                    // 1. Tìm đường dẫn gốc của Project (đi ngược từ bin/Debug lên)
-                    string projectDir = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName;
-
-                    // 2. Trỏ trực tiếp vào thư mục Images nằm trong Solution
-                    string thuMucAnh = Path.Combine(projectDir, "images");
-
-                    // 3. Tạo thư mục nếu chưa có
-                    if (!Directory.Exists(thuMucAnh)) Directory.CreateDirectory(thuMucAnh);
-                    if (!Directory.Exists(thuMucAnh)) Directory.CreateDirectory(thuMucAnh);
-
-                    // LẤY TÊN FILE GÁN VÀO BIẾN DÙNG CHUNG
                     tenFileAnhHienTai = Path.GetFileName(openFile.FileName);
-                    string duongDanDich = Path.Combine(thuMucAnh, tenFileAnhHienTai);
+                    string duongDanDich = Path.Combine(imagesFolder, tenFileAnhHienTai);
 
-                    File.Copy(openFile.FileName, duongDanDich, true);
+                    if (openFile.FileName != duongDanDich)
+                    {
+                        File.Copy(openFile.FileName, duongDanDich, true);
+                    }
 
-                    // Hiển thị lên PictureBox
                     if (picAnhMinhHoa.Image != null) picAnhMinhHoa.Image.Dispose();
-                    picAnhMinhHoa.Image = Image.FromFile(duongDanDich);
+
+                    using (Image imgTemp = Image.FromFile(duongDanDich))
+                    {
+                        picAnhMinhHoa.Image = new Bitmap(imgTemp);
+                    }
+
+                    // Cập nhật lại kho tạm nếu người dùng chọn đè ảnh mới trùng tên ảnh cũ
+                    if (khoAnhTam.ContainsKey(tenFileAnhHienTai))
+                    {
+                        khoAnhTam[tenFileAnhHienTai]?.Dispose(); // Dọn ảnh cũ trong cache
+                        using (Image imgTemp = Image.FromFile(duongDanDich))
+                        {
+                            khoAnhTam[tenFileAnhHienTai] = new Bitmap(imgTemp);
+                        }
+                    }
                 }
-                catch (Exception ex) { MessageBox.Show("Lỗi chọn ảnh: " + ex.Message); }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi chọn ảnh: " + ex.Message, "Thông báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -308,20 +313,28 @@ namespace QuanLyCuaHangTiVi.forms
                 var tv = dgvDanhSachTiVi.Rows[e.RowIndex].DataBoundItem as QuanLyTiVi;
                 if (tv != null && !string.IsNullOrEmpty(tv.AnhMinhHoa))
                 {
-                    string path = Path.Combine(Application.StartupPath, "Images", tv.AnhMinhHoa);
-                    if (File.Exists(path))
+                    // Lấy ảnh từ cache (khoAnhTam)
+                    if (!khoAnhTam.ContainsKey(tv.AnhMinhHoa))
                     {
-                        try
+                        string path = Path.Combine(imagesFolder, tv.AnhMinhHoa);
+                        if (File.Exists(path))
                         {
-                            // Dùng MemoryStream để tránh chiếm dụng file khi DataGridView load liên tục
-                            byte[] bytes = File.ReadAllBytes(path);
-                            using (MemoryStream ms = new MemoryStream(bytes))
+                            try
                             {
-                                e.Value = Image.FromStream(ms);
+                                using (Image imgTemp = Image.FromFile(path))
+                                {
+                                    khoAnhTam[tv.AnhMinhHoa] = new Bitmap(imgTemp);
+                                }
                             }
+                            catch { khoAnhTam[tv.AnhMinhHoa] = null; }
                         }
-                        catch { e.Value = null; }
+                        else
+                        {
+                            khoAnhTam[tv.AnhMinhHoa] = null;
+                        }
                     }
+
+                    e.Value = khoAnhTam[tv.AnhMinhHoa];
                 }
             }
         }
@@ -335,16 +348,28 @@ namespace QuanLyCuaHangTiVi.forms
                 {
                     try
                     {
-                        string path = Path.Combine(Application.StartupPath, "Images", tv.AnhMinhHoa);
+                        string path = Path.Combine(imagesFolder, tv.AnhMinhHoa);
+
                         if (picAnhMinhHoa.Image != null) picAnhMinhHoa.Image.Dispose();
-                        if (File.Exists(path)) picAnhMinhHoa.Image = Image.FromFile(path);
-                        else picAnhMinhHoa.Image = null;
+
+                        if (File.Exists(path))
+                        {
+                            using (Image imgTemp = Image.FromFile(path))
+                            {
+                                picAnhMinhHoa.Image = new Bitmap(imgTemp);
+                            }
+                        }
+                        else
+                        {
+                            picAnhMinhHoa.Image = null;
+                        }
                     }
                     catch { picAnhMinhHoa.Image = null; }
                 }
             }
         }
     }
-}
+ }
+
     
 
