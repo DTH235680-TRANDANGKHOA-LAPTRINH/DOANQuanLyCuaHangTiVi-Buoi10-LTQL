@@ -15,23 +15,21 @@ namespace QuanLyCuaHangTiVi.DATA
         [StringLength(20)]
         public string MaTraGop { get; set; }
 
-        // Khóa ngoại Hóa Đơn
-        [StringLength(20)]
-        public string MaHoaDon { get; set; }
-        [ForeignKey("MaHoaDon")]
+        // ✅ SỬA: Xóa bỏ [StringLength(20)] vì kiểu int không dùng thuộc tính này
+        public int MaHoaDon { get; set; }
+
+        [ForeignKey("MaHoaDon")] // ✅ Nên thêm thuộc tính này để tường minh
         public virtual HoaDon HoaDon { get; set; }
 
-        // Đổi double thành decimal(18,2) để tính tiền lãi không bị sai số
         [Column(TypeName = "decimal(18, 2)")]
-        public decimal LaiSuat { get; set; } // % Lãi suất
+        public decimal LaiSuat { get; set; }
 
         [Column(TypeName = "decimal(18, 0)")]
         public decimal SoTienTraTruoc { get; set; }
 
         [Column(TypeName = "decimal(18, 0)")]
-        public decimal SoTienConNo { get; set; } // = (Tổng + Lãi) - Trả trước
+        public decimal SoTienConNo { get; set; }
 
-        // Đổi thành kiểu số nguyên để dễ làm phép chia tiền trả góp hàng tháng
-        public int KyHanTra { get; set; } // Ví dụ nhập: 6, 9, 12 (tháng)
+        public int KyHanTra { get; set; }
     }
 }

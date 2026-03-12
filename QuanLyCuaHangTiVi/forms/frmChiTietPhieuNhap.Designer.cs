@@ -139,9 +139,9 @@
             label3.AutoSize = true;
             label3.Location = new Point(483, 76);
             label3.Name = "label3";
-            label3.Size = new Size(72, 25);
+            label3.Size = new Size(73, 25);
             label3.TabIndex = 21;
-            label3.Text = "Mã TIVI";
+            label3.Text = "Tên TIVI";
             // 
             // label2
             // 

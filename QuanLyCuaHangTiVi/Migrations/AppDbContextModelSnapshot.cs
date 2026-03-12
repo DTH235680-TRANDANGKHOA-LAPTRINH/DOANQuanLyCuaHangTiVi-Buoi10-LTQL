@@ -57,14 +57,14 @@ namespace QuanLyCuaHangTiVi.Migrations
 
             modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.HoaDon", b =>
                 {
-                    b.Property<string>("MaHoaDon")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("LoaiThanhToan")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("GhiChuHoaDon")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MaKhachHang")
                         .IsRequired()
@@ -76,13 +76,10 @@ namespace QuanLyCuaHangTiVi.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<DateTime>("NgayLapHoaDon")
+                    b.Property<DateTime>("NgayLap")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("TongTienHoaDon")
-                        .HasColumnType("decimal(18, 0)");
-
-                    b.HasKey("MaHoaDon");
+                    b.HasKey("ID");
 
                     b.HasIndex("MaKhachHang");
 
@@ -93,37 +90,32 @@ namespace QuanLyCuaHangTiVi.Migrations
 
             modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.HoaDonChiTiet", b =>
                 {
-                    b.Property<int>("MaChiTiet")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaChiTiet"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<decimal>("DonGia")
+                    b.Property<decimal>("DonGiaBan")
                         .HasColumnType("decimal(18, 0)");
 
-                    b.Property<decimal>("KhuyenMai")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<int>("HoaDonID")
+                        .HasColumnType("int");
 
-                    b.Property<string>("MaHoaDon")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                    b.Property<decimal?>("KhuyenMai")
+                        .HasColumnType("decimal(18, 0)");
 
                     b.Property<string>("MaTiVi")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<int>("SoLuongMua")
+                    b.Property<int>("SoLuongBan")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("ThanhTien")
-                        .HasColumnType("decimal(18, 0)");
+                    b.HasKey("ID");
 
-                    b.HasKey("MaChiTiet");
-
-                    b.HasIndex("MaHoaDon");
+                    b.HasIndex("HoaDonID");
 
                     b.HasIndex("MaTiVi");
 
@@ -278,10 +270,8 @@ namespace QuanLyCuaHangTiVi.Migrations
                     b.Property<decimal>("LaiSuat")
                         .HasColumnType("decimal(18, 2)");
 
-                    b.Property<string>("MaHoaDon")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                    b.Property<int>("MaHoaDon")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("SoTienConNo")
                         .HasColumnType("decimal(18, 0)");
@@ -338,7 +328,7 @@ namespace QuanLyCuaHangTiVi.Migrations
                 {
                     b.HasOne("QuanLyCuaHangTiVi.DATA.HoaDon", "HoaDon")
                         .WithMany("HoaDonChiTiets")
-                        .HasForeignKey("MaHoaDon")
+                        .HasForeignKey("HoaDonID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -363,7 +353,7 @@ namespace QuanLyCuaHangTiVi.Migrations
             modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.TraGop", b =>
                 {
                     b.HasOne("QuanLyCuaHangTiVi.DATA.HoaDon", "HoaDon")
-                        .WithMany("TraGops")
+                        .WithMany()
                         .HasForeignKey("MaHoaDon")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -374,8 +364,6 @@ namespace QuanLyCuaHangTiVi.Migrations
             modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.HoaDon", b =>
                 {
                     b.Navigation("HoaDonChiTiets");
-
-                    b.Navigation("TraGops");
                 });
 
             modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.KhachHang", b =>

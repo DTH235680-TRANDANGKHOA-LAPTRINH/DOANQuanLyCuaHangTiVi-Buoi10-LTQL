@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,34 +13,38 @@ namespace QuanLyCuaHangTiVi.DATA
     public class HoaDon
     {
         [Key]
+        public int ID { get; set; } // ID hóa đơn vẫn nên để int tự tăng cho dễ quản lý
+
+        [Required]
         [StringLength(20)]
-        public string MaHoaDon { get; set; }
+        public string MaNhanVien { get; set; } // Đổi từ NhanVienID (int) -> MaNhanVien (string)
 
-        // Khóa ngoại Khách Hàng
+        [Required]
         [StringLength(20)]
-        public string MaKhachHang { get; set; }
-        [ForeignKey("MaKhachHang")]
-        public virtual KhachHang KhachHang { get; set; }
+        public string MaKhachHang { get; set; } // Đổi từ KhachHangID (int) -> MaKhachHang (string)
 
-        // Khóa ngoại Nhân Viên
-        [StringLength(20)]
-        public string MaNhanVien { get; set; }
-
-        // SỬA Ở ĐÂY: Đổi "MaNV" thành "MaNhanVien" cho khớp với biến phía trên
-        [ForeignKey("MaNhanVien")]
-        public virtual NhanVien NhanVien { get; set; }
-
-        public DateTime NgayLapHoaDon { get; set; } = DateTime.Now;
-
-        [StringLength(50)]
-        public string LoaiThanhToan { get; set; } // Tiền mặt / Trả góp
-
-        // decimal(18, 0) rất chuẩn nếu cửa hàng của bạn chỉ tính tiền Việt (VND)
-        [Column(TypeName = "decimal(18, 0)")]
-        public decimal TongTienHoaDon { get; set; }
+        public DateTime NgayLap { get; set; } = DateTime.Now;
+        public string? GhiChuHoaDon { get; set; }
 
         // Quan hệ
-        public virtual ICollection<HoaDonChiTiet> HoaDonChiTiets { get; set; }
-        public virtual ICollection<TraGop> TraGops { get; set; }
+        public virtual ICollection<HoaDonChiTiet> HoaDonChiTiets { get; set; } = new List<HoaDonChiTiet>();
+
+        [ForeignKey("MaKhachHang")]
+        public virtual KhachHang KhachHang { get; set; } = null!;
+
+        [ForeignKey("MaNhanVien")]
+        public virtual NhanVien NhanVien { get; set; } = null!;
+    }
+
+    [NotMapped]
+    public class DanhSachHoaDon
+    {
+        public int ID { get; set; }
+        public string MaNhanVien { get; set; }
+        public string HoTenNhanVien { get; set; }
+        public string MaKhachHang { get; set; }
+        public string TenKhachHang { get; set; }
+        public DateTime NgayLap { get; set; }
+        public decimal TongTien { get; set; }
     }
 }

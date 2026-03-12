@@ -12,31 +12,40 @@ namespace QuanLyCuaHangTiVi.DATA
     public class HoaDonChiTiet
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int MaChiTiet { get; set; }
+        public int ID { get; set; }
 
-        // Khóa ngoại Hóa Đơn
-        [StringLength(20)]
-        public string MaHoaDon { get; set; }
-        [ForeignKey("MaHoaDon")]
-        public virtual HoaDon HoaDon { get; set; }
+        public int HoaDonID { get; set; }
 
-        // Khóa ngoại TiVi
+        [Required]
         [StringLength(20)]
-        public string MaTiVi { get; set; }
+        public string MaTiVi { get; set; } // Đổi từ int -> string
+
+        public int SoLuongBan { get; set; }
+
+        [Column(TypeName = "decimal(18, 0)")]
+        public decimal DonGiaBan { get; set; }
+
+        [Column(TypeName = "decimal(18, 0)")]
+        public decimal? KhuyenMai { get; set; }
+
+        // Quan hệ khóa ngoại
+        [ForeignKey("HoaDonID")]
+        public virtual HoaDon HoaDon { get; set; } = null!;
+
         [ForeignKey("MaTiVi")]
-        public virtual QuanLyTiVi QuanLyTiVi { get; set; }
+        public virtual QuanLyTiVi QuanLyTiVi { get; set; } = null!;
+    }
 
-        public int SoLuongMua { get; set; }
-
-        [Column(TypeName = "decimal(18, 0)")]
-        public decimal DonGia { get; set; }
-
-        // SỬA Ở ĐÂY: Đổi double thành decimal(18, 2) cho đồng bộ với bảng QuanLyTiVi
-        [Column(TypeName = "decimal(18, 2)")]
+    [NotMapped]
+    public class DanhSachHoaDonChiTiet
+    {
+        public int ID { get; set; }
+        public int HoaDonID { get; set; }
+        public string MaTiVi { get; set; }
+        public string TenTiVi { get; set; }
+        public int SoLuongBan { get; set; }
+        public decimal DonGiaBan { get; set; }
         public decimal KhuyenMai { get; set; }
-
-        [Column(TypeName = "decimal(18, 0)")]
         public decimal ThanhTien { get; set; }
     }
 }
