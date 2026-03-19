@@ -257,6 +257,7 @@
             btnDangXuat.TabIndex = 28;
             btnDangXuat.Text = "ĐĂNG XUẤT";
             btnDangXuat.UseVisualStyleBackColor = false;
+            btnDangXuat.Click += btnDangXuat_Click;
             // 
             // statusStrip1
             // 
@@ -291,6 +292,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Trang Chủ - Quản Lý TiVi";
             WindowState = FormWindowState.Maximized;
+            Load += frmTrangChu_Load;
             groupBox1.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
             statusStrip1.ResumeLayout(false);

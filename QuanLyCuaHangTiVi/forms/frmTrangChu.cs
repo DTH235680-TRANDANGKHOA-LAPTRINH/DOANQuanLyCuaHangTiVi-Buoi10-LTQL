@@ -17,6 +17,8 @@ namespace QuanLyCuaHangTiVi.forms
         {
             InitializeComponent();
 
+            this.IsMdiContainer = true;
+
         }
         AppDbContext db = new AppDbContext(); // Khởi tạo kết nối CSDL
         frmDangNhap dangNhap = null;
@@ -29,112 +31,97 @@ namespace QuanLyCuaHangTiVi.forms
 
         private void frmTrangChu_Load(object sender, EventArgs e)
         {
-            ChuaDangNhap(); // Khóa hết các nút chức năng
-            ThucHienDangNhap(); // Bật form đăng nhập
+            ChuaDangNhap(); // Khóa menu trước
+            ThucHienDangNhap(); // Hiện bảng đăng nhập sau
         }
-
-
-
-        // --- 1. CÁC HÀM PHÂN QUYỀN (Bật/Tắt các Button) ---
-        public void ChuaDangNhap()
-        {
-            // Mờ tất cả các nút trừ nút Đăng xuất / Thoát (tôi đoán là nút màu đỏ ở dưới cùng)
-            btnQuanLyTiVi.Enabled = false;
-            btnNhanVien.Enabled = false;
-            btnKhachHang.Enabled = false;
-            btnPhieuNhap.Enabled = false;
-            btnCTPhieuNhap.Enabled = false;
-            btnHoaDon.Enabled = false;
-            btnTraGop.Enabled = false;
-            btnTKChiPhi.Enabled = false;
-            btnTKDoanhThu.Enabled = false;
-            btnTroGiup.Enabled = false;
-
-            this.Text = "Trang Chủ - Quản Lý TiVi | Chưa đăng nhập";
-        }
-
-        public void QuyenQuanLy()
-        {
-            // Quản lý được sử dụng TẤT CẢ các nút
-            btnQuanLyTiVi.Enabled = true;
-            btnNhanVien.Enabled = true;
-            btnKhachHang.Enabled = true;
-            btnPhieuNhap.Enabled = true;
-            btnCTPhieuNhap.Enabled = true;
-            btnHoaDon.Enabled = true; 
-            btnTraGop.Enabled = true;
-            btnTKChiPhi.Enabled = true;
-            btnTKDoanhThu.Enabled = true;
-            btnTroGiup.Enabled = true;
-
-            this.Text = "Trang Chủ - Quản Lý TiVi | Quản lý: " + hoTenNguoiDung;
-        }
-
-        public void QuyenNhanVien()
-        {
-            // Nhân viên chỉ được thao tác Bán hàng (Hóa đơn, Khách hàng, xem TiVi)
-            btnQuanLyTiVi.Enabled = true;
-            btnKhachHang.Enabled = true;
-            btnHoaDon.Enabled = true;
-          
-            btnTraGop.Enabled = true;
-            btnTroGiup.Enabled = true;
-
-            // KHÔNG cho phép Nhân viên thao tác quản trị, nhập kho và xem thống kê
-            btnNhanVien.Enabled = false;
-            btnPhieuNhap.Enabled = false;
-            btnCTPhieuNhap.Enabled = false;
-            btnTKChiPhi.Enabled = false;
-            btnTKDoanhThu.Enabled = false;
-
-            this.Text = "Trang Chủ - Quản Lý TiVi | Nhân viên: " + hoTenNguoiDung;
-        }
-
-        // --- 2. HÀM XỬ LÝ ĐĂNG NHẬP (Chuẩn theo sườn của thầy) ---
         private void ThucHienDangNhap()
         {
-            // Bật Form đăng nhập lên
-            if (dangNhap == null || dangNhap.IsDisposed)
-                dangNhap = new frmDangNhap();
-
-            if (dangNhap.ShowDialog() == DialogResult.OK)
+            using (frmDangNhap fLogin = new frmDangNhap())
             {
-                // 1. Lúc này Form Đăng Nhập đã kiểm tra CSDL xong và gán TaiKhoanHienTai rồi.
-                // 2. Ta chỉ việc lấy thông tin từ TaiKhoanHienTai ra để dùng!
-                var nv = TaiKhoanHienTai.NhanVienDangNhap;
-
-                if (nv != null)
+                // Nếu đăng nhập thành công (nhấn nút Đăng nhập và khớp DB)
+                if (fLogin.ShowDialog() == DialogResult.OK)
                 {
-                    hoTenNguoiDung = nv.HoTenNhanVien;
-
-                    // Kiểm tra phân quyền dựa vào chức vụ
-                    if (nv.QuyenHan == "Quản lý")
+                    var nv = TaiKhoanHienTai.NhanVienDangNhap;
+                    if (nv != null)
                     {
-                        QuyenQuanLy();
-                    }
-                    else
-                    {
-                        QuyenNhanVien();
+                        if (nv.QuyenHan == "Quản lý") QuyenQuanLy(nv.HoTenNhanVien);
+                        else QuyenNhanVien(nv.HoTenNhanVien);
                     }
                 }
+                else
+                {
+                    // Nếu bấm thoát hoặc hủy ở bảng đăng nhập -> Thoát ứng dụng
+                    Application.Exit();
+                }
+            }
+        }
+
+        // --- PHÂN QUYỀN (Duyệt trong tableLayoutPanel1) ---
+        private void SetMenuStatus(bool status)
+        {
+            // Trong hình bạn gửi, các nút nằm trong tableLayoutPanel1
+            foreach (Control ctrl in tableLayoutPanel1.Controls)
+            {
+                if (ctrl is Button btn)
+                {
+                    // Nút Đăng xuất không bao giờ bị khóa
+                    if (btn.Name == "btnDangXuat") btn.Enabled = true;
+                    else btn.Enabled = status;
+                }
+            }
+        }
+
+        public void ChuaDangNhap()
+        {
+            SetMenuStatus(false);
+            lblTrangThai.Text = "Chưa đăng nhập";
+        }
+
+        public void QuyenQuanLy(string hoTen)
+        {
+            SetMenuStatus(true);
+            lblTrangThai.Text = "Quản lý: " + hoTen;
+            this.Text = "Trang Chủ - Quản Lý TiVi | Quản lý: " + hoTen;
+        }
+
+        public void QuyenNhanVien(string hoTen)
+        {
+            SetMenuStatus(true);
+            // Khóa các chức năng của Quản lý
+            btnNhanVien.Enabled = false;
+            btnTKChiPhi.Enabled = false;
+            btnTKDoanhThu.Enabled = false;
+            btnPhieuNhap.Enabled = false;
+
+            lblTrangThai.Text = "Nhân viên: " + hoTen;
+            this.Text = "Trang Chủ - Quản Lý TiVi | Nhân viên: " + hoTen;
+        }
+
+        // --- MỞ FORM CON ---
+        private void MoFormCon<T>() where T : Form, new()
+        {
+            Form frm = this.MdiChildren.FirstOrDefault(f => f is T);
+            if (frm == null)
+            {
+                frm = new T();
+                frm.MdiParent = this; // Cho form con chui vào vùng xám
+                frm.WindowState = FormWindowState.Maximized;
+                frm.Show();
             }
             else
             {
-                // Bấm nút Hủy bỏ hoặc dấu X -> Thoát app luôn
-                Application.Exit();
+                frm.Activate();
             }
         }
-
         private void btnDangXuat_Click(object sender, EventArgs e)
         {
-            // Đóng tất cả các form con đang hiển thị ở phần không gian trống bên phải
-            foreach (Form child in this.MdiChildren)
+            if (MessageBox.Show("Bạn có muốn đăng xuất không?", "Xác nhận", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                child.Close();
+                foreach (Form child in MdiChildren) child.Close();
+                TaiKhoanHienTai.NhanVienDangNhap = null;
+                ChuaDangNhap();
+                ThucHienDangNhap();
             }
-
-            ChuaDangNhap(); // Trả về trạng thái khóa
-            ThucHienDangNhap(); // Bật lại màn hình đăng nhậ
         }
 
         private void btnQuanLyTiVi_Click(object sender, EventArgs e)
@@ -172,25 +159,13 @@ namespace QuanLyCuaHangTiVi.forms
             MoFormCon<frmTraGop>();
         }
 
-      
 
 
 
-        // Hàm dùng chung để mở Form con lọt vào vùng trống
-        private void MoFormCon<T>() where T : Form, new()
-        {
-            // Kiểm tra xem Form này đã mở chưa
-            Form frm = this.MdiChildren.FirstOrDefault(f => f is T);
-            if (frm == null)
-            {
-                frm = new T();
-                frm.MdiParent = this; // Cho nó chui vào trong Form chính
-                frm.Show();
-            }
-            else
-            {
-                frm.Activate(); // Nếu mở rồi thì hiện lên trên cùng
-            }
-        }
+
+
+
+        
+        
     }
 }

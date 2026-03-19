@@ -21,33 +21,26 @@ namespace QuanLyCuaHangTiVi.forms
 
         private void btnDangNhap_Click(object sender, EventArgs e)
         {
-            string username = txtTenDangNhap.Text.Trim(); // Giả sử ô nhập tài khoản tên là txtTenDangNhap
-            string password = txtMatKhau.Text;
+            string user = txtTenDangNhap.Text.Trim();
+            string pass = txtMatKhau.Text;
 
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(pass))
             {
-                MessageBox.Show("Vui lòng nhập đầy đủ tài khoản và mật khẩu!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng nhập đủ thông tin!");
                 return;
             }
 
-            // Truy vấn kiểm tra xem có khớp tài khoản và mật khẩu trong DB không
-            // Lưu ý: Nếu ở FrmNhanVien bạn có mã hóa (hash) mật khẩu, thì ở đây bạn cũng phải mã hóa 'password' rồi mới so sánh
-            var nv = db.NhanViens.FirstOrDefault(x => x.TenDangNhap == username && x.MatKhau == password);
+            var nv = db.NhanViens.FirstOrDefault(x => x.TenDangNhap == user && x.MatKhau == pass);
 
             if (nv != null)
             {
-                // Đăng nhập thành công -> Lưu thông tin vào class tĩnh
                 TaiKhoanHienTai.NhanVienDangNhap = nv;
-
-                MessageBox.Show("Đăng nhập thành công! Xin chào " + nv.HoTenNhanVien, "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.DialogResult = DialogResult.OK;
+                this.DialogResult = DialogResult.OK; // QUAN TRỌNG: Để frmTrangChu biết đã OK
+                this.Close();
             }
             else
             {
-                // Đăng nhập thất bại
-                MessageBox.Show("Tên đăng nhập hoặc mật khẩu không đúng!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                txtMatKhau.Clear();
-                txtMatKhau.Focus();
+                MessageBox.Show("Sai tài khoản hoặc mật khẩu!", "Lỗi");
             }
         }
 
@@ -55,14 +48,12 @@ namespace QuanLyCuaHangTiVi.forms
         {
 
             this.DialogResult = DialogResult.Cancel;
+            this.Close();
         }
 
         private void txtMatKhau_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
-            {
-                btnDangNhap_Click(sender, e);
-            }
+            if (e.KeyCode == Keys.Enter) btnDangNhap_Click(sender, e);
         }
     }
 }
