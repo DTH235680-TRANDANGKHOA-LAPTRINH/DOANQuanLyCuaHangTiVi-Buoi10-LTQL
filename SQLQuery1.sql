@@ -22,11 +22,11 @@ GO
 -- ========================================================
 
 -- 1. Thêm 3 dữ liệu bảng Nhân Viên
-INSERT INTO NhanVien (MaNhanVien, HoTenNhanVien, TenDangNhap, MatKhau, QuyenHan, AnhChanDung)
+INSERT INTO NhanVien (MaNhanVien, HoTenNhanVien, TenDangNhap, MatKhau, QuyenHan, AnhChanDung, Luong)
 VALUES 
-('NV01', N'Trần Văn Sếp', 'chuquan', '123', N'Chủ quán', 'chuquan.jpg'),
-('NV02', N'Nguyễn Văn Quản Lý', 'admin', '123', N'Quản lý', 'quanly.jpg'),
-('NV03', N'Lê Thị Bán Hàng', 'nhanvien', '123', N'Nhân viên', 'nhanvien.jpg');
+('NV01', N'Trần Văn Sếp', 'chuquan', '123', N'Chủ quán', 'chuquan.jpg', 25000000),
+('NV02', N'Nguyễn Văn Quản Lý', 'admin', '123', N'Quản lý', 'quanly.jpg', 15000000),
+('NV03', N'Lê Thị Bán Hàng', 'nhanvien', '123', N'Nhân viên', 'nhanvien.jpg', 8000000);
 GO
 
 -- 2. Thêm 5 dữ liệu bảng Quản Lý TiVi

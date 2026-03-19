@@ -46,5 +46,6 @@ namespace QuanLyCuaHangTiVi.DATA
         public string TenKhachHang { get; set; }
         public DateTime NgayLap { get; set; }
         public decimal TongTien { get; set; }
+        public string XemChiTiet { get; set; } = "Xem chi tiết";
     }
 }

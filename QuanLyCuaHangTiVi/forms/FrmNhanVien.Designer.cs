@@ -28,7 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             panel1 = new Panel();
+            txtLuong = new TextBox();
+            label6 = new Label();
             btnChonAnh = new Button();
             picAnhNhanVien = new PictureBox();
             cboQuyenHan = new ComboBox();
@@ -49,11 +52,12 @@
             btnThem = new Button();
             dgvDanhSachNhanVien = new DataGridView();
             MaNhanVien = new DataGridViewTextBoxColumn();
-            CotHinhAnh = new DataGridViewImageColumn();
-            TenDangNhap = new DataGridViewTextBoxColumn();
             HoTenNhanVien = new DataGridViewTextBoxColumn();
+            TenDangNhap = new DataGridViewTextBoxColumn();
             MatKhau = new DataGridViewTextBoxColumn();
             QuyenHan = new DataGridViewTextBoxColumn();
+            ColLuong = new DataGridViewTextBoxColumn();
+            CotHinhAnh = new DataGridViewImageColumn();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picAnhNhanVien).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvDanhSachNhanVien).BeginInit();
@@ -61,6 +65,8 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(txtLuong);
+            panel1.Controls.Add(label6);
             panel1.Controls.Add(btnChonAnh);
             panel1.Controls.Add(picAnhNhanVien);
             panel1.Controls.Add(cboQuyenHan);
@@ -85,6 +91,22 @@
             panel1.Size = new Size(1690, 233);
             panel1.TabIndex = 1;
             // 
+            // txtLuong
+            // 
+            txtLuong.Location = new Point(901, 100);
+            txtLuong.Name = "txtLuong";
+            txtLuong.Size = new Size(150, 31);
+            txtLuong.TabIndex = 22;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(777, 106);
+            label6.Name = "label6";
+            label6.Size = new Size(68, 25);
+            label6.TabIndex = 21;
+            label6.Text = "Lương ";
+            // 
             // btnChonAnh
             // 
             btnChonAnh.Location = new Point(1388, 48);
@@ -107,7 +129,7 @@
             // cboQuyenHan
             // 
             cboQuyenHan.FormattingEnabled = true;
-            cboQuyenHan.Items.AddRange(new object[] { "Quản Lý", "Nhân Viên ", "Chủ Quán" });
+            cboQuyenHan.Items.AddRange(new object[] { "Quản Lý", "Nhân Viên " });
             cboQuyenHan.Location = new Point(868, 29);
             cboQuyenHan.Name = "cboQuyenHan";
             cboQuyenHan.Size = new Size(182, 33);
@@ -253,7 +275,7 @@
             dgvDanhSachNhanVien.AllowUserToDeleteRows = false;
             dgvDanhSachNhanVien.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvDanhSachNhanVien.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvDanhSachNhanVien.Columns.AddRange(new DataGridViewColumn[] { MaNhanVien, CotHinhAnh, TenDangNhap, HoTenNhanVien, MatKhau, QuyenHan });
+            dgvDanhSachNhanVien.Columns.AddRange(new DataGridViewColumn[] { MaNhanVien, HoTenNhanVien, TenDangNhap, MatKhau, QuyenHan, ColLuong, CotHinhAnh });
             dgvDanhSachNhanVien.Dock = DockStyle.Fill;
             dgvDanhSachNhanVien.Location = new Point(0, 233);
             dgvDanhSachNhanVien.MultiSelect = false;
@@ -271,13 +293,12 @@
             MaNhanVien.MinimumWidth = 8;
             MaNhanVien.Name = "MaNhanVien";
             // 
-            // CotHinhAnh
+            // HoTenNhanVien
             // 
-            CotHinhAnh.DataPropertyName = "CotHinhAnh";
-            CotHinhAnh.HeaderText = "Hình ảnh";
-            CotHinhAnh.ImageLayout = DataGridViewImageCellLayout.Zoom;
-            CotHinhAnh.MinimumWidth = 8;
-            CotHinhAnh.Name = "CotHinhAnh";
+            HoTenNhanVien.DataPropertyName = "HoTenNhanVien";
+            HoTenNhanVien.HeaderText = "Họ Tên";
+            HoTenNhanVien.MinimumWidth = 8;
+            HoTenNhanVien.Name = "HoTenNhanVien";
             // 
             // TenDangNhap
             // 
@@ -285,13 +306,6 @@
             TenDangNhap.HeaderText = "Tên Đăng Nhập";
             TenDangNhap.MinimumWidth = 8;
             TenDangNhap.Name = "TenDangNhap";
-            // 
-            // HoTenNhanVien
-            // 
-            HoTenNhanVien.DataPropertyName = "HoTenNhanVien";
-            HoTenNhanVien.HeaderText = "Họ Tên";
-            HoTenNhanVien.MinimumWidth = 8;
-            HoTenNhanVien.Name = "HoTenNhanVien";
             // 
             // MatKhau
             // 
@@ -306,6 +320,24 @@
             QuyenHan.HeaderText = "Quyền Hạn";
             QuyenHan.MinimumWidth = 8;
             QuyenHan.Name = "QuyenHan";
+            // 
+            // ColLuong
+            // 
+            ColLuong.DataPropertyName = "Luong";
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.Format = "N0";
+            ColLuong.DefaultCellStyle = dataGridViewCellStyle1;
+            ColLuong.HeaderText = "Lương";
+            ColLuong.MinimumWidth = 8;
+            ColLuong.Name = "ColLuong";
+            // 
+            // CotHinhAnh
+            // 
+            CotHinhAnh.DataPropertyName = "CotHinhAnh";
+            CotHinhAnh.HeaderText = "Hình ảnh";
+            CotHinhAnh.ImageLayout = DataGridViewImageCellLayout.Zoom;
+            CotHinhAnh.MinimumWidth = 8;
+            CotHinhAnh.Name = "CotHinhAnh";
             // 
             // FrmNhanVien
             // 
@@ -347,11 +379,14 @@
         private ComboBox cboQuyenHan;
         private Button btnChonAnh;
         private PictureBox picAnhNhanVien;
+        private TextBox txtLuong;
+        private Label label6;
         private DataGridViewTextBoxColumn MaNhanVien;
-        private DataGridViewImageColumn CotHinhAnh;
-        private DataGridViewTextBoxColumn TenDangNhap;
         private DataGridViewTextBoxColumn HoTenNhanVien;
+        private DataGridViewTextBoxColumn TenDangNhap;
         private DataGridViewTextBoxColumn MatKhau;
         private DataGridViewTextBoxColumn QuyenHan;
+        private DataGridViewTextBoxColumn ColLuong;
+        private DataGridViewImageColumn CotHinhAnh;
     }
 }

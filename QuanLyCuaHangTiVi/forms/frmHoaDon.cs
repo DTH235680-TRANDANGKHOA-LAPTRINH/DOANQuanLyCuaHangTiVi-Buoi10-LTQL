@@ -8,13 +8,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using ClosedXML.Excel;
 namespace QuanLyCuaHangTiVi.forms
 {
     public partial class frmHoaDon : Form
     {
         AppDbContext context = new AppDbContext();
-      
+
         int id;
         public frmHoaDon()
         {
@@ -35,7 +35,8 @@ namespace QuanLyCuaHangTiVi.forms
                 TenKhachHang = r.KhachHang.TenKhachHang,
                 NgayLap = r.NgayLap,
                 // Sử dụng (decimal)(ct.KhuyenMai ?? 0) để tránh lỗi null và sai kiểu dữ liệu
-                TongTien = r.HoaDonChiTiets.Sum(ct => (ct.SoLuongBan * ct.DonGiaBan) - (ct.KhuyenMai ?? 0))
+                TongTien = r.HoaDonChiTiets.Sum(ct => (ct.SoLuongBan * ct.DonGiaBan) - (ct.KhuyenMai ?? 0)),
+                XemChiTiet = "Xem chi tiết"
             }).ToList();
 
             dgvDanhSachHD.DataSource = hd;
@@ -114,6 +115,119 @@ namespace QuanLyCuaHangTiVi.forms
         private void btnThoat_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void btnXuatHoaDon_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Title = "Xuất dữ liệu Hóa đơn ra Excel";
+            saveFileDialog.Filter = "Tập tin Excel|*.xlsx";
+            saveFileDialog.FileName = "DanhSachHoaDon_" + DateTime.Now.ToString("ddMMyyyy") + ".xlsx";
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    using (XLWorkbook wb = new XLWorkbook())
+                    {
+                        // ==========================================
+                        // --- SHEET 1: DANH SÁCH HÓA ĐƠN ---
+                        // ==========================================
+                        DataTable dtHoaDon = new DataTable();
+                        dtHoaDon.Columns.AddRange(new DataColumn[] {
+                    new DataColumn("Mã HĐ", typeof(int)),
+                    new DataColumn("Tên Nhân Viên", typeof(string)),
+                    new DataColumn("Tên Khách Hàng", typeof(string)),
+                    new DataColumn("Ngày Lập", typeof(DateTime)),
+                    new DataColumn("Tổng Tiền", typeof(decimal)) // Dùng decimal cho tiền tệ
+                });
+
+                        // Lấy dữ liệu Hóa Đơn (giống với cách bạn load lên DataGridView)
+                        var dsHoaDon = context.HoaDons.Select(r => new
+                        {
+                            ID = r.ID,
+                            HoTenNhanVien = r.NhanVien.HoTenNhanVien,
+                            TenKhachHang = r.KhachHang.TenKhachHang,
+                            NgayLap = r.NgayLap,
+                            TongTien = r.HoaDonChiTiets.Sum(ct => (ct.SoLuongBan * ct.DonGiaBan) - (ct.KhuyenMai ?? 0))
+                        }).ToList();
+
+                        // Đổ dữ liệu vào DataTable
+                        foreach (var hd in dsHoaDon)
+                        {
+                            dtHoaDon.Rows.Add(hd.ID, hd.HoTenNhanVien, hd.TenKhachHang, hd.NgayLap, hd.TongTien);
+                        }
+                        var sheetHD = wb.Worksheets.Add(dtHoaDon, "DanhSachHoaDon");
+                        sheetHD.Columns().AdjustToContents(); // Tự động giãn cột cho đẹp
+
+                        // ==========================================
+                        // --- SHEET 2: CHI TIẾT HÓA ĐƠN ---
+                        // ==========================================
+                        DataTable dtChiTiet = new DataTable();
+                        dtChiTiet.Columns.AddRange(new DataColumn[] {
+                    new DataColumn("Mã HĐ", typeof(int)),
+                    new DataColumn("Mã TiVi", typeof(string)),
+                    new DataColumn("Số Lượng", typeof(int)),
+                    new DataColumn("Đơn Giá", typeof(decimal)),
+                    new DataColumn("Khuyến Mãi", typeof(decimal)),
+                    new DataColumn("Thành Tiền", typeof(decimal))
+                });
+
+                        // Lấy dữ liệu Chi Tiết Hóa Đơn
+                        var dsChiTiet = context.HoaDonChiTiets.Select(ct => new
+                        {
+                            HoaDonID = ct.HoaDonID,
+                            MaTiVi = ct.MaTiVi,
+                            // Nếu bạn có class QuanLyTiVi lồng trong HoaDonChiTiet, bạn có thể lấy tên TiVi như sau:
+                            // TenTiVi = ct.QuanLyTiVi.TenTiVi,
+                            SoLuongBan = ct.SoLuongBan,
+                            DonGiaBan = ct.DonGiaBan,
+                            KhuyenMai = ct.KhuyenMai ?? 0,
+                            ThanhTien = (ct.SoLuongBan * ct.DonGiaBan) - (ct.KhuyenMai ?? 0)
+                        }).ToList();
+
+                        // Đổ dữ liệu vào DataTable
+                        foreach (var ct in dsChiTiet)
+                        {
+                            dtChiTiet.Rows.Add(ct.HoaDonID, ct.MaTiVi, ct.SoLuongBan, ct.DonGiaBan, ct.KhuyenMai, ct.ThanhTien);
+                        }
+                        var sheetCT = wb.Worksheets.Add(dtChiTiet, "ChiTietHoaDon");
+                        sheetCT.Columns().AdjustToContents();
+
+                        // --- LƯU FILE ---
+                        wb.SaveAs(saveFileDialog.FileName);
+                        MessageBox.Show("Xuất báo cáo hóa đơn thành công!\nFile đã được lưu tại: " + saveFileDialog.FileName, "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi xuất Excel: File có thể đang được mở bởi một chương trình khác. \nChi tiết lỗi: " + ex.Message, "Lỗi hệ thống", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void dgvDanhSachHD_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Kiểm tra xem có click vào tiêu đề không (e.RowIndex < 0 thì bỏ qua)
+            if (e.RowIndex < 0) return;
+
+            // Kiểm tra xem cột vừa click có phải là cột "Xem Chi Tiết" không
+            // Thay "colXemChiTiet" bằng đúng (Name) bạn đã kiểm tra ở Bước 1
+            if (dgvDanhSachHD.Columns[e.ColumnIndex].Name == "colXemChiTiet")
+            {
+                // 1. Lấy ID hóa đơn từ dòng hiện tại
+                // Đảm bảo "colID" là (Name) của cột chứa mã hóa đơn
+                int idHoaDon = Convert.ToInt32(dgvDanhSachHD.Rows[e.RowIndex].Cells["colID"].Value);
+
+                // 2. Mở form chi tiết và truyền ID sang
+                using (frmChiTietHoaDon fChiTiet = new frmChiTietHoaDon(idHoaDon))
+                {
+                    fChiTiet.ShowDialog();
+
+                    // 3. Load lại dữ liệu sau khi đóng form chi tiết để cập nhật thay đổi (nếu có)
+                    frmHoaDon_Load(sender, e);
+                }
+            }
         }
     }
 }

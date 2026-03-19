@@ -319,6 +319,7 @@
             // CotHinhAnh
             // 
             CotHinhAnh.DataPropertyName = "CotHinhAnh";
+            CotHinhAnh.FillWeight = 200F;
             CotHinhAnh.HeaderText = "Hình ảnh";
             CotHinhAnh.MinimumWidth = 8;
             CotHinhAnh.Name = "CotHinhAnh";

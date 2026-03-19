@@ -30,6 +30,9 @@ namespace QuanLyCuaHangTiVi.DATA
         public string QuyenHan { get; set; } // Ví dụ: "Quản lý", "Nhân viên"
         public string AnhChanDung { get; set; } // Thêm dòng này vào class NhanVien
 
+        [Column(TypeName = "decimal(18, 0)")]
+        public decimal Luong { get; set; } // Bạn có thể dùng kiểu int hoặc double tùy nhu cầu
+
         // Quan hệ
         public virtual ICollection<HoaDon> HoaDons { get; set; }
         public virtual ICollection<PhieuNhap> PhieuNhaps { get; set; }

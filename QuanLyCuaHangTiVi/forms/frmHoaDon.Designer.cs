@@ -30,22 +30,25 @@
         {
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
+            btnXuatHoaDon = new Button();
             btnLapHoaDon = new Button();
             btnXoa = new Button();
             btnSua = new Button();
             btnThoat = new Button();
             dgvDanhSachHD = new DataGridView();
-            HoTenNhanVien = new DataGridViewTextBoxColumn();
             colID = new DataGridViewTextBoxColumn();
             TenKhachHang = new DataGridViewTextBoxColumn();
             NgayLap = new DataGridViewTextBoxColumn();
             TongTien = new DataGridViewTextBoxColumn();
+            HoTenNhanVien = new DataGridViewTextBoxColumn();
+            colXemChiTiet = new DataGridViewLinkColumn();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvDanhSachHD).BeginInit();
             SuspendLayout();
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(btnXuatHoaDon);
             groupBox1.Controls.Add(btnLapHoaDon);
             groupBox1.Controls.Add(btnXoa);
             groupBox1.Controls.Add(btnSua);
@@ -57,6 +60,16 @@
             groupBox1.TabIndex = 3;
             groupBox1.TabStop = false;
             groupBox1.Text = "Hóa Đơn";
+            // 
+            // btnXuatHoaDon
+            // 
+            btnXuatHoaDon.Location = new Point(794, 66);
+            btnXuatHoaDon.Name = "btnXuatHoaDon";
+            btnXuatHoaDon.Size = new Size(203, 34);
+            btnXuatHoaDon.TabIndex = 43;
+            btnXuatHoaDon.Text = "Xuất hóa đơn...";
+            btnXuatHoaDon.UseVisualStyleBackColor = true;
+            btnXuatHoaDon.Click += btnXuatHoaDon_Click;
             // 
             // btnLapHoaDon
             // 
@@ -104,7 +117,7 @@
             dgvDanhSachHD.AllowUserToDeleteRows = false;
             dgvDanhSachHD.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvDanhSachHD.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvDanhSachHD.Columns.AddRange(new DataGridViewColumn[] { HoTenNhanVien, colID, TenKhachHang, NgayLap, TongTien });
+            dgvDanhSachHD.Columns.AddRange(new DataGridViewColumn[] { colID, TenKhachHang, NgayLap, TongTien, HoTenNhanVien, colXemChiTiet });
             dgvDanhSachHD.Dock = DockStyle.Fill;
             dgvDanhSachHD.Location = new Point(0, 126);
             dgvDanhSachHD.MultiSelect = false;
@@ -114,14 +127,7 @@
             dgvDanhSachHD.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvDanhSachHD.Size = new Size(1707, 391);
             dgvDanhSachHD.TabIndex = 6;
-            // 
-            // HoTenNhanVien
-            // 
-            HoTenNhanVien.DataPropertyName = "HoTenNhanVien";
-            HoTenNhanVien.HeaderText = "Nhân Viên Lập";
-            HoTenNhanVien.MinimumWidth = 8;
-            HoTenNhanVien.Name = "HoTenNhanVien";
-            HoTenNhanVien.ReadOnly = true;
+            dgvDanhSachHD.CellContentClick += dgvDanhSachHD_CellContentClick;
             // 
             // colID
             // 
@@ -158,6 +164,24 @@
             TongTien.Name = "TongTien";
             TongTien.ReadOnly = true;
             // 
+            // HoTenNhanVien
+            // 
+            HoTenNhanVien.DataPropertyName = "HoTenNhanVien";
+            HoTenNhanVien.HeaderText = "Nhân Viên Lập";
+            HoTenNhanVien.MinimumWidth = 8;
+            HoTenNhanVien.Name = "HoTenNhanVien";
+            HoTenNhanVien.ReadOnly = true;
+            // 
+            // colXemChiTiet
+            // 
+            colXemChiTiet.DataPropertyName = "XemChiTiet";
+            colXemChiTiet.HeaderText = "Xem Chi Tiết";
+            colXemChiTiet.MinimumWidth = 8;
+            colXemChiTiet.Name = "colXemChiTiet";
+            colXemChiTiet.ReadOnly = true;
+            colXemChiTiet.Resizable = DataGridViewTriState.True;
+            colXemChiTiet.SortMode = DataGridViewColumnSortMode.Automatic;
+            // 
             // frmHoaDon
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
@@ -181,10 +205,12 @@
         private Button btnThoat;
         private DataGridView dgvDanhSachHD;
         private Button btnLapHoaDon;
-        private DataGridViewTextBoxColumn HoTenNhanVien;
+        private Button btnXuatHoaDon;
         private DataGridViewTextBoxColumn colID;
         private DataGridViewTextBoxColumn TenKhachHang;
         private DataGridViewTextBoxColumn NgayLap;
         private DataGridViewTextBoxColumn TongTien;
+        private DataGridViewTextBoxColumn HoTenNhanVien;
+        private DataGridViewLinkColumn colXemChiTiet;
     }
 }

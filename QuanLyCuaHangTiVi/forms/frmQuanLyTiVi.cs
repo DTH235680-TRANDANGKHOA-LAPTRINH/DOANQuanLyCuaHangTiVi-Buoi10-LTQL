@@ -108,6 +108,13 @@ namespace QuanLyCuaHangTiVi.forms
             txtDonGiaBan.DataBindings.Add("Text", bindingSource, "DonGiaBan", true, DataSourceUpdateMode.Never);
             txtKhuyenMai.DataBindings.Add("Text", bindingSource, "KhuyenMai", true, DataSourceUpdateMode.Never);
             txtSoLuongTon.DataBindings.Add("Text", bindingSource, "SoLuongTon", true, DataSourceUpdateMode.Never);
+           
+            if (dgvDanhSachTiVi.Columns.Contains("CotHinhAnh"))
+            {
+                DataGridViewImageColumn imgCol = (DataGridViewImageColumn)dgvDanhSachTiVi.Columns["CotHinhAnh"];
+                imgCol.ImageLayout = DataGridViewImageCellLayout.Zoom; // Thu nhỏ ảnh vừa ô
+                imgCol.Width = 80; // Bạn có thể chỉnh độ rộng cột tại đây
+            }
         }
 
         private void btnThem_Click(object sender, EventArgs e)
