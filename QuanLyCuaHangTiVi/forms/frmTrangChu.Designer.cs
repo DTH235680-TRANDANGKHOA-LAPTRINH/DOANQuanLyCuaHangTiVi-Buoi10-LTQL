@@ -33,6 +33,7 @@
             statusStrip1 = new StatusStrip();
             lblTrangThai = new ToolStripStatusLabel();
             toolStripStatusLabel4 = new ToolStripStatusLabel();
+            panelContent = new Panel();
             groupBox1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             statusStrip1.SuspendLayout();
@@ -48,7 +49,7 @@
             groupBox1.Location = new Point(0, 0);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new Padding(10);
-            groupBox1.Size = new Size(300, 535);
+            groupBox1.Size = new Size(208, 535);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "DANH MỤC";
@@ -85,7 +86,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
-            tableLayoutPanel1.Size = new Size(280, 488);
+            tableLayoutPanel1.Size = new Size(188, 488);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // btnQuanLyTiVi
@@ -98,7 +99,7 @@
             btnQuanLyTiVi.Location = new Point(15, 2);
             btnQuanLyTiVi.Margin = new Padding(15, 2, 15, 2);
             btnQuanLyTiVi.Name = "btnQuanLyTiVi";
-            btnQuanLyTiVi.Size = new Size(250, 36);
+            btnQuanLyTiVi.Size = new Size(158, 36);
             btnQuanLyTiVi.TabIndex = 0;
             btnQuanLyTiVi.Text = "Quản Lý TiVi";
             btnQuanLyTiVi.UseVisualStyleBackColor = false;
@@ -114,7 +115,7 @@
             btnNhanVien.Location = new Point(15, 42);
             btnNhanVien.Margin = new Padding(15, 2, 15, 2);
             btnNhanVien.Name = "btnNhanVien";
-            btnNhanVien.Size = new Size(250, 36);
+            btnNhanVien.Size = new Size(158, 36);
             btnNhanVien.TabIndex = 1;
             btnNhanVien.Text = "Nhân Viên";
             btnNhanVien.UseVisualStyleBackColor = false;
@@ -130,7 +131,7 @@
             btnKhachHang.Location = new Point(15, 82);
             btnKhachHang.Margin = new Padding(15, 2, 15, 2);
             btnKhachHang.Name = "btnKhachHang";
-            btnKhachHang.Size = new Size(250, 36);
+            btnKhachHang.Size = new Size(158, 36);
             btnKhachHang.TabIndex = 2;
             btnKhachHang.Text = "Khách Hàng";
             btnKhachHang.UseVisualStyleBackColor = false;
@@ -146,7 +147,7 @@
             btnPhieuNhap.Location = new Point(15, 122);
             btnPhieuNhap.Margin = new Padding(15, 2, 15, 2);
             btnPhieuNhap.Name = "btnPhieuNhap";
-            btnPhieuNhap.Size = new Size(250, 36);
+            btnPhieuNhap.Size = new Size(158, 36);
             btnPhieuNhap.TabIndex = 3;
             btnPhieuNhap.Text = "Phiếu Nhập";
             btnPhieuNhap.UseVisualStyleBackColor = false;
@@ -162,7 +163,7 @@
             btnCTPhieuNhap.Location = new Point(15, 162);
             btnCTPhieuNhap.Margin = new Padding(15, 2, 15, 2);
             btnCTPhieuNhap.Name = "btnCTPhieuNhap";
-            btnCTPhieuNhap.Size = new Size(250, 36);
+            btnCTPhieuNhap.Size = new Size(158, 36);
             btnCTPhieuNhap.TabIndex = 4;
             btnCTPhieuNhap.Text = "CT Phiếu Nhập";
             btnCTPhieuNhap.UseVisualStyleBackColor = false;
@@ -178,7 +179,7 @@
             btnHoaDon.Location = new Point(15, 202);
             btnHoaDon.Margin = new Padding(15, 2, 15, 2);
             btnHoaDon.Name = "btnHoaDon";
-            btnHoaDon.Size = new Size(250, 36);
+            btnHoaDon.Size = new Size(158, 36);
             btnHoaDon.TabIndex = 5;
             btnHoaDon.Text = "Hóa Đơn";
             btnHoaDon.UseVisualStyleBackColor = false;
@@ -194,7 +195,7 @@
             btnTraGop.Location = new Point(15, 242);
             btnTraGop.Margin = new Padding(15, 2, 15, 2);
             btnTraGop.Name = "btnTraGop";
-            btnTraGop.Size = new Size(250, 36);
+            btnTraGop.Size = new Size(158, 36);
             btnTraGop.TabIndex = 29;
             btnTraGop.Text = "Trả Góp";
             btnTraGop.UseVisualStyleBackColor = false;
@@ -210,10 +211,11 @@
             btnTKChiPhi.Location = new Point(15, 282);
             btnTKChiPhi.Margin = new Padding(15, 2, 15, 2);
             btnTKChiPhi.Name = "btnTKChiPhi";
-            btnTKChiPhi.Size = new Size(250, 36);
+            btnTKChiPhi.Size = new Size(158, 36);
             btnTKChiPhi.TabIndex = 30;
             btnTKChiPhi.Text = "TK Chi Phí";
             btnTKChiPhi.UseVisualStyleBackColor = false;
+            btnTKChiPhi.Click += btnTKChiPhi_Click;
             // 
             // btnTKDoanhThu
             // 
@@ -225,10 +227,11 @@
             btnTKDoanhThu.Location = new Point(15, 322);
             btnTKDoanhThu.Margin = new Padding(15, 2, 15, 2);
             btnTKDoanhThu.Name = "btnTKDoanhThu";
-            btnTKDoanhThu.Size = new Size(250, 36);
+            btnTKDoanhThu.Size = new Size(158, 36);
             btnTKDoanhThu.TabIndex = 31;
             btnTKDoanhThu.Text = "TK Doanh Thu";
             btnTKDoanhThu.UseVisualStyleBackColor = false;
+            btnTKDoanhThu.Click += btnTKDoanhThu_Click;
             // 
             // btnTroGiup
             // 
@@ -240,7 +243,7 @@
             btnTroGiup.Location = new Point(15, 362);
             btnTroGiup.Margin = new Padding(15, 2, 15, 2);
             btnTroGiup.Name = "btnTroGiup";
-            btnTroGiup.Size = new Size(250, 36);
+            btnTroGiup.Size = new Size(158, 36);
             btnTroGiup.TabIndex = 32;
             btnTroGiup.Text = "Trợ Giúp";
             btnTroGiup.UseVisualStyleBackColor = false;
@@ -253,7 +256,7 @@
             btnDangXuat.Location = new Point(15, 443);
             btnDangXuat.Margin = new Padding(15, 5, 15, 5);
             btnDangXuat.Name = "btnDangXuat";
-            btnDangXuat.Size = new Size(250, 40);
+            btnDangXuat.Size = new Size(158, 40);
             btnDangXuat.TabIndex = 28;
             btnDangXuat.Text = "ĐĂNG XUẤT";
             btnDangXuat.UseVisualStyleBackColor = false;
@@ -266,7 +269,7 @@
             statusStrip1.Items.AddRange(new ToolStripItem[] { lblTrangThai, toolStripStatusLabel4 });
             statusStrip1.Location = new Point(0, 535);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(1675, 32);
+            statusStrip1.Size = new Size(1924, 32);
             statusStrip1.TabIndex = 2;
             // 
             // lblTrangThai
@@ -278,13 +281,22 @@
             // toolStripStatusLabel4
             // 
             toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-            toolStripStatusLabel4.Size = new Size(1516, 25);
+            toolStripStatusLabel4.Size = new Size(1765, 25);
             toolStripStatusLabel4.Spring = true;
             toolStripStatusLabel4.Text = " ";
             // 
+            // panelContent
+            // 
+            panelContent.Dock = DockStyle.Fill;
+            panelContent.Location = new Point(208, 0);
+            panelContent.Name = "panelContent";
+            panelContent.Size = new Size(1716, 535);
+            panelContent.TabIndex = 4;
+            // 
             // frmTrangChu
             // 
-            ClientSize = new Size(1675, 567);
+            ClientSize = new Size(1924, 567);
+            Controls.Add(panelContent);
             Controls.Add(groupBox1);
             Controls.Add(statusStrip1);
             IsMdiContainer = true;
@@ -321,5 +333,6 @@
         public Button btnTKDoanhThu;
         public Button btnTroGiup;
         public Button btnDangXuat;
+        private Panel panelContent;
     }
 }

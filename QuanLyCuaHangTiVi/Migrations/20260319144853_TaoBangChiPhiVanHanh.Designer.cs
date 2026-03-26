@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuanLyCuaHangTiVi.DATA;
 
@@ -11,9 +12,11 @@ using QuanLyCuaHangTiVi.DATA;
 namespace QuanLyCuaHangTiVi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260319144853_TaoBangChiPhiVanHanh")]
+    partial class TaoBangChiPhiVanHanh
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,44 +87,6 @@ namespace QuanLyCuaHangTiVi.Migrations
                     b.HasIndex("MaTiVi");
 
                     b.ToTable("ChiTietPhieuNhap");
-                });
-
-            modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.ChiTietTraGop", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<bool>("DaThanhToan")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("KyThu")
-                        .HasColumnType("int");
-
-                    b.Property<string>("MaTraGop")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<DateTime>("NgayCanDong")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("SoTienGoc")
-                        .HasColumnType("decimal(18, 0)");
-
-                    b.Property<decimal>("SoTienLai")
-                        .HasColumnType("decimal(18, 0)");
-
-                    b.Property<decimal>("TongTienDong")
-                        .HasColumnType("decimal(18, 0)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("MaTraGop");
-
-                    b.ToTable("ChiTietTraGop");
                 });
 
             modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.HoaDon", b =>
@@ -377,17 +342,6 @@ namespace QuanLyCuaHangTiVi.Migrations
                     b.Navigation("QuanLyTiVi");
                 });
 
-            modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.ChiTietTraGop", b =>
-                {
-                    b.HasOne("QuanLyCuaHangTiVi.DATA.TraGop", "TraGop")
-                        .WithMany("ChiTietTraGops")
-                        .HasForeignKey("MaTraGop")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TraGop");
-                });
-
             modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.HoaDon", b =>
                 {
                     b.HasOne("QuanLyCuaHangTiVi.DATA.KhachHang", "KhachHang")
@@ -471,11 +425,6 @@ namespace QuanLyCuaHangTiVi.Migrations
                     b.Navigation("ChiTietPhieuNhaps");
 
                     b.Navigation("HoaDonChiTiets");
-                });
-
-            modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.TraGop", b =>
-                {
-                    b.Navigation("ChiTietTraGops");
                 });
 #pragma warning restore 612, 618
         }

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmQuanLyTiVi));
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             panel1 = new Panel();
             btnChonAnh = new Button();
@@ -68,6 +69,7 @@
             // 
             // panel1
             // 
+            panel1.BackColor = Color.SkyBlue;
             panel1.Controls.Add(btnChonAnh);
             panel1.Controls.Add(picAnhMinhHoa);
             panel1.Controls.Add(cboHangSanXuat);
@@ -99,17 +101,20 @@
             // 
             // btnChonAnh
             // 
-            btnChonAnh.Location = new Point(1515, 23);
+            btnChonAnh.BackColor = Color.Gray;
+            btnChonAnh.Image = (Image)resources.GetObject("btnChonAnh.Image");
+            btnChonAnh.ImageAlign = ContentAlignment.MiddleLeft;
+            btnChonAnh.Location = new Point(1339, 23);
             btnChonAnh.Name = "btnChonAnh";
-            btnChonAnh.Size = new Size(112, 34);
+            btnChonAnh.Size = new Size(142, 50);
             btnChonAnh.TabIndex = 24;
             btnChonAnh.Text = "chọn ảnh";
-            btnChonAnh.UseVisualStyleBackColor = true;
+            btnChonAnh.UseVisualStyleBackColor = false;
             btnChonAnh.Click += btnChonAnh_Click;
             // 
             // picAnhMinhHoa
             // 
-            picAnhMinhHoa.Location = new Point(1313, 12);
+            picAnhMinhHoa.Location = new Point(1137, 12);
             picAnhMinhHoa.Name = "picAnhMinhHoa";
             picAnhMinhHoa.Size = new Size(150, 170);
             picAnhMinhHoa.SizeMode = PictureBoxSizeMode.Zoom;
@@ -121,7 +126,7 @@
             cboHangSanXuat.FormattingEnabled = true;
             cboHangSanXuat.Location = new Point(545, 17);
             cboHangSanXuat.Name = "cboHangSanXuat";
-            cboHangSanXuat.Size = new Size(182, 33);
+            cboHangSanXuat.Size = new Size(253, 33);
             cboHangSanXuat.TabIndex = 22;
             // 
             // txtSoLuongTon
@@ -143,64 +148,79 @@
             // 
             // btnThoat
             // 
-            btnThoat.Location = new Point(990, 148);
+            btnThoat.BackColor = Color.Lime;
+            btnThoat.Image = (Image)resources.GetObject("btnThoat.Image");
+            btnThoat.ImageAlign = ContentAlignment.MiddleLeft;
+            btnThoat.Location = new Point(907, 143);
             btnThoat.Name = "btnThoat";
-            btnThoat.Size = new Size(112, 34);
+            btnThoat.Size = new Size(115, 44);
             btnThoat.TabIndex = 17;
             btnThoat.Text = "Thoát";
-            btnThoat.UseVisualStyleBackColor = true;
+            btnThoat.UseVisualStyleBackColor = false;
             btnThoat.Click += btnThoat_Click;
             // 
             // btnHuyBo
             // 
-            btnHuyBo.Location = new Point(850, 148);
+            btnHuyBo.BackColor = Color.FromArgb(255, 128, 0);
+            btnHuyBo.Image = (Image)resources.GetObject("btnHuyBo.Image");
+            btnHuyBo.ImageAlign = ContentAlignment.MiddleLeft;
+            btnHuyBo.Location = new Point(759, 143);
             btnHuyBo.Name = "btnHuyBo";
-            btnHuyBo.Size = new Size(112, 34);
+            btnHuyBo.Size = new Size(133, 44);
             btnHuyBo.TabIndex = 16;
             btnHuyBo.Text = "Hủy Bỏ";
-            btnHuyBo.UseVisualStyleBackColor = true;
+            btnHuyBo.UseVisualStyleBackColor = false;
             btnHuyBo.Click += btnHuyBo_Click;
             // 
             // btnLuu
             // 
-            btnLuu.Location = new Point(686, 148);
+            btnLuu.BackColor = Color.FromArgb(192, 0, 192);
+            btnLuu.Image = (Image)resources.GetObject("btnLuu.Image");
+            btnLuu.ImageAlign = ContentAlignment.MiddleLeft;
+            btnLuu.Location = new Point(610, 143);
             btnLuu.Name = "btnLuu";
-            btnLuu.Size = new Size(112, 34);
+            btnLuu.Size = new Size(133, 44);
             btnLuu.TabIndex = 15;
             btnLuu.Text = "Lưu";
-            btnLuu.UseVisualStyleBackColor = true;
+            btnLuu.UseVisualStyleBackColor = false;
             btnLuu.Click += btnLuu_Click;
             // 
             // btnSua
             // 
-            btnSua.Location = new Point(519, 148);
+            btnSua.BackColor = Color.Yellow;
+            btnSua.Image = (Image)resources.GetObject("btnSua.Image");
+            btnSua.ImageAlign = ContentAlignment.MiddleLeft;
+            btnSua.Location = new Point(461, 143);
             btnSua.Name = "btnSua";
-            btnSua.Size = new Size(112, 34);
+            btnSua.Size = new Size(125, 44);
             btnSua.TabIndex = 14;
             btnSua.Text = "Sửa";
-            btnSua.UseVisualStyleBackColor = true;
+            btnSua.UseVisualStyleBackColor = false;
             btnSua.Click += btnSua_Click;
             // 
             // btnXoa
             // 
-            btnXoa.Location = new Point(325, 148);
+            btnXoa.BackColor = Color.Red;
+            btnXoa.Image = (Image)resources.GetObject("btnXoa.Image");
+            btnXoa.ImageAlign = ContentAlignment.MiddleLeft;
+            btnXoa.Location = new Point(294, 143);
             btnXoa.Name = "btnXoa";
-            btnXoa.Size = new Size(112, 34);
+            btnXoa.Size = new Size(125, 44);
             btnXoa.TabIndex = 13;
             btnXoa.Text = "Xóa";
-            btnXoa.UseVisualStyleBackColor = true;
+            btnXoa.UseVisualStyleBackColor = false;
             btnXoa.Click += btnXoa_Click;
             // 
             // dtpNgayTao
             // 
             dtpNgayTao.Location = new Point(545, 57);
             dtpNgayTao.Name = "dtpNgayTao";
-            dtpNgayTao.Size = new Size(300, 31);
+            dtpNgayTao.Size = new Size(253, 31);
             dtpNgayTao.TabIndex = 12;
             // 
             // txtKhuyenMai
             // 
-            txtKhuyenMai.Location = new Point(968, 80);
+            txtKhuyenMai.Location = new Point(952, 62);
             txtKhuyenMai.Name = "txtKhuyenMai";
             txtKhuyenMai.Size = new Size(150, 31);
             txtKhuyenMai.TabIndex = 11;
@@ -208,7 +228,7 @@
             // 
             // txtDonGiaBan
             // 
-            txtDonGiaBan.Location = new Point(966, 23);
+            txtDonGiaBan.Location = new Point(952, 17);
             txtDonGiaBan.Name = "txtDonGiaBan";
             txtDonGiaBan.Size = new Size(150, 31);
             txtDonGiaBan.TabIndex = 10;
@@ -217,13 +237,13 @@
             // 
             txtTenTiVi.Location = new Point(134, 59);
             txtTenTiVi.Name = "txtTenTiVi";
-            txtTenTiVi.Size = new Size(150, 31);
+            txtTenTiVi.Size = new Size(172, 31);
             txtTenTiVi.TabIndex = 8;
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(858, 83);
+            label6.Location = new Point(831, 65);
             label6.Name = "label6";
             label6.Size = new Size(104, 25);
             label6.TabIndex = 7;
@@ -232,7 +252,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(850, 18);
+            label5.Location = new Point(831, 25);
             label5.Name = "label5";
             label5.Size = new Size(110, 25);
             label5.TabIndex = 6;
@@ -269,7 +289,7 @@
             // 
             txtMaTiVi.Location = new Point(133, 12);
             txtMaTiVi.Name = "txtMaTiVi";
-            txtMaTiVi.Size = new Size(150, 31);
+            txtMaTiVi.Size = new Size(173, 31);
             txtMaTiVi.TabIndex = 2;
             // 
             // label1
@@ -283,12 +303,16 @@
             // 
             // btnThem
             // 
-            btnThem.Location = new Point(134, 148);
+            btnThem.BackColor = Color.Cyan;
+            btnThem.ForeColor = Color.FromArgb(0, 0, 192);
+            btnThem.Image = (Image)resources.GetObject("btnThem.Image");
+            btnThem.ImageAlign = ContentAlignment.MiddleLeft;
+            btnThem.Location = new Point(115, 143);
             btnThem.Name = "btnThem";
-            btnThem.Size = new Size(112, 34);
+            btnThem.Size = new Size(130, 44);
             btnThem.TabIndex = 0;
             btnThem.Text = "Thêm";
-            btnThem.UseVisualStyleBackColor = true;
+            btnThem.UseVisualStyleBackColor = false;
             btnThem.Click += btnThem_Click;
             // 
             // dgvDanhSachTiVi

@@ -18,7 +18,8 @@ namespace QuanLyCuaHangTiVi.DATA
         public DbSet<TraGop> TraGops { get; set; }
         public DbSet<PhieuNhap> PhieuNhaps { get; set; }
         public DbSet<ChiTietPhieuNhap> ChiTietPhieuNhaps { get; set; }
-
+        public DbSet<ChiPhiVanHanh> ChiPhiVanHanhs { get; set; }
+        public DbSet<ChiTietTraGop> ChiTietTraGops { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // Best Practice: Kiểm tra xem optionsBuilder đã được cấu hình từ trước chưa

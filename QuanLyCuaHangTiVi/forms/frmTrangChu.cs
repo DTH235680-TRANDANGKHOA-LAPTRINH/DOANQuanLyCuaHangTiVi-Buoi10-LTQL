@@ -17,7 +17,6 @@ namespace QuanLyCuaHangTiVi.forms
         {
             InitializeComponent();
 
-            this.IsMdiContainer = true;
 
         }
         AppDbContext db = new AppDbContext(); // Khởi tạo kết nối CSDL
@@ -91,26 +90,38 @@ namespace QuanLyCuaHangTiVi.forms
             btnNhanVien.Enabled = false;
             btnTKChiPhi.Enabled = false;
             btnTKDoanhThu.Enabled = false;
-            btnPhieuNhap.Enabled = false;
+           
 
             lblTrangThai.Text = "Nhân viên: " + hoTen;
             this.Text = "Trang Chủ - Quản Lý TiVi | Nhân viên: " + hoTen;
         }
 
-        // --- MỞ FORM CON ---
+        // --- MỞ FORM CON TRONG PANEL ---
         private void MoFormCon<T>() where T : Form, new()
         {
-            Form frm = this.MdiChildren.FirstOrDefault(f => f is T);
+            // Tìm xem form loại T đã được mở trong panelContent chưa
+            Form frm = panelContent.Controls.OfType<T>().FirstOrDefault();
+
             if (frm == null)
             {
                 frm = new T();
-                frm.MdiParent = this; // Cho form con chui vào vùng xám
-                frm.WindowState = FormWindowState.Maximized;
+                frm.TopLevel = false;            // Cực kỳ quan trọng: Biến Form thành Control con
+                frm.FormBorderStyle = FormBorderStyle.None; // Loại bỏ viền
+                frm.Dock = DockStyle.Fill;       // Cho lấp đầy toàn bộ panelContent
+
+                // Xóa các form cũ đang hiển thị để nhường chỗ cho form mới
+                panelContent.Controls.Clear();
+
+                // Thêm form mới vào panel và hiển thị
+                panelContent.Controls.Add(frm);
                 frm.Show();
             }
             else
             {
-                frm.Activate();
+                // Nếu form đã tồn tại trong panel, chỉ việc dọn dẹp các form khác và đưa nó lên đầu
+                panelContent.Controls.Clear();
+                panelContent.Controls.Add(frm);
+                frm.Show();
             }
         }
         private void btnDangXuat_Click(object sender, EventArgs e)
@@ -159,13 +170,15 @@ namespace QuanLyCuaHangTiVi.forms
             MoFormCon<frmTraGop>();
         }
 
+        private void btnTKChiPhi_Click(object sender, EventArgs e)
+        {
+            MoFormCon<frmThongkeChiPhi>();
+        }
 
+        private void btnTKDoanhThu_Click(object sender, EventArgs e)
+        {
+            MoFormCon<frmThongKeDoanhThu>();
 
-
-
-
-
-        
-        
+        }
     }
 }

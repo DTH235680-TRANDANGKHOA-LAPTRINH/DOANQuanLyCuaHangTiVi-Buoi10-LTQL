@@ -28,9 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
+            btnXemChiTiet = new Button();
             cboMaHoaDon = new ComboBox();
             txtKyHanTra = new TextBox();
             label4 = new Label();
@@ -64,6 +65,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(btnXemChiTiet);
             groupBox1.Controls.Add(cboMaHoaDon);
             groupBox1.Controls.Add(txtKyHanTra);
             groupBox1.Controls.Add(label4);
@@ -82,13 +84,23 @@
             groupBox1.Controls.Add(txtMaTraGop);
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(btnThem);
-            groupBox1.Dock = DockStyle.Top;
+            groupBox1.Dock = DockStyle.Left;
             groupBox1.Location = new Point(0, 0);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(1624, 274);
+            groupBox1.Size = new Size(577, 502);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Thông Tin Trả Góp";
+            // 
+            // btnXemChiTiet
+            // 
+            btnXemChiTiet.Location = new Point(198, 416);
+            btnXemChiTiet.Name = "btnXemChiTiet";
+            btnXemChiTiet.Size = new Size(208, 65);
+            btnXemChiTiet.TabIndex = 45;
+            btnXemChiTiet.Text = "Xem Lịch Trình Trả góp";
+            btnXemChiTiet.UseVisualStyleBackColor = true;
+            btnXemChiTiet.Click += btnXemLichTrinh_Click;
             // 
             // cboMaHoaDon
             // 
@@ -102,7 +114,7 @@
             // 
             // txtKyHanTra
             // 
-            txtKyHanTra.Location = new Point(567, 105);
+            txtKyHanTra.Location = new Point(165, 219);
             txtKyHanTra.Name = "txtKyHanTra";
             txtKyHanTra.Size = new Size(172, 31);
             txtKyHanTra.TabIndex = 43;
@@ -110,7 +122,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(409, 117);
+            label4.Location = new Point(7, 231);
             label4.Name = "label4";
             label4.Size = new Size(94, 25);
             label4.TabIndex = 42;
@@ -118,7 +130,7 @@
             // 
             // txtLaiSuat
             // 
-            txtLaiSuat.Location = new Point(567, 52);
+            txtLaiSuat.Location = new Point(165, 166);
             txtLaiSuat.Name = "txtLaiSuat";
             txtLaiSuat.Size = new Size(172, 31);
             txtLaiSuat.TabIndex = 41;
@@ -126,7 +138,7 @@
             // 
             // btnThoat
             // 
-            btnThoat.Location = new Point(1012, 188);
+            btnThoat.Location = new Point(408, 317);
             btnThoat.Name = "btnThoat";
             btnThoat.Size = new Size(112, 34);
             btnThoat.TabIndex = 39;
@@ -136,7 +148,7 @@
             // 
             // btnHuyBo
             // 
-            btnHuyBo.Location = new Point(872, 188);
+            btnHuyBo.Location = new Point(408, 254);
             btnHuyBo.Name = "btnHuyBo";
             btnHuyBo.Size = new Size(112, 34);
             btnHuyBo.TabIndex = 38;
@@ -146,7 +158,7 @@
             // 
             // btnLuu
             // 
-            btnLuu.Location = new Point(708, 188);
+            btnLuu.Location = new Point(408, 202);
             btnLuu.Name = "btnLuu";
             btnLuu.Size = new Size(112, 34);
             btnLuu.TabIndex = 37;
@@ -156,7 +168,7 @@
             // 
             // btnSua
             // 
-            btnSua.Location = new Point(541, 188);
+            btnSua.Location = new Point(408, 148);
             btnSua.Name = "btnSua";
             btnSua.Size = new Size(112, 34);
             btnSua.TabIndex = 36;
@@ -166,7 +178,7 @@
             // 
             // btnXoa
             // 
-            btnXoa.Location = new Point(347, 188);
+            btnXoa.Location = new Point(408, 96);
             btnXoa.Name = "btnXoa";
             btnXoa.Size = new Size(112, 34);
             btnXoa.TabIndex = 35;
@@ -176,14 +188,14 @@
             // 
             // txtSoTienConNo
             // 
-            txtSoTienConNo.Location = new Point(1158, 117);
+            txtSoTienConNo.Location = new Point(187, 358);
             txtSoTienConNo.Name = "txtSoTienConNo";
             txtSoTienConNo.Size = new Size(150, 31);
             txtSoTienConNo.TabIndex = 33;
             // 
             // txtSoTienTraTruoc
             // 
-            txtSoTienTraTruoc.Location = new Point(1158, 60);
+            txtSoTienTraTruoc.Location = new Point(187, 301);
             txtSoTienTraTruoc.Name = "txtSoTienTraTruoc";
             txtSoTienTraTruoc.Size = new Size(150, 31);
             txtSoTienTraTruoc.TabIndex = 32;
@@ -192,7 +204,7 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(971, 123);
+            label6.Location = new Point(0, 364);
             label6.Name = "label6";
             label6.Size = new Size(136, 25);
             label6.TabIndex = 30;
@@ -201,7 +213,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(971, 52);
+            label5.Location = new Point(0, 293);
             label5.Name = "label5";
             label5.Size = new Size(145, 25);
             label5.TabIndex = 29;
@@ -210,7 +222,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(409, 60);
+            label3.Location = new Point(7, 174);
             label3.Name = "label3";
             label3.Size = new Size(73, 25);
             label3.TabIndex = 27;
@@ -243,7 +255,7 @@
             // 
             // btnThem
             // 
-            btnThem.Location = new Point(156, 188);
+            btnThem.Location = new Point(408, 46);
             btnThem.Name = "btnThem";
             btnThem.Size = new Size(112, 34);
             btnThem.TabIndex = 23;
@@ -255,9 +267,9 @@
             // 
             groupBox2.Controls.Add(dgvTraGop);
             groupBox2.Dock = DockStyle.Fill;
-            groupBox2.Location = new Point(0, 274);
+            groupBox2.Location = new Point(577, 0);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(1624, 228);
+            groupBox2.Size = new Size(1047, 502);
             groupBox2.TabIndex = 2;
             groupBox2.TabStop = false;
             groupBox2.Text = "Danh Sách Trả Góp";
@@ -274,7 +286,8 @@
             dgvTraGop.MultiSelect = false;
             dgvTraGop.Name = "dgvTraGop";
             dgvTraGop.RowHeadersWidth = 62;
-            dgvTraGop.Size = new Size(1618, 198);
+            dgvTraGop.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvTraGop.Size = new Size(1041, 472);
             dgvTraGop.TabIndex = 3;
             // 
             // ColMaTraGop
@@ -308,9 +321,9 @@
             // ColSoTienTraTruoc
             // 
             ColSoTienTraTruoc.DataPropertyName = "SoTienTraTruoc";
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle1.Format = "N0";
-            ColSoTienTraTruoc.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle3.Format = "N0";
+            ColSoTienTraTruoc.DefaultCellStyle = dataGridViewCellStyle3;
             ColSoTienTraTruoc.HeaderText = "Số Tiền Trả Trước";
             ColSoTienTraTruoc.MinimumWidth = 8;
             ColSoTienTraTruoc.Name = "ColSoTienTraTruoc";
@@ -318,9 +331,9 @@
             // ColSoTienConNo
             // 
             ColSoTienConNo.DataPropertyName = "SoTienConNo";
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle2.Format = "N0";
-            ColSoTienConNo.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle4.Format = "N0";
+            ColSoTienConNo.DefaultCellStyle = dataGridViewCellStyle4;
             ColSoTienConNo.HeaderText = "Số Tiền Còn Nợ";
             ColSoTienConNo.MinimumWidth = 8;
             ColSoTienConNo.Name = "ColSoTienConNo";
@@ -371,5 +384,6 @@
         private DataGridViewTextBoxColumn ColSoTienTraTruoc;
         private DataGridViewTextBoxColumn ColSoTienConNo;
         private ComboBox cboMaHoaDon;
+        private Button btnXemChiTiet;
     }
 }

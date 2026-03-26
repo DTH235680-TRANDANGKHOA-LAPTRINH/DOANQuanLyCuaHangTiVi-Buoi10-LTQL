@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuanLyCuaHangTiVi.DATA
 {
@@ -31,5 +32,8 @@ namespace QuanLyCuaHangTiVi.DATA
         public decimal SoTienConNo { get; set; }
 
         public int KyHanTra { get; set; }
+        // Thêm dòng này vào bên trong class TraGop, ngay dưới các thuộc tính cũ
+        public virtual ICollection<ChiTietTraGop> ChiTietTraGops { get; set; } = new List<ChiTietTraGop>();
     }
 }
+

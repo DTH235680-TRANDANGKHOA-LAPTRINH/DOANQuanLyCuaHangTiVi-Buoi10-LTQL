@@ -194,8 +194,7 @@ namespace QuanLyCuaHangTiVi.forms
 
         private void btnLuu_Click(object sender, EventArgs e)
         {
-
-            // 1. Kiểm tra dữ liệu đầu vào (Validation)
+            // 1. Kiểm tra rỗng (Validation)
             if (string.IsNullOrWhiteSpace(txtMaTraGop.Text))
             {
                 MessageBox.Show("Vui lòng nhập Mã Trả Góp!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -210,8 +209,8 @@ namespace QuanLyCuaHangTiVi.forms
                 return;
             }
 
-            // 2. Kiểm tra xem các ô số có bị để trống hoặc nhập sai định dạng không
-            // Lưu ý: Đã bỏ kiểm tra txtSoTienConNo vì máy sẽ tự tính, người dùng gõ sai cũng không sao
+            // ==========================================================
+            // ĐÂY LÀ ĐOẠN KHAI BÁO BỊ THIẾU TRONG HÌNH CỦA BẠN GÂY LỖI ĐỎ
             decimal laiSuat, soTienTruoc;
             int kyHan;
 
@@ -222,56 +221,59 @@ namespace QuanLyCuaHangTiVi.forms
                 MessageBox.Show("Vui lòng nhập đúng định dạng số cho Lãi suất, Kỳ hạn và Số tiền trả trước!", "Lỗi nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            // ==========================================================
 
             try
             {
-                // ==========================================================
-                // 3. TỰ ĐỘNG TÍNH SỐ TIỀN CÒN NỢ TRƯỚC KHI LƯU
-                // ==========================================================
+                // 3. TÍNH TOÁN TIỀN NỢ
                 int maHD = (int)cboMaHoaDon.SelectedValue;
-
-                // Lấy tổng tiền của Hóa Đơn đang chọn (tính bằng cách cộng dồn DonGia * SoLuong trong Chi Tiết)
-                var hoaDon = db.HoaDons.Select(hd => new {
-                    hd.ID,
-                    // NẾU BẢNG HOADON CỦA BẠN ĐÃ CÓ SẴN CỘT TONGTIEN, BẠN CHỈ CẦN GỌI: TongTien = hd.TongTien
-                    TongTien = hd.HoaDonChiTiets.Sum(ct => ct.SoLuongBan * ct.DonGiaBan)
-                }).FirstOrDefault(hd => hd.ID == maHD);
-
+                var hoaDon = db.HoaDons.Select(hd => new { hd.ID, TongTien = hd.HoaDonChiTiets.Sum(ct => ct.SoLuongBan * ct.DonGiaBan) }).FirstOrDefault(hd => hd.ID == maHD);
                 decimal tongTienHoaDon = hoaDon != null ? hoaDon.TongTien : 0;
 
-                // Công thức: Nợ Gốc = Tổng tiền Tivi - Trả trước
                 decimal noGoc = tongTienHoaDon - soTienTruoc;
-
-                // Tính lãi (Giả sử Lãi suất bạn nhập trên Form là %, ví dụ nhập 10 nghĩa là 10% thì chia 100)
-                // Nếu bạn nhập thẳng số tiền mặt (ví dụ nhập 500000) thì sửa thành: decimal tienLai = laiSuat;
+                if (noGoc < 0) noGoc = 0; // Đề phòng khách trả trước nhiều hơn cả tiền tivi
                 decimal tienLai = noGoc * (laiSuat / 100);
-
-                // Chốt lại số tiền nợ cuối cùng
                 decimal soTienNoTinhToan = noGoc + tienLai;
-
-                // Cập nhật lên giao diện cho người dùng nhìn thấy số tiền đã chốt
-                txtSoTienConNo.Text = soTienNoTinhToan.ToString("0");
-                // ==========================================================
+                txtSoTienConNo.Text = soTienNoTinhToan.ToString("0"); // Hiển thị lên UI
 
                 if (isThem)
                 {
-                    // --- TRƯỜNG HỢP THÊM MỚI ---
                     var checkTonTai = db.TraGops.Find(txtMaTraGop.Text);
                     if (checkTonTai != null)
                     {
-                        MessageBox.Show("Mã trả góp này đã tồn tại trong hệ thống!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Mã trả góp này đã tồn tại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
 
+                    // --- LƯU BẢNG GỐC (HỢP ĐỒNG) ---
                     TraGop tgMoi = new TraGop();
                     tgMoi.MaTraGop = txtMaTraGop.Text;
                     tgMoi.MaHoaDon = maHD;
                     tgMoi.LaiSuat = laiSuat;
                     tgMoi.KyHanTra = kyHan;
                     tgMoi.SoTienTraTruoc = soTienTruoc;
-                    tgMoi.SoTienConNo = soTienNoTinhToan; // Lưu số tiền máy vừa tính ra
-
+                    tgMoi.SoTienConNo = soTienNoTinhToan;
                     db.TraGops.Add(tgMoi);
+
+                    // --- LƯU TỰ ĐỘNG CÁC THÁNG VÀO BẢNG CHI TIẾT ---
+                    decimal gocMoiThang = noGoc / kyHan;
+                    decimal laiMoiThang = tienLai / kyHan;
+                    decimal tongMoiThang = soTienNoTinhToan / kyHan;
+                    DateTime ngayBatDau = DateTime.Now;
+
+                    for (int i = 1; i <= kyHan; i++)
+                    {
+                        ChiTietTraGop chiTiet = new ChiTietTraGop();
+                        chiTiet.MaTraGop = tgMoi.MaTraGop;
+                        chiTiet.KyThu = i;
+                        chiTiet.NgayCanDong = ngayBatDau.AddMonths(i); // Mỗi kỳ cách nhau 1 tháng
+                        chiTiet.SoTienGoc = Math.Round(gocMoiThang, 0);
+                        chiTiet.SoTienLai = Math.Round(laiMoiThang, 0);
+                        chiTiet.TongTienDong = Math.Round(tongMoiThang, 0);
+                        chiTiet.DaThanhToan = false; // Mới tạo thì chưa đóng tiền
+
+                        db.ChiTietTraGops.Add(chiTiet);
+                    }
                 }
                 else
                 {
@@ -283,30 +285,17 @@ namespace QuanLyCuaHangTiVi.forms
                         tgSua.LaiSuat = laiSuat;
                         tgSua.KyHanTra = kyHan;
                         tgSua.SoTienTraTruoc = soTienTruoc;
-                        tgSua.SoTienConNo = soTienNoTinhToan; // Lưu số tiền máy vừa tính ra
-                    }
-                    else
-                    {
-                        MessageBox.Show("Không tìm thấy dữ liệu để cập nhật!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
+                        tgSua.SoTienConNo = soTienNoTinhToan;
                     }
                 }
 
-                // Thực thi lưu xuống Database
-                db.SaveChanges();
-                MessageBox.Show("Lưu thông tin trả góp thành công!\nSố tiền còn nợ đã được hệ thống tự động chốt là: " + soTienNoTinhToan.ToString("N0") + " VNĐ", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                // Tải lại lưới và khóa các control
+                db.SaveChanges(); // Lưu tất cả vào Database cùng 1 lúc
+                MessageBox.Show("Lưu thành công! Hệ thống đã tự động tính toán và cập nhật dữ liệu.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 frmTraGop_Load(sender, e);
             }
             catch (Exception ex)
             {
-                string errorMsg = ex.Message;
-                if (ex.InnerException != null)
-                {
-                    errorMsg += "\nChi tiết: " + ex.InnerException.Message;
-                }
-                MessageBox.Show("Lỗi hệ thống: " + errorMsg, "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Lỗi hệ thống: " + ex.Message, "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -329,6 +318,19 @@ namespace QuanLyCuaHangTiVi.forms
         private void cboMaHoaDon_TextChanged(object sender, EventArgs e)
         {
             TinhSoTienNo();
+        }
+
+        private void btnXemLichTrinh_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtMaTraGop.Text) || btnLuu.Enabled == true)
+            {
+                MessageBox.Show("Vui lòng chọn một hợp đồng hợp lệ trên lưới để xem chi tiết (Không thao tác khi đang thêm mới).", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Mở Form chi tiết và truyền Mã hợp đồng sang
+            frmChiTietTraGop frm = new frmChiTietTraGop(txtMaTraGop.Text);
+            frm.ShowDialog();
         }
     }
 }

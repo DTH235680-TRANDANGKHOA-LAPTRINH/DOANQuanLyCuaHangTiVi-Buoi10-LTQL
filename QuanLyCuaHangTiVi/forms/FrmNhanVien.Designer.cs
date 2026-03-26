@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmNhanVien));
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             panel1 = new Panel();
             txtLuong = new TextBox();
@@ -65,6 +66,7 @@
             // 
             // panel1
             // 
+            panel1.BackColor = Color.FromArgb(192, 192, 255);
             panel1.Controls.Add(txtLuong);
             panel1.Controls.Add(label6);
             panel1.Controls.Add(btnChonAnh);
@@ -88,20 +90,20 @@
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1690, 233);
+            panel1.Size = new Size(1351, 233);
             panel1.TabIndex = 1;
             // 
             // txtLuong
             // 
-            txtLuong.Location = new Point(901, 100);
+            txtLuong.Location = new Point(781, 71);
             txtLuong.Name = "txtLuong";
-            txtLuong.Size = new Size(150, 31);
+            txtLuong.Size = new Size(182, 31);
             txtLuong.TabIndex = 22;
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(777, 106);
+            label6.Location = new Point(707, 80);
             label6.Name = "label6";
             label6.Size = new Size(68, 25);
             label6.TabIndex = 21;
@@ -109,17 +111,20 @@
             // 
             // btnChonAnh
             // 
-            btnChonAnh.Location = new Point(1388, 48);
+            btnChonAnh.BackColor = Color.Gray;
+            btnChonAnh.Image = (Image)resources.GetObject("btnChonAnh.Image");
+            btnChonAnh.ImageAlign = ContentAlignment.MiddleLeft;
+            btnChonAnh.Location = new Point(1176, 28);
             btnChonAnh.Name = "btnChonAnh";
-            btnChonAnh.Size = new Size(112, 34);
+            btnChonAnh.Size = new Size(163, 62);
             btnChonAnh.TabIndex = 20;
             btnChonAnh.Text = "Chọn Ảnh";
-            btnChonAnh.UseVisualStyleBackColor = true;
+            btnChonAnh.UseVisualStyleBackColor = false;
             btnChonAnh.Click += btnChonAnh_Click;
             // 
             // picAnhNhanVien
             // 
-            picAnhNhanVien.Location = new Point(1182, 20);
+            picAnhNhanVien.Location = new Point(1000, 0);
             picAnhNhanVien.Name = "picAnhNhanVien";
             picAnhNhanVien.Size = new Size(150, 207);
             picAnhNhanVien.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -130,71 +135,86 @@
             // 
             cboQuyenHan.FormattingEnabled = true;
             cboQuyenHan.Items.AddRange(new object[] { "Quản Lý", "Nhân Viên " });
-            cboQuyenHan.Location = new Point(868, 29);
+            cboQuyenHan.Location = new Point(781, 17);
             cboQuyenHan.Name = "cboQuyenHan";
             cboQuyenHan.Size = new Size(182, 33);
             cboQuyenHan.TabIndex = 18;
             // 
             // btnThoat
             // 
-            btnThoat.Location = new Point(990, 148);
+            btnThoat.BackColor = Color.FromArgb(255, 192, 192);
+            btnThoat.Image = (Image)resources.GetObject("btnThoat.Image");
+            btnThoat.ImageAlign = ContentAlignment.MiddleLeft;
+            btnThoat.Location = new Point(868, 163);
             btnThoat.Name = "btnThoat";
-            btnThoat.Size = new Size(112, 34);
+            btnThoat.Size = new Size(114, 44);
             btnThoat.TabIndex = 17;
             btnThoat.Text = "Thoát";
-            btnThoat.UseVisualStyleBackColor = true;
+            btnThoat.UseVisualStyleBackColor = false;
             btnThoat.Click += btnThoat_Click;
             // 
             // btnHuyBo
             // 
-            btnHuyBo.Location = new Point(850, 148);
+            btnHuyBo.BackColor = Color.FromArgb(128, 255, 255);
+            btnHuyBo.Image = (Image)resources.GetObject("btnHuyBo.Image");
+            btnHuyBo.ImageAlign = ContentAlignment.MiddleLeft;
+            btnHuyBo.Location = new Point(728, 163);
             btnHuyBo.Name = "btnHuyBo";
-            btnHuyBo.Size = new Size(112, 34);
+            btnHuyBo.Size = new Size(119, 44);
             btnHuyBo.TabIndex = 16;
             btnHuyBo.Text = "Hủy Bỏ";
-            btnHuyBo.UseVisualStyleBackColor = true;
+            btnHuyBo.UseVisualStyleBackColor = false;
             btnHuyBo.Click += btnHuyBo_Click;
             // 
             // btnLuu
             // 
-            btnLuu.Location = new Point(686, 148);
+            btnLuu.BackColor = Color.Fuchsia;
+            btnLuu.Image = (Image)resources.GetObject("btnLuu.Image");
+            btnLuu.ImageAlign = ContentAlignment.MiddleLeft;
+            btnLuu.Location = new Point(564, 163);
             btnLuu.Name = "btnLuu";
-            btnLuu.Size = new Size(112, 34);
+            btnLuu.Size = new Size(129, 44);
             btnLuu.TabIndex = 15;
             btnLuu.Text = "Lưu";
-            btnLuu.UseVisualStyleBackColor = true;
+            btnLuu.UseVisualStyleBackColor = false;
             btnLuu.Click += btnLuu_Click;
             // 
             // btnSua
             // 
-            btnSua.Location = new Point(519, 148);
+            btnSua.BackColor = Color.FromArgb(255, 255, 128);
+            btnSua.Image = (Image)resources.GetObject("btnSua.Image");
+            btnSua.ImageAlign = ContentAlignment.MiddleLeft;
+            btnSua.Location = new Point(397, 163);
             btnSua.Name = "btnSua";
-            btnSua.Size = new Size(112, 34);
+            btnSua.Size = new Size(129, 44);
             btnSua.TabIndex = 14;
             btnSua.Text = "Sửa";
-            btnSua.UseVisualStyleBackColor = true;
+            btnSua.UseVisualStyleBackColor = false;
             btnSua.Click += btnSua_Click;
             // 
             // btnXoa
             // 
-            btnXoa.Location = new Point(325, 148);
+            btnXoa.BackColor = Color.Red;
+            btnXoa.Image = (Image)resources.GetObject("btnXoa.Image");
+            btnXoa.ImageAlign = ContentAlignment.MiddleLeft;
+            btnXoa.Location = new Point(203, 163);
             btnXoa.Name = "btnXoa";
-            btnXoa.Size = new Size(112, 34);
+            btnXoa.Size = new Size(131, 44);
             btnXoa.TabIndex = 13;
             btnXoa.Text = "Xóa";
-            btnXoa.UseVisualStyleBackColor = true;
+            btnXoa.UseVisualStyleBackColor = false;
             btnXoa.Click += btnXoa_Click;
             // 
             // txtMatKhau
             // 
-            txtMatKhau.Location = new Point(545, 77);
+            txtMatKhau.Location = new Point(502, 71);
             txtMatKhau.Name = "txtMatKhau";
             txtMatKhau.Size = new Size(150, 31);
             txtMatKhau.TabIndex = 11;
             // 
             // txtTenDangNhap
             // 
-            txtTenDangNhap.Location = new Point(545, 20);
+            txtTenDangNhap.Location = new Point(502, 14);
             txtTenDangNhap.Name = "txtTenDangNhap";
             txtTenDangNhap.Size = new Size(150, 31);
             txtTenDangNhap.TabIndex = 10;
@@ -202,7 +222,7 @@
             // 
             // txtHoTenNhanVien
             // 
-            txtHoTenNhanVien.Location = new Point(184, 53);
+            txtHoTenNhanVien.Location = new Point(184, 74);
             txtHoTenNhanVien.Name = "txtHoTenNhanVien";
             txtHoTenNhanVien.Size = new Size(150, 31);
             txtHoTenNhanVien.TabIndex = 8;
@@ -210,7 +230,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(744, 32);
+            label5.Location = new Point(674, 20);
             label5.Name = "label5";
             label5.Size = new Size(101, 25);
             label5.TabIndex = 6;
@@ -219,7 +239,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(434, 83);
+            label4.Location = new Point(391, 77);
             label4.Name = "label4";
             label4.Size = new Size(87, 25);
             label4.TabIndex = 5;
@@ -228,7 +248,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(387, 20);
+            label3.Location = new Point(362, 14);
             label3.Name = "label3";
             label3.Size = new Size(134, 25);
             label3.TabIndex = 4;
@@ -237,7 +257,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(3, 57);
+            label2.Location = new Point(25, 80);
             label2.Name = "label2";
             label2.Size = new Size(153, 25);
             label2.TabIndex = 3;
@@ -261,27 +281,30 @@
             // 
             // btnThem
             // 
-            btnThem.Location = new Point(134, 148);
+            btnThem.BackColor = Color.FromArgb(128, 255, 128);
+            btnThem.Image = (Image)resources.GetObject("btnThem.Image");
+            btnThem.ImageAlign = ContentAlignment.MiddleLeft;
+            btnThem.Location = new Point(12, 163);
             btnThem.Name = "btnThem";
-            btnThem.Size = new Size(112, 34);
+            btnThem.Size = new Size(132, 44);
             btnThem.TabIndex = 0;
             btnThem.Text = "Thêm";
-            btnThem.UseVisualStyleBackColor = true;
+            btnThem.UseVisualStyleBackColor = false;
             btnThem.Click += btnThem_Click;
             // 
             // dgvDanhSachNhanVien
             // 
             dgvDanhSachNhanVien.AllowUserToAddRows = false;
             dgvDanhSachNhanVien.AllowUserToDeleteRows = false;
+            dgvDanhSachNhanVien.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvDanhSachNhanVien.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvDanhSachNhanVien.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvDanhSachNhanVien.Columns.AddRange(new DataGridViewColumn[] { MaNhanVien, HoTenNhanVien, TenDangNhap, MatKhau, QuyenHan, ColLuong, CotHinhAnh });
-            dgvDanhSachNhanVien.Dock = DockStyle.Fill;
             dgvDanhSachNhanVien.Location = new Point(0, 233);
             dgvDanhSachNhanVien.MultiSelect = false;
             dgvDanhSachNhanVien.Name = "dgvDanhSachNhanVien";
             dgvDanhSachNhanVien.RowHeadersWidth = 62;
-            dgvDanhSachNhanVien.Size = new Size(1690, 311);
+            dgvDanhSachNhanVien.Size = new Size(1351, 311);
             dgvDanhSachNhanVien.TabIndex = 2;
             dgvDanhSachNhanVien.CellClick += dgvDanhSachNhanVien_CellClick;
             dgvDanhSachNhanVien.CellFormatting += dgvDanhSachNhanVien_CellFormatting;
@@ -341,9 +364,9 @@
             // 
             // FrmNhanVien
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1690, 544);
+            AutoScaleDimensions = new SizeF(144F, 144F);
+            AutoScaleMode = AutoScaleMode.Dpi;
+            ClientSize = new Size(1351, 544);
             Controls.Add(dgvDanhSachNhanVien);
             Controls.Add(panel1);
             Name = "FrmNhanVien";
