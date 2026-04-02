@@ -156,119 +156,119 @@ namespace QuanLyCuaHangTiVi.forms
         private void btnLuu_Click(object sender, EventArgs e)
         {
             // 1. Kiểm tra các trường dữ liệu bắt buộc (Validation)
-    if (string.IsNullOrWhiteSpace(txtMaNhanVien.Text))
-    {
-        MessageBox.Show("Vui lòng nhập Mã Nhân Viên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        txtMaNhanVien.Focus();
-        return;
-    }
-    if (string.IsNullOrWhiteSpace(txtHoTenNhanVien.Text))
-    {
-        MessageBox.Show("Vui lòng nhập Họ Tên Nhân Viên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        txtHoTenNhanVien.Focus();
-        return;
-    }
-    if (string.IsNullOrWhiteSpace(txtTenDangNhap.Text))
-    {
-        MessageBox.Show("Vui lòng nhập Tên Đăng Nhập!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        txtTenDangNhap.Focus();
-        return;
-    }
-
-    // --- KIỂM TRA DỮ LIỆU LƯƠNG ---
-    decimal luongNV = 0;
-    if (!string.IsNullOrWhiteSpace(txtLuong.Text))
-    {
-        // Xóa dấu phẩy/chấm nếu người dùng có nhập định dạng tiền tệ (VD: 15,000,000 -> 15000000)
-        string tienLuong = txtLuong.Text.Replace(",", "").Replace(".", "");
-        if (!decimal.TryParse(tienLuong, out luongNV))
-        {
-            MessageBox.Show("Vui lòng nhập lương là một con số hợp lệ!", "Lỗi định dạng", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            txtLuong.Focus();
-            return;
-        }
-    }
-
-    try
-    {
-        if (isThem) // TRƯỜNG HỢP THÊM MỚI
-        {
-            // Kiểm tra trùng mã ID trước khi thêm
-            var checkID = db.NhanViens.Find(txtMaNhanVien.Text);
-            if (checkID != null)
+            if (string.IsNullOrWhiteSpace(txtMaNhanVien.Text))
             {
-                MessageBox.Show("Mã nhân viên này đã tồn tại!", "Lỗi trùng mã", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Vui lòng nhập Mã Nhân Viên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtMaNhanVien.Focus();
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(txtHoTenNhanVien.Text))
+            {
+                MessageBox.Show("Vui lòng nhập Họ Tên Nhân Viên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtHoTenNhanVien.Focus();
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(txtTenDangNhap.Text))
+            {
+                MessageBox.Show("Vui lòng nhập Tên Đăng Nhập!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtTenDangNhap.Focus();
                 return;
             }
 
-            // Bắt buộc nhập mật khẩu khi tạo tài khoản mới
-            if (string.IsNullOrWhiteSpace(txtMatKhau.Text))
+            // --- KIỂM TRA DỮ LIỆU LƯƠNG ---
+            decimal luongNV = 0;
+            if (!string.IsNullOrWhiteSpace(txtLuong.Text))
             {
-                MessageBox.Show("Nhân viên mới cần phải có mật khẩu!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtMatKhau.Focus();
-                return;
-            }
-
-            // Tạo đối tượng nhân viên mới
-            NhanVien nv = new NhanVien();
-            nv.MaNhanVien = txtMaNhanVien.Text.Trim();
-            nv.HoTenNhanVien = txtHoTenNhanVien.Text.Trim();
-            nv.TenDangNhap = txtTenDangNhap.Text.Trim();
-            nv.MatKhau = txtMatKhau.Text;
-            nv.QuyenHan = cboQuyenHan.Text;
-            
-            // LƯU LƯƠNG NHÂN VIÊN
-            nv.Luong = luongNV; 
-
-            // LƯU TÊN ẢNH: Gán tên file ảnh đã chọn vào cột trong DB
-            nv.AnhChanDung = tenFileAnhNV;
-
-            db.NhanViens.Add(nv);
-        }
-        else // TRƯỜNG HỢP SỬA (UPDATE)
-        {
-            var nvSua = db.NhanViens.Find(txtMaNhanVien.Text);
-            if (nvSua != null)
-            {
-                nvSua.HoTenNhanVien = txtHoTenNhanVien.Text.Trim();
-                nvSua.TenDangNhap = txtTenDangNhap.Text.Trim();
-                nvSua.QuyenHan = cboQuyenHan.Text;
-                
-                // CẬP NHẬT LƯƠNG NHÂN VIÊN
-                nvSua.Luong = luongNV;
-
-                // Nếu người dùng có nhập mật khẩu mới thì mới cập nhật
-                if (!string.IsNullOrWhiteSpace(txtMatKhau.Text))
+                // Xóa dấu phẩy/chấm nếu người dùng có nhập định dạng tiền tệ (VD: 15,000,000 -> 15000000)
+                string tienLuong = txtLuong.Text.Replace(",", "").Replace(".", "");
+                if (!decimal.TryParse(tienLuong, out luongNV))
                 {
-                    nvSua.MatKhau = txtMatKhau.Text;
-                }
-
-                // CẬP NHẬT ẢNH: Chỉ cập nhật nếu người dùng có chọn ảnh mới
-                if (!string.IsNullOrEmpty(tenFileAnhNV))
-                {
-                    nvSua.AnhChanDung = tenFileAnhNV;
+                    MessageBox.Show("Vui lòng nhập lương là một con số hợp lệ!", "Lỗi định dạng", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    txtLuong.Focus();
+                    return;
                 }
             }
-            else
+
+            try
             {
-                MessageBox.Show("Không tìm thấy dữ liệu nhân viên để cập nhật!");
-                return;
+                if (isThem) // TRƯỜNG HỢP THÊM MỚI
+                {
+                    // Kiểm tra trùng mã ID trước khi thêm
+                    var checkID = db.NhanViens.Find(txtMaNhanVien.Text);
+                    if (checkID != null)
+                    {
+                        MessageBox.Show("Mã nhân viên này đã tồn tại!", "Lỗi trùng mã", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    // Bắt buộc nhập mật khẩu khi tạo tài khoản mới
+                    if (string.IsNullOrWhiteSpace(txtMatKhau.Text))
+                    {
+                        MessageBox.Show("Nhân viên mới cần phải có mật khẩu!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        txtMatKhau.Focus();
+                        return;
+                    }
+
+                    // Tạo đối tượng nhân viên mới
+                    NhanVien nv = new NhanVien();
+                    nv.MaNhanVien = txtMaNhanVien.Text.Trim();
+                    nv.HoTenNhanVien = txtHoTenNhanVien.Text.Trim();
+                    nv.TenDangNhap = txtTenDangNhap.Text.Trim();
+                    nv.MatKhau = txtMatKhau.Text;
+                    nv.QuyenHan = cboQuyenHan.Text;
+
+                    // LƯU LƯƠNG NHÂN VIÊN
+                    nv.Luong = luongNV;
+
+                    // LƯU TÊN ẢNH: Gán tên file ảnh đã chọn vào cột trong DB
+                    nv.AnhChanDung = tenFileAnhNV;
+
+                    db.NhanViens.Add(nv);
+                }
+                else // TRƯỜNG HỢP SỬA (UPDATE)
+                {
+                    var nvSua = db.NhanViens.Find(txtMaNhanVien.Text);
+                    if (nvSua != null)
+                    {
+                        nvSua.HoTenNhanVien = txtHoTenNhanVien.Text.Trim();
+                        nvSua.TenDangNhap = txtTenDangNhap.Text.Trim();
+                        nvSua.QuyenHan = cboQuyenHan.Text;
+
+                        // CẬP NHẬT LƯƠNG NHÂN VIÊN
+                        nvSua.Luong = luongNV;
+
+                        // Nếu người dùng có nhập mật khẩu mới thì mới cập nhật
+                        if (!string.IsNullOrWhiteSpace(txtMatKhau.Text))
+                        {
+                            nvSua.MatKhau = txtMatKhau.Text;
+                        }
+
+                        // CẬP NHẬT ẢNH: Chỉ cập nhật nếu người dùng có chọn ảnh mới
+                        if (!string.IsNullOrEmpty(tenFileAnhNV))
+                        {
+                            nvSua.AnhChanDung = tenFileAnhNV;
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Không tìm thấy dữ liệu nhân viên để cập nhật!");
+                        return;
+                    }
+                }
+
+                // Lưu tất cả thay đổi xuống Database
+                db.SaveChanges();
+                MessageBox.Show("Đã lưu thông tin nhân viên thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // Reset trạng thái Form
+                tenFileAnhNV = ""; // Reset biến tạm sau khi lưu xong
+                FrmNhanVien_Load(sender, e); // Tải lại danh sách lên lưới
             }
-        }
-
-        // Lưu tất cả thay đổi xuống Database
-        db.SaveChanges();
-        MessageBox.Show("Đã lưu thông tin nhân viên thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-        // Reset trạng thái Form
-        tenFileAnhNV = ""; // Reset biến tạm sau khi lưu xong
-        FrmNhanVien_Load(sender, e); // Tải lại danh sách lên lưới
-    }
-    catch (Exception ex)
-    {
-        // Hiển thị chi tiết lỗi nếu có (lỗi DB, lỗi kết nối...)
-        MessageBox.Show("Lỗi khi lưu dữ liệu: " + (ex.InnerException?.Message ?? ex.Message), "Lỗi Hệ Thống", MessageBoxButtons.OK, MessageBoxIcon.Error);
-    }
+            catch (Exception ex)
+            {
+                // Hiển thị chi tiết lỗi nếu có (lỗi DB, lỗi kết nối...)
+                MessageBox.Show("Lỗi khi lưu dữ liệu: " + (ex.InnerException?.Message ?? ex.Message), "Lỗi Hệ Thống", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnHuyBo_Click(object sender, EventArgs e)
@@ -364,5 +364,7 @@ namespace QuanLyCuaHangTiVi.forms
                 }
             }
         }
+
+        
     }
 }

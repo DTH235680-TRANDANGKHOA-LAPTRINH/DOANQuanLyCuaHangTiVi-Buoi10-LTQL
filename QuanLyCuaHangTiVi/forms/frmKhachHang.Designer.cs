@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmKhachHang));
             groupBox1 = new GroupBox();
             txtSoDienThoai = new TextBox();
             btnThoat = new Button();
@@ -97,52 +98,67 @@
             // 
             // btnThoat
             // 
-            btnThoat.Location = new Point(1012, 188);
+            btnThoat.BackColor = Color.FromArgb(128, 255, 128);
+            btnThoat.Image = (Image)resources.GetObject("btnThoat.Image");
+            btnThoat.ImageAlign = ContentAlignment.MiddleLeft;
+            btnThoat.Location = new Point(909, 188);
             btnThoat.Name = "btnThoat";
-            btnThoat.Size = new Size(112, 34);
+            btnThoat.Size = new Size(125, 63);
             btnThoat.TabIndex = 39;
             btnThoat.Text = "Thoát";
-            btnThoat.UseVisualStyleBackColor = true;
+            btnThoat.UseVisualStyleBackColor = false;
             btnThoat.Click += btnThoat_Click;
             // 
             // btnHuyBo
             // 
-            btnHuyBo.Location = new Point(872, 188);
+            btnHuyBo.BackColor = Color.FromArgb(255, 192, 128);
+            btnHuyBo.Image = (Image)resources.GetObject("btnHuyBo.Image");
+            btnHuyBo.ImageAlign = ContentAlignment.MiddleLeft;
+            btnHuyBo.Location = new Point(759, 188);
             btnHuyBo.Name = "btnHuyBo";
-            btnHuyBo.Size = new Size(112, 34);
+            btnHuyBo.Size = new Size(125, 63);
             btnHuyBo.TabIndex = 38;
             btnHuyBo.Text = "Hủy Bỏ";
-            btnHuyBo.UseVisualStyleBackColor = true;
+            btnHuyBo.UseVisualStyleBackColor = false;
             btnHuyBo.Click += btnHuyBo_Click;
             // 
             // btnLuu
             // 
-            btnLuu.Location = new Point(708, 188);
+            btnLuu.BackColor = Color.Fuchsia;
+            btnLuu.Image = (Image)resources.GetObject("btnLuu.Image");
+            btnLuu.ImageAlign = ContentAlignment.MiddleLeft;
+            btnLuu.Location = new Point(614, 188);
             btnLuu.Name = "btnLuu";
-            btnLuu.Size = new Size(112, 34);
+            btnLuu.Size = new Size(125, 63);
             btnLuu.TabIndex = 37;
             btnLuu.Text = "Lưu";
-            btnLuu.UseVisualStyleBackColor = true;
+            btnLuu.UseVisualStyleBackColor = false;
             btnLuu.Click += btnLuu_Click;
             // 
             // btnSua
             // 
-            btnSua.Location = new Point(541, 188);
+            btnSua.BackColor = Color.Yellow;
+            btnSua.Image = (Image)resources.GetObject("btnSua.Image");
+            btnSua.ImageAlign = ContentAlignment.MiddleLeft;
+            btnSua.Location = new Point(460, 188);
             btnSua.Name = "btnSua";
-            btnSua.Size = new Size(112, 34);
+            btnSua.Size = new Size(125, 63);
             btnSua.TabIndex = 36;
             btnSua.Text = "Sửa";
-            btnSua.UseVisualStyleBackColor = true;
+            btnSua.UseVisualStyleBackColor = false;
             btnSua.Click += btnSua_Click;
             // 
             // btnXoa
             // 
-            btnXoa.Location = new Point(347, 188);
+            btnXoa.BackColor = Color.Red;
+            btnXoa.Image = (Image)resources.GetObject("btnXoa.Image");
+            btnXoa.ImageAlign = ContentAlignment.MiddleLeft;
+            btnXoa.Location = new Point(309, 188);
             btnXoa.Name = "btnXoa";
-            btnXoa.Size = new Size(112, 34);
+            btnXoa.Size = new Size(125, 63);
             btnXoa.TabIndex = 35;
             btnXoa.Text = "Xóa";
-            btnXoa.UseVisualStyleBackColor = true;
+            btnXoa.UseVisualStyleBackColor = false;
             btnXoa.Click += btnXoa_Click;
             // 
             // dtpNgayThangNamSinh
@@ -154,21 +170,21 @@
             // 
             // txtDiaChi
             // 
-            txtDiaChi.Location = new Point(1158, 117);
+            txtDiaChi.Location = new Point(1158, 97);
             txtDiaChi.Name = "txtDiaChi";
             txtDiaChi.Size = new Size(150, 31);
             txtDiaChi.TabIndex = 33;
             // 
             // txtCCCD
             // 
-            txtCCCD.Location = new Point(1158, 60);
+            txtCCCD.Location = new Point(1158, 52);
             txtCCCD.Name = "txtCCCD";
             txtCCCD.Size = new Size(150, 31);
             txtCCCD.TabIndex = 32;
             // 
             // txtTenKhachHang
             // 
-            txtTenKhachHang.Location = new Point(156, 99);
+            txtTenKhachHang.Location = new Point(156, 97);
             txtTenKhachHang.Name = "txtTenKhachHang";
             txtTenKhachHang.Size = new Size(150, 31);
             txtTenKhachHang.TabIndex = 31;
@@ -176,7 +192,7 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(1048, 123);
+            label6.Location = new Point(1048, 100);
             label6.Name = "label6";
             label6.Size = new Size(68, 25);
             label6.TabIndex = 30;
@@ -185,7 +201,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(1048, 60);
+            label5.Location = new Point(1048, 55);
             label5.Name = "label5";
             label5.Size = new Size(58, 25);
             label5.TabIndex = 29;
@@ -194,7 +210,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(409, 99);
+            label4.Location = new Point(409, 100);
             label4.Name = "label4";
             label4.Size = new Size(93, 25);
             label4.TabIndex = 28;
@@ -203,7 +219,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(409, 60);
+            label3.Location = new Point(409, 55);
             label3.Name = "label3";
             label3.Size = new Size(122, 25);
             label3.TabIndex = 27;
@@ -212,7 +228,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(12, 105);
+            label2.Location = new Point(12, 100);
             label2.Name = "label2";
             label2.Size = new Size(138, 25);
             label2.TabIndex = 26;
@@ -228,7 +244,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(12, 60);
+            label1.Location = new Point(12, 55);
             label1.Name = "label1";
             label1.Size = new Size(137, 25);
             label1.TabIndex = 24;
@@ -236,12 +252,15 @@
             // 
             // btnThem
             // 
+            btnThem.BackColor = Color.FromArgb(128, 255, 255);
+            btnThem.Image = (Image)resources.GetObject("btnThem.Image");
+            btnThem.ImageAlign = ContentAlignment.MiddleLeft;
             btnThem.Location = new Point(156, 188);
             btnThem.Name = "btnThem";
-            btnThem.Size = new Size(112, 34);
+            btnThem.Size = new Size(125, 63);
             btnThem.TabIndex = 23;
             btnThem.Text = "Thêm";
-            btnThem.UseVisualStyleBackColor = true;
+            btnThem.UseVisualStyleBackColor = false;
             btnThem.Click += btnThem_Click;
             // 
             // groupBox2

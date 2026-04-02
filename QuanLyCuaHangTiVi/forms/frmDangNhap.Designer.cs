@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmDangNhap));
             btnDangNhap = new Button();
             label1 = new Label();
             txtTenDangNhap = new TextBox();
@@ -36,17 +37,23 @@
             txtMatKhau = new TextBox();
             label3 = new Label();
             label2 = new Label();
+            pictureBox1 = new PictureBox();
             groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // btnDangNhap
             // 
+            btnDangNhap.BackColor = Color.DodgerBlue;
+            btnDangNhap.FlatStyle = FlatStyle.Flat;
+            btnDangNhap.Font = new Font("Segoe UI Black", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnDangNhap.ForeColor = Color.White;
             btnDangNhap.Location = new Point(61, 484);
             btnDangNhap.Name = "btnDangNhap";
             btnDangNhap.Size = new Size(185, 66);
             btnDangNhap.TabIndex = 0;
             btnDangNhap.Text = "Đăng nhập ";
-            btnDangNhap.UseVisualStyleBackColor = true;
+            btnDangNhap.UseVisualStyleBackColor = false;
             btnDangNhap.Click += btnDangNhap_Click;
             // 
             // label1
@@ -61,6 +68,7 @@
             // 
             // txtTenDangNhap
             // 
+            txtTenDangNhap.BorderStyle = BorderStyle.None;
             txtTenDangNhap.Location = new Point(77, 209);
             txtTenDangNhap.Multiline = true;
             txtTenDangNhap.Name = "txtTenDangNhap";
@@ -69,6 +77,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.BackColor = Color.FromArgb(224, 224, 224);
             groupBox1.Controls.Add(btnHuyBo);
             groupBox1.Controls.Add(txtMatKhau);
             groupBox1.Controls.Add(label3);
@@ -86,6 +95,7 @@
             // 
             // btnHuyBo
             // 
+            btnHuyBo.Font = new Font("Segoe UI Black", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnHuyBo.Location = new Point(297, 484);
             btnHuyBo.Name = "btnHuyBo";
             btnHuyBo.Size = new Size(185, 66);
@@ -96,6 +106,7 @@
             // 
             // txtMatKhau
             // 
+            txtMatKhau.BorderStyle = BorderStyle.None;
             txtMatKhau.Location = new Point(77, 350);
             txtMatKhau.Multiline = true;
             txtMatKhau.Name = "txtMatKhau";
@@ -122,13 +133,25 @@
             label2.TabIndex = 3;
             label2.Text = "Tên đăng nhập ";
             // 
+            // pictureBox1
+            // 
+            pictureBox1.Dock = DockStyle.Fill;
+            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
+            pictureBox1.Location = new Point(0, 0);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(383, 606);
+            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox1.TabIndex = 4;
+            pictureBox1.TabStop = false;
+            // 
             // frmDangNhap
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(891, 606);
+            Controls.Add(pictureBox1);
             Controls.Add(groupBox1);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
+            FormBorderStyle = FormBorderStyle.None;
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "frmDangNhap";
@@ -136,6 +159,7 @@
             Text = "Đăng nhập ";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
         }
 
@@ -150,5 +174,6 @@
         private Label label2;
         public TextBox txtTenDangNhap;
         public TextBox txtMatKhau;
+        private PictureBox pictureBox1;
     }
 }

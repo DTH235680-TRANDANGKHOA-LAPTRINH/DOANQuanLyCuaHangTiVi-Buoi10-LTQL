@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmHoaDon));
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
             btnXuatHoaDon = new Button();
@@ -63,52 +64,67 @@
             // 
             // btnXuatHoaDon
             // 
-            btnXuatHoaDon.Location = new Point(794, 66);
+            btnXuatHoaDon.BackColor = Color.FromArgb(0, 192, 0);
+            btnXuatHoaDon.Image = (Image)resources.GetObject("btnXuatHoaDon.Image");
+            btnXuatHoaDon.ImageAlign = ContentAlignment.MiddleLeft;
+            btnXuatHoaDon.Location = new Point(768, 30);
             btnXuatHoaDon.Name = "btnXuatHoaDon";
-            btnXuatHoaDon.Size = new Size(203, 34);
+            btnXuatHoaDon.Size = new Size(223, 80);
             btnXuatHoaDon.TabIndex = 43;
             btnXuatHoaDon.Text = "Xuất hóa đơn...";
-            btnXuatHoaDon.UseVisualStyleBackColor = true;
+            btnXuatHoaDon.UseVisualStyleBackColor = false;
             btnXuatHoaDon.Click += btnXuatHoaDon_Click;
             // 
             // btnLapHoaDon
             // 
-            btnLapHoaDon.Location = new Point(69, 66);
+            btnLapHoaDon.BackColor = Color.Cyan;
+            btnLapHoaDon.Image = (Image)resources.GetObject("btnLapHoaDon.Image");
+            btnLapHoaDon.ImageAlign = ContentAlignment.MiddleLeft;
+            btnLapHoaDon.Location = new Point(62, 30);
             btnLapHoaDon.Name = "btnLapHoaDon";
-            btnLapHoaDon.Size = new Size(174, 34);
+            btnLapHoaDon.Size = new Size(191, 80);
             btnLapHoaDon.TabIndex = 42;
             btnLapHoaDon.Text = "Lập Hóa Đơn";
-            btnLapHoaDon.UseVisualStyleBackColor = true;
+            btnLapHoaDon.UseVisualStyleBackColor = false;
             btnLapHoaDon.Click += btnLapHoaDon_Click;
             // 
             // btnXoa
             // 
-            btnXoa.Location = new Point(294, 66);
+            btnXoa.BackColor = Color.Red;
+            btnXoa.Image = (Image)resources.GetObject("btnXoa.Image");
+            btnXoa.ImageAlign = ContentAlignment.MiddleLeft;
+            btnXoa.Location = new Point(286, 30);
             btnXoa.Name = "btnXoa";
-            btnXoa.Size = new Size(112, 34);
+            btnXoa.Size = new Size(155, 80);
             btnXoa.TabIndex = 41;
             btnXoa.Text = "Xóa";
-            btnXoa.UseVisualStyleBackColor = true;
+            btnXoa.UseVisualStyleBackColor = false;
             btnXoa.Click += btnXoa_Click;
             // 
             // btnSua
             // 
-            btnSua.Location = new Point(468, 66);
+            btnSua.BackColor = Color.Yellow;
+            btnSua.Image = (Image)resources.GetObject("btnSua.Image");
+            btnSua.ImageAlign = ContentAlignment.MiddleLeft;
+            btnSua.Location = new Point(456, 30);
             btnSua.Name = "btnSua";
-            btnSua.Size = new Size(112, 34);
+            btnSua.Size = new Size(135, 80);
             btnSua.TabIndex = 40;
             btnSua.Text = "Sửa";
-            btnSua.UseVisualStyleBackColor = true;
+            btnSua.UseVisualStyleBackColor = false;
             btnSua.Click += btnSua_Click;
             // 
             // btnThoat
             // 
-            btnThoat.Location = new Point(621, 66);
+            btnThoat.BackColor = Color.FromArgb(128, 255, 128);
+            btnThoat.Image = (Image)resources.GetObject("btnThoat.Image");
+            btnThoat.ImageAlign = ContentAlignment.MiddleLeft;
+            btnThoat.Location = new Point(610, 30);
             btnThoat.Name = "btnThoat";
-            btnThoat.Size = new Size(112, 34);
+            btnThoat.Size = new Size(136, 80);
             btnThoat.TabIndex = 39;
             btnThoat.Text = "Thoát";
-            btnThoat.UseVisualStyleBackColor = true;
+            btnThoat.UseVisualStyleBackColor = false;
             btnThoat.Click += btnThoat_Click;
             // 
             // dgvDanhSachHD
@@ -190,7 +206,7 @@
             Controls.Add(dgvDanhSachHD);
             Controls.Add(groupBox1);
             Name = "frmHoaDon";
-            Text = "frmHoaDon";
+            Text = "Hóa Đơn";
             Load += frmHoaDon_Load;
             groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvDanhSachHD).EndInit();

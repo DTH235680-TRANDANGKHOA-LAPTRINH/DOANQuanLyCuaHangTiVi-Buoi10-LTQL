@@ -34,6 +34,12 @@
             DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             groupBox2 = new GroupBox();
             dgvDoanhThu = new DataGridView();
+            ColMaTiVi = new DataGridViewTextBoxColumn();
+            ColTenTiVi = new DataGridViewTextBoxColumn();
+            ColKhuyenMai = new DataGridViewTextBoxColumn();
+            ColSoLuong = new DataGridViewTextBoxColumn();
+            ColDonGia = new DataGridViewTextBoxColumn();
+            ColThanhTien = new DataGridViewTextBoxColumn();
             label8 = new Label();
             txtThuHoaDon = new TextBox();
             label1 = new Label();
@@ -56,12 +62,6 @@
             label10 = new Label();
             txtChiNhapHang = new TextBox();
             label5 = new Label();
-            ColMaTiVi = new DataGridViewTextBoxColumn();
-            ColTenTiVi = new DataGridViewTextBoxColumn();
-            ColKhuyenMai = new DataGridViewTextBoxColumn();
-            ColSoLuong = new DataGridViewTextBoxColumn();
-            ColDonGia = new DataGridViewTextBoxColumn();
-            ColThanhTien = new DataGridViewTextBoxColumn();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvDoanhThu).BeginInit();
             groupBox1.SuspendLayout();
@@ -96,6 +96,66 @@
             dgvDoanhThu.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvDoanhThu.Size = new Size(1574, 247);
             dgvDoanhThu.TabIndex = 9;
+            // 
+            // ColMaTiVi
+            // 
+            ColMaTiVi.DataPropertyName = "MaTiVi";
+            ColMaTiVi.HeaderText = "Mã TiVi";
+            ColMaTiVi.MinimumWidth = 8;
+            ColMaTiVi.Name = "ColMaTiVi";
+            ColMaTiVi.ReadOnly = true;
+            // 
+            // ColTenTiVi
+            // 
+            ColTenTiVi.DataPropertyName = "TenTiVi";
+            ColTenTiVi.HeaderText = "Tên TiVi";
+            ColTenTiVi.MinimumWidth = 8;
+            ColTenTiVi.Name = "ColTenTiVi";
+            ColTenTiVi.ReadOnly = true;
+            // 
+            // ColKhuyenMai
+            // 
+            ColKhuyenMai.DataPropertyName = "KhuyenMai";
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.Format = "N0";
+            ColKhuyenMai.DefaultCellStyle = dataGridViewCellStyle1;
+            ColKhuyenMai.HeaderText = "Khuyến Mãi";
+            ColKhuyenMai.MinimumWidth = 8;
+            ColKhuyenMai.Name = "ColKhuyenMai";
+            ColKhuyenMai.ReadOnly = true;
+            // 
+            // ColSoLuong
+            // 
+            ColSoLuong.DataPropertyName = "SoLuong";
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle2.Format = "N0";
+            ColSoLuong.DefaultCellStyle = dataGridViewCellStyle2;
+            ColSoLuong.HeaderText = "Số Lượng ";
+            ColSoLuong.MinimumWidth = 8;
+            ColSoLuong.Name = "ColSoLuong";
+            ColSoLuong.ReadOnly = true;
+            // 
+            // ColDonGia
+            // 
+            ColDonGia.DataPropertyName = "DonGia";
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle3.Format = "N0";
+            ColDonGia.DefaultCellStyle = dataGridViewCellStyle3;
+            ColDonGia.HeaderText = "Đơn Gía";
+            ColDonGia.MinimumWidth = 8;
+            ColDonGia.Name = "ColDonGia";
+            ColDonGia.ReadOnly = true;
+            // 
+            // ColThanhTien
+            // 
+            ColThanhTien.DataPropertyName = "ThanhTien";
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle4.Format = "N0";
+            ColThanhTien.DefaultCellStyle = dataGridViewCellStyle4;
+            ColThanhTien.HeaderText = "Thành Tiền ";
+            ColThanhTien.MinimumWidth = 8;
+            ColThanhTien.Name = "ColThanhTien";
+            ColThanhTien.ReadOnly = true;
             // 
             // label8
             // 
@@ -150,6 +210,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.BackColor = Color.FromArgb(192, 255, 255);
             groupBox1.Controls.Add(txtTienLuong);
             groupBox1.Controls.Add(label4);
             groupBox1.Controls.Add(txtTongChiPhi);
@@ -310,66 +371,6 @@
             label5.Size = new Size(184, 25);
             label5.TabIndex = 58;
             label5.Text = "Tiền Vốn (Nhập hàng)";
-            // 
-            // ColMaTiVi
-            // 
-            ColMaTiVi.DataPropertyName = "MaTiVi";
-            ColMaTiVi.HeaderText = "Mã TiVi";
-            ColMaTiVi.MinimumWidth = 8;
-            ColMaTiVi.Name = "ColMaTiVi";
-            ColMaTiVi.ReadOnly = true;
-            // 
-            // ColTenTiVi
-            // 
-            ColTenTiVi.DataPropertyName = "TenTiVi";
-            ColTenTiVi.HeaderText = "Tên TiVi";
-            ColTenTiVi.MinimumWidth = 8;
-            ColTenTiVi.Name = "ColTenTiVi";
-            ColTenTiVi.ReadOnly = true;
-            // 
-            // ColKhuyenMai
-            // 
-            ColKhuyenMai.DataPropertyName = "KhuyenMai";
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle1.Format = "N0";
-            ColKhuyenMai.DefaultCellStyle = dataGridViewCellStyle1;
-            ColKhuyenMai.HeaderText = "Khuyến Mãi";
-            ColKhuyenMai.MinimumWidth = 8;
-            ColKhuyenMai.Name = "ColKhuyenMai";
-            ColKhuyenMai.ReadOnly = true;
-            // 
-            // ColSoLuong
-            // 
-            ColSoLuong.DataPropertyName = "SoLuong";
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle2.Format = "N0";
-            ColSoLuong.DefaultCellStyle = dataGridViewCellStyle2;
-            ColSoLuong.HeaderText = "Số Lượng ";
-            ColSoLuong.MinimumWidth = 8;
-            ColSoLuong.Name = "ColSoLuong";
-            ColSoLuong.ReadOnly = true;
-            // 
-            // ColDonGia
-            // 
-            ColDonGia.DataPropertyName = "DonGia";
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle3.Format = "N0";
-            ColDonGia.DefaultCellStyle = dataGridViewCellStyle3;
-            ColDonGia.HeaderText = "Đơn Gía";
-            ColDonGia.MinimumWidth = 8;
-            ColDonGia.Name = "ColDonGia";
-            ColDonGia.ReadOnly = true;
-            // 
-            // ColThanhTien
-            // 
-            ColThanhTien.DataPropertyName = "ThanhTien";
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle4.Format = "N0";
-            ColThanhTien.DefaultCellStyle = dataGridViewCellStyle4;
-            ColThanhTien.HeaderText = "Thành Tiền ";
-            ColThanhTien.MinimumWidth = 8;
-            ColThanhTien.Name = "ColThanhTien";
-            ColThanhTien.ReadOnly = true;
             // 
             // frmThongKeDoanhThu
             // 

@@ -69,7 +69,7 @@
             // 
             // panel1
             // 
-            panel1.BackColor = Color.SkyBlue;
+            panel1.BackColor = Color.FromArgb(224, 224, 224);
             panel1.Controls.Add(btnChonAnh);
             panel1.Controls.Add(picAnhMinhHoa);
             panel1.Controls.Add(cboHangSanXuat);
@@ -151,9 +151,9 @@
             btnThoat.BackColor = Color.Lime;
             btnThoat.Image = (Image)resources.GetObject("btnThoat.Image");
             btnThoat.ImageAlign = ContentAlignment.MiddleLeft;
-            btnThoat.Location = new Point(907, 143);
+            btnThoat.Location = new Point(952, 143);
             btnThoat.Name = "btnThoat";
-            btnThoat.Size = new Size(115, 44);
+            btnThoat.Size = new Size(153, 59);
             btnThoat.TabIndex = 17;
             btnThoat.Text = "Thoát";
             btnThoat.UseVisualStyleBackColor = false;
@@ -164,9 +164,9 @@
             btnHuyBo.BackColor = Color.FromArgb(255, 128, 0);
             btnHuyBo.Image = (Image)resources.GetObject("btnHuyBo.Image");
             btnHuyBo.ImageAlign = ContentAlignment.MiddleLeft;
-            btnHuyBo.Location = new Point(759, 143);
+            btnHuyBo.Location = new Point(775, 143);
             btnHuyBo.Name = "btnHuyBo";
-            btnHuyBo.Size = new Size(133, 44);
+            btnHuyBo.Size = new Size(171, 59);
             btnHuyBo.TabIndex = 16;
             btnHuyBo.Text = "Hủy Bỏ";
             btnHuyBo.UseVisualStyleBackColor = false;
@@ -177,9 +177,9 @@
             btnLuu.BackColor = Color.FromArgb(192, 0, 192);
             btnLuu.Image = (Image)resources.GetObject("btnLuu.Image");
             btnLuu.ImageAlign = ContentAlignment.MiddleLeft;
-            btnLuu.Location = new Point(610, 143);
+            btnLuu.Location = new Point(598, 143);
             btnLuu.Name = "btnLuu";
-            btnLuu.Size = new Size(133, 44);
+            btnLuu.Size = new Size(171, 59);
             btnLuu.TabIndex = 15;
             btnLuu.Text = "Lưu";
             btnLuu.UseVisualStyleBackColor = false;
@@ -190,9 +190,9 @@
             btnSua.BackColor = Color.Yellow;
             btnSua.Image = (Image)resources.GetObject("btnSua.Image");
             btnSua.ImageAlign = ContentAlignment.MiddleLeft;
-            btnSua.Location = new Point(461, 143);
+            btnSua.Location = new Point(429, 143);
             btnSua.Name = "btnSua";
-            btnSua.Size = new Size(125, 44);
+            btnSua.Size = new Size(163, 59);
             btnSua.TabIndex = 14;
             btnSua.Text = "Sửa";
             btnSua.UseVisualStyleBackColor = false;
@@ -203,9 +203,9 @@
             btnXoa.BackColor = Color.Red;
             btnXoa.Image = (Image)resources.GetObject("btnXoa.Image");
             btnXoa.ImageAlign = ContentAlignment.MiddleLeft;
-            btnXoa.Location = new Point(294, 143);
+            btnXoa.Location = new Point(246, 143);
             btnXoa.Name = "btnXoa";
-            btnXoa.Size = new Size(125, 44);
+            btnXoa.Size = new Size(163, 59);
             btnXoa.TabIndex = 13;
             btnXoa.Text = "Xóa";
             btnXoa.UseVisualStyleBackColor = false;
@@ -307,9 +307,9 @@
             btnThem.ForeColor = Color.FromArgb(0, 0, 192);
             btnThem.Image = (Image)resources.GetObject("btnThem.Image");
             btnThem.ImageAlign = ContentAlignment.MiddleLeft;
-            btnThem.Location = new Point(115, 143);
+            btnThem.Location = new Point(57, 143);
             btnThem.Name = "btnThem";
-            btnThem.Size = new Size(130, 44);
+            btnThem.Size = new Size(168, 59);
             btnThem.TabIndex = 0;
             btnThem.Text = "Thêm";
             btnThem.UseVisualStyleBackColor = false;

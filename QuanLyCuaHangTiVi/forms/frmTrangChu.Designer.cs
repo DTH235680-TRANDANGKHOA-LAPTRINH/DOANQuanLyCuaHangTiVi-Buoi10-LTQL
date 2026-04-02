@@ -17,6 +17,7 @@
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmTrangChu));
             groupBox1 = new GroupBox();
             tableLayoutPanel1 = new TableLayoutPanel();
             btnQuanLyTiVi = new Button();
@@ -34,9 +35,12 @@
             lblTrangThai = new ToolStripStatusLabel();
             toolStripStatusLabel4 = new ToolStripStatusLabel();
             panelContent = new Panel();
+            pictureBox1 = new PictureBox();
             groupBox1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             statusStrip1.SuspendLayout();
+            panelContent.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // groupBox1
@@ -287,11 +291,22 @@
             // 
             // panelContent
             // 
+            panelContent.Controls.Add(pictureBox1);
             panelContent.Dock = DockStyle.Fill;
             panelContent.Location = new Point(208, 0);
             panelContent.Name = "panelContent";
             panelContent.Size = new Size(1716, 535);
             panelContent.TabIndex = 4;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.BackgroundImage = (Image)resources.GetObject("pictureBox1.BackgroundImage");
+            pictureBox1.Dock = DockStyle.Fill;
+            pictureBox1.Location = new Point(0, 0);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(1716, 535);
+            pictureBox1.TabIndex = 0;
+            pictureBox1.TabStop = false;
             // 
             // frmTrangChu
             // 
@@ -309,6 +324,8 @@
             tableLayoutPanel1.ResumeLayout(false);
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
+            panelContent.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -334,5 +351,6 @@
         public Button btnTroGiup;
         public Button btnDangXuat;
         private Panel panelContent;
+        private PictureBox pictureBox1;
     }
 }

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmChiTietTraGop));
             groupBox3 = new GroupBox();
             dgvChiTiet = new DataGridView();
             lblTieuDe = new Label();
@@ -67,6 +68,7 @@
             // lblTieuDe
             // 
             lblTieuDe.AutoSize = true;
+            lblTieuDe.ForeColor = Color.FromArgb(64, 64, 64);
             lblTieuDe.Location = new Point(624, 31);
             lblTieuDe.Name = "lblTieuDe";
             lblTieuDe.Size = new Size(300, 25);
@@ -75,28 +77,35 @@
             // 
             // btnThoat
             // 
-            btnThoat.Location = new Point(1002, 99);
+            btnThoat.BackColor = Color.FromArgb(255, 128, 128);
+            btnThoat.Image = (Image)resources.GetObject("btnThoat.Image");
+            btnThoat.ImageAlign = ContentAlignment.MiddleLeft;
+            btnThoat.Location = new Point(993, 90);
             btnThoat.Name = "btnThoat";
-            btnThoat.Size = new Size(112, 34);
+            btnThoat.Size = new Size(147, 60);
             btnThoat.TabIndex = 41;
             btnThoat.Text = "Thoát";
-            btnThoat.UseVisualStyleBackColor = true;
+            btnThoat.UseVisualStyleBackColor = false;
             btnThoat.Click += btnThoat_Click;
             // 
             // btnThuTien
             // 
+            btnThuTien.BackColor = Color.Cyan;
+            btnThuTien.Image = (Image)resources.GetObject("btnThuTien.Image");
+            btnThuTien.ImageAlign = ContentAlignment.MiddleLeft;
             btnThuTien.Location = new Point(481, 90);
             btnThuTien.Name = "btnThuTien";
-            btnThuTien.Size = new Size(112, 34);
+            btnThuTien.Size = new Size(196, 60);
             btnThuTien.TabIndex = 40;
             btnThuTien.Text = "Thu Tiền Kỳ Này";
-            btnThuTien.UseVisualStyleBackColor = true;
+            btnThuTien.UseVisualStyleBackColor = false;
             btnThuTien.Click += btnThuTien_Click;
             // 
             // frmChiTietTraGop
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(128, 255, 128);
             ClientSize = new Size(1704, 450);
             Controls.Add(btnThoat);
             Controls.Add(btnThuTien);
