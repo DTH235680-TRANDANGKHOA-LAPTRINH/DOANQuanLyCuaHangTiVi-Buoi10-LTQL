@@ -27,84 +27,65 @@ namespace QuanLyCuaHangTiVi.forms
 
             try
             {
-                // ==========================================
-                // 1. TÍNH DOANH THU THỰC TẾ
-                // ==========================================
+                // Lấy danh sách Hóa Đơn ID thuộc diện Trả Góp để phân loại
+                var listMaHoaDonTraGop = db.TraGops.Select(tg => tg.MaHoaDon).ToList();
 
-                // 1.1 Doanh thu bán đứt 
+                // ==========================================
+                // 1. TÍNH DOANH THU BÁN ĐỨT
+                // ==========================================
                 var queryHoaDon = db.HoaDonChiTiets.Where(ct => ct.HoaDon.NgayLap.Year == nam);
                 if (thang > 0)
                     queryHoaDon = queryHoaDon.Where(ct => ct.HoaDon.NgayLap.Month == thang);
 
                 var dsHoaDon = queryHoaDon.ToList();
-                decimal thuHoaDon = dsHoaDon.Any() ? dsHoaDon.Sum(ct => (ct.SoLuongBan * ct.DonGiaBan) - (ct.KhuyenMai ?? 0)) : 0;
 
-                // 1.2 Doanh thu trả góp
+                // Tổng doanh thu bán đứt (Loại trừ các hóa đơn nằm trong bảng TraGop)
+                decimal thuBanDut = dsHoaDon
+                    .Where(ct => !listMaHoaDonTraGop.Contains(ct.HoaDonID))
+                    .Sum(ct => (ct.SoLuongBan * ct.DonGiaBan) - (ct.KhuyenMai ?? 0));
+
+                // ==========================================
+                // 2. TÍNH DOANH THU TRẢ GÓP (Đã đóng & Chưa đóng)
+                // ==========================================
                 var queryTraGop = db.TraGops.Where(tg => tg.HoaDon.NgayLap.Year == nam);
                 if (thang > 0)
                     queryTraGop = queryTraGop.Where(tg => tg.HoaDon.NgayLap.Month == thang);
 
+                // 2.1 Tiền trả trước của các hợp đồng trả góp
                 decimal thuTraTruoc = queryTraGop.Any() ? queryTraGop.Sum(tg => tg.SoTienTraTruoc) : 0;
 
-                var queryChiTietTraGop = db.ChiTietTraGops.Where(ct => ct.DaThanhToan == true && ct.NgayCanDong.Year == nam);
+                // 2.2 Chi tiết từng kỳ trả góp
+                var queryChiTietTraGop = db.ChiTietTraGops.Where(ct => ct.NgayCanDong.Year == nam);
                 if (thang > 0)
                     queryChiTietTraGop = queryChiTietTraGop.Where(ct => ct.NgayCanDong.Month == thang);
 
-                decimal thuTienGop = queryChiTietTraGop.Any() ? queryChiTietTraGop.Sum(ct => ct.TongTienDong) : 0;
+                var dsChiTietTraGop = queryChiTietTraGop.ToList();
 
-                decimal tongThuTraGop = thuTraTruoc + thuTienGop;
-                decimal tongDoanhThu = thuHoaDon + tongThuTraGop;
+                // Tiền đã thu trong kỳ (gồm trả trước + tiền thực tế đã đóng các kỳ)
+                decimal thuTraGopDaDong = thuTraTruoc + (dsChiTietTraGop.Any() ? dsChiTietTraGop.Sum(ct => ct.SoTienDaDong) : 0);
 
-                // ==========================================
-                // 2. TÍNH CHI PHÍ (GIÁ VỐN HÀNG BÁN & VẬN HÀNH)
-                // ==========================================
-                var dictGiaNhap = db.ChiTietPhieuNhaps
-                                    .GroupBy(ct => ct.MaTiVi)
-                                    .ToDictionary(g => g.Key, g => g.FirstOrDefault()?.DonGiaNhap ?? 0);
-
-                decimal chiPhiGiaVon = 0;
-                foreach (var item in dsHoaDon)
-                {
-                    decimal giaNhap = dictGiaNhap.ContainsKey(item.MaTiVi) ? dictGiaNhap[item.MaTiVi] : 0;
-                    chiPhiGiaVon += item.SoLuongBan * giaNhap;
-                }
-
-                decimal luongMotThang = db.NhanViens.Any() ? db.NhanViens.Sum(nv => nv.Luong) : 0;
-                int soThangTinhLuong = (thang == 0) ? (nam == DateTime.Now.Year ? DateTime.Now.Month : 12) : 1;
-                decimal chiLuong = luongMotThang * soThangTinhLuong;
-
-                decimal chiVanHanh = 0;
-                if (thang > 0)
-                {
-                    var cpVH = db.ChiPhiVanHanhs.FirstOrDefault(cp => cp.Thang == thang && cp.Nam == nam);
-                    chiVanHanh = cpVH != null ? cpVH.TongChiPhiVanHanh : 0;
-                }
-                else
-                {
-                    var dsChiPhiNam = db.ChiPhiVanHanhs.Where(cp => cp.Nam == nam).ToList();
-                    chiVanHanh = dsChiPhiNam.Any() ? dsChiPhiNam.Sum(x => x.TongChiPhiVanHanh) : 0;
-                }
-
-                decimal tongChi = chiPhiGiaVon + chiLuong + chiVanHanh;
+                // Tiền chưa thu trong kỳ = Tổng cần đóng (gốc + lãi + phạt) - Tổng đã đóng
+                decimal thuTraGopChuaDong = dsChiTietTraGop.Any()
+                    ? dsChiTietTraGop.Sum(ct => Math.Max(0, (ct.TongTienDong + ct.SoTienPhat) - ct.SoTienDaDong))
+                    : 0;
 
                 // ==========================================
-                // 3. TÍNH LỢI NHUẬN & ĐỔ DỮ LIỆU LÊN GIAO DIỆN
+                // 3. TỔNG KẾT VÀ HIỂN THỊ LÊN TEXTBOX
                 // ==========================================
-                decimal loiNhuan = tongDoanhThu - tongChi;
+                decimal tongDoanhThuThucTe = thuBanDut + thuTraGopDaDong;
 
-                txtThuHoaDon.Text = thuHoaDon.ToString("N0") + " VNĐ";
-                txtThuTraGop.Text = tongThuTraGop.ToString("N0") + " VNĐ";
-                txtTongDoanhThu.Text = tongDoanhThu.ToString("N0") + " VNĐ";
+                // Thay tên các textbox bên dưới cho khớp với tên (Name) bạn đã đặt trên giao diện Design
+                txtThuHoaDon.Text = thuBanDut.ToString("N0"); // Thu Hóa Đơn (Bán đứt)
 
-                txtChiNhapHang.Text = chiPhiGiaVon.ToString("N0") + " VNĐ";
-                txtTienLuong.Text = chiLuong.ToString("N0") + " VNĐ";
-                txtTienVanHanh.Text = chiVanHanh.ToString("N0") + " VNĐ";
-                txtTongChiPhi.Text = tongChi.ToString("N0") + " VNĐ";
+                // GIẢ SỬ 3 TEXTBOX CÒN LẠI TÊN LÀ NHƯ SAU (Bạn hãy sửa lại tên nếu giao diện đặt khác)
+                 txtThuTraGopDaDong.Text = thuTraGopDaDong.ToString("N0");
+                 txtThuTraGopChuaDong.Text = thuTraGopChuaDong.ToString("N0");
+                 txtTongDoanhThu.Text = tongDoanhThuThucTe.ToString("N0");
 
-                txtLoiNhuan.Text = loiNhuan.ToString("N0") + " VNĐ";
-                txtLoiNhuan.ForeColor = (loiNhuan < 0) ? Color.Red : Color.Green;
 
-                // Kéo danh sách tivi từ database lên làm từ điển để tra cứu nhanh
+                // ==========================================
+                // 4. ĐỔ DỮ LIỆU LÊN DATAGRIDVIEW (THÊM CỘT HÌNH THỨC)
+                // ==========================================
                 var dictTenTiVi = db.QuanLyTiVis.ToDictionary(tv => tv.MaTiVi, tv => tv.TenTiVi);
 
                 var dsTiviDaBan = dsHoaDon.Select(ct => new
@@ -114,17 +95,15 @@ namespace QuanLyCuaHangTiVi.forms
                     KhuyenMai = ct.KhuyenMai ?? 0,
                     SoLuong = ct.SoLuongBan,
                     DonGia = ct.DonGiaBan,
-                    ThanhTien = (ct.SoLuongBan * ct.DonGiaBan) - (ct.KhuyenMai ?? 0)
+                    ThanhTien = (ct.SoLuongBan * ct.DonGiaBan) - (ct.KhuyenMai ?? 0),
+
+                    // XÁC ĐỊNH HÌNH THỨC DỰA VÀO VIỆC HOÁ ĐƠN CÓ TRONG BẢNG TRẢ GÓP HAY KHÔNG
+                    HinhThuc = listMaHoaDonTraGop.Contains(ct.HoaDonID) ? "Trả Góp" : "Bán Đứt"
                 }).ToList();
 
-                // ====================================================
-                // CHỈ GIỮ LẠI 3 DÒNG NÀY CHO DATAGRIDVIEW
-                // ====================================================
-                dgvDoanhThu.AutoGenerateColumns = false; // Tắt tự động đẻ cột
+                dgvDoanhThu.AutoGenerateColumns = false; // Bắt buộc để DataGridView nhận đúng mapping
                 dgvDoanhThu.DataSource = null;           // Làm sạch dữ liệu cũ
                 dgvDoanhThu.DataSource = dsTiviDaBan;    // Đổ dữ liệu mới vào
-                // ====================================================
-
             }
             catch (Exception ex)
             {

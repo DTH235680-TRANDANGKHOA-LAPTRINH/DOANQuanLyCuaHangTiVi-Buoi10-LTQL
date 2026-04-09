@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -26,21 +27,17 @@ namespace QuanLyCuaHangTiVi.forms
         // 2. Hàm điều khiển trạng thái các nút và ô nhập
         private void BatTatChucNang(bool dangThaoTac)
         {
-            // dangThaoTac = true: Đang nhập liệu (Hiện Lưu/Hủy)
-            // dangThaoTac = false: Đang xem (Hiện Thêm/Sửa/Xóa)
-
             btnLuu.Enabled = dangThaoTac;
             btnHuyBo.Enabled = dangThaoTac;
 
-            // Các ô nhập liệu (Riêng mã nhân viên chỉ được nhập khi Thêm)
             txtMaNhanVien.Enabled = dangThaoTac && isThem;
             txtHoTenNhanVien.Enabled = dangThaoTac;
             txtTenDangNhap.Enabled = dangThaoTac;
             txtMatKhau.Enabled = dangThaoTac;
             cboQuyenHan.Enabled = dangThaoTac;
             txtLuong.Enabled = dangThaoTac;
+            dtpNgaySinh.Enabled = dangThaoTac; // Bật tắt ô ngày sinh
 
-            // Các nút chức năng chính
             btnThem.Enabled = !dangThaoTac;
             btnSua.Enabled = !dangThaoTac;
             btnXoa.Enabled = !dangThaoTac;
@@ -55,62 +52,89 @@ namespace QuanLyCuaHangTiVi.forms
         {
             BatTatChucNang(false);
 
-            // Tải dữ liệu từ CSDL
             var danhSachNV = db.NhanViens.ToList();
 
-            // Tạo BindingSource
             BindingSource bindingSource = new BindingSource();
             bindingSource.DataSource = danhSachNV;
 
-            // Gán dữ liệu cho DataGridView
             dgvDanhSachNhanVien.AutoGenerateColumns = false;
             dgvDanhSachNhanVien.DataSource = bindingSource;
-
-            // Chỉnh chiều cao dòng giống bên TiVi
             dgvDanhSachNhanVien.RowTemplate.Height = 80;
 
-            // Nếu bạn muốn ẩn cột văn bản "AnhChanDung" tự động hiện ra
             if (dgvDanhSachNhanVien.Columns.Contains("AnhChanDung"))
                 dgvDanhSachNhanVien.Columns["AnhChanDung"].Visible = false;
 
-            // --- CẤU HÌNH CỘT CHO LƯỚI ---
-            // (Bạn nhớ kiểm tra Property Name của các cột trong giao diện Design nhé)
             if (dgvDanhSachNhanVien.Columns.Contains("MaNhanVien")) dgvDanhSachNhanVien.Columns["MaNhanVien"].DataPropertyName = "MaNhanVien";
             if (dgvDanhSachNhanVien.Columns.Contains("HoTen")) dgvDanhSachNhanVien.Columns["HoTen"].DataPropertyName = "HoTenNhanVien";
+            if (dgvDanhSachNhanVien.Columns.Contains("NgaySinh")) dgvDanhSachNhanVien.Columns["NgaySinh"].DataPropertyName = "NgaySinh"; // Cột ngày sinh trên lưới
             if (dgvDanhSachNhanVien.Columns.Contains("TenDangNhap")) dgvDanhSachNhanVien.Columns["TenDangNhap"].DataPropertyName = "TenDangNhap";
             if (dgvDanhSachNhanVien.Columns.Contains("QuyenHan")) dgvDanhSachNhanVien.Columns["QuyenHan"].DataPropertyName = "QuyenHan";
             if (dgvDanhSachNhanVien.Columns.Contains("CotLuong")) dgvDanhSachNhanVien.Columns["CotLuong"].DataPropertyName = "Luong";
-            // Không map cột Mật Khẩu để tránh lộ mã băm (hash) lên lưới
 
-            // --- DATABINDING (Tự đổ dữ liệu vào TextBox) ---
+            // --- DATABINDING ---
             txtMaNhanVien.DataBindings.Clear();
             txtHoTenNhanVien.DataBindings.Clear();
             txtTenDangNhap.DataBindings.Clear();
             cboQuyenHan.DataBindings.Clear();
             txtLuong.DataBindings.Clear();
+            dtpNgaySinh.DataBindings.Clear(); // Xóa binding cũ
 
             txtMaNhanVien.DataBindings.Add("Text", bindingSource, "MaNhanVien", true, DataSourceUpdateMode.Never);
             txtHoTenNhanVien.DataBindings.Add("Text", bindingSource, "HoTenNhanVien", true, DataSourceUpdateMode.Never);
             txtTenDangNhap.DataBindings.Add("Text", bindingSource, "TenDangNhap", true, DataSourceUpdateMode.Never);
             cboQuyenHan.DataBindings.Add("Text", bindingSource, "QuyenHan", true, DataSourceUpdateMode.Never);
             txtLuong.DataBindings.Add("Text", bindingSource, "Luong", true, DataSourceUpdateMode.Never);
+            dtpNgaySinh.DataBindings.Add("Value", bindingSource, "NgaySinh", true, DataSourceUpdateMode.Never); // Bind ngày sinh
 
-            // Cố tình làm rỗng ô mật khẩu khi click vào các dòng (vì nó đã mã hóa, hiển thị ra cũng không đọc được)
+            txtMaNhanVien.Leave -= txtMaNhanVien_Leave;
+            txtMaNhanVien.Leave += txtMaNhanVien_Leave;
+
             txtMatKhau.Clear();
         }
+        private void txtMaNhanVien_Leave(object sender, EventArgs e)
+        {
+            // Chỉ kiểm tra khi đang ở chế độ THÊM và ô mã không để trống
+            if (isThem && !string.IsNullOrWhiteSpace(txtMaNhanVien.Text))
+            {
+                string maNhap = txtMaNhanVien.Text.Trim();
 
+                // Truy vấn xem mã này đã tồn tại trong bảng NhanVien chưa
+                bool trungMa = db.NhanViens.Any(x => x.MaNhanVien == maNhap);
+
+                if (trungMa)
+                {
+                    MessageBox.Show($"Mã nhân viên '{maNhap}' đã tồn tại! Vui lòng chọn mã khác.",
+                                    "Cảnh báo trùng mã",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning);
+
+                    txtMaNhanVien.Clear(); // Xóa nội dung đã nhập
+                    txtMaNhanVien.Focus(); // Đưa con trỏ quay lại ô Mã
+                }
+            }
+        }
+        private void ChiNhapSo_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+                MessageBox.Show("Vui lòng chỉ nhập số!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
         private void btnThem_Click(object sender, EventArgs e)
         {
             isThem = true;
             BatTatChucNang(true);
 
-            // Xóa trắng để nhập mới
             txtMaNhanVien.Clear();
             txtHoTenNhanVien.Clear();
             txtTenDangNhap.Clear();
             txtMatKhau.Clear();
             cboQuyenHan.SelectedIndex = -1;
             txtLuong.Clear();
+
+            // Mặc định nhân viên mới là 18 tuổi
+            dtpNgaySinh.Value = DateTime.Now.AddYears(-18);
 
             txtMaNhanVien.Focus();
         }
@@ -143,7 +167,7 @@ namespace QuanLyCuaHangTiVi.forms
                         db.NhanViens.Remove(nvXoa);
                         db.SaveChanges();
                         MessageBox.Show("Xóa thành công!");
-                        FrmNhanVien_Load(sender, e); // Tải lại dữ liệu
+                        FrmNhanVien_Load(sender, e);
                     }
                 }
                 catch (Exception ex)
@@ -155,7 +179,6 @@ namespace QuanLyCuaHangTiVi.forms
 
         private void btnLuu_Click(object sender, EventArgs e)
         {
-            // 1. Kiểm tra các trường dữ liệu bắt buộc (Validation)
             if (string.IsNullOrWhiteSpace(txtMaNhanVien.Text))
             {
                 MessageBox.Show("Vui lòng nhập Mã Nhân Viên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -175,11 +198,20 @@ namespace QuanLyCuaHangTiVi.forms
                 return;
             }
 
-            // --- KIỂM TRA DỮ LIỆU LƯƠNG ---
+            // --- KIỂM TRA ĐỦ 18 TUỔI ---
+            int tuoi = DateTime.Now.Year - dtpNgaySinh.Value.Year;
+            if (dtpNgaySinh.Value.Date > DateTime.Now.AddYears(-tuoi)) tuoi--;
+
+            if (tuoi < 18)
+            {
+                MessageBox.Show("Nhân viên phải từ đủ 18 tuổi trở lên!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                dtpNgaySinh.Focus();
+                return;
+            }
+
             decimal luongNV = 0;
             if (!string.IsNullOrWhiteSpace(txtLuong.Text))
             {
-                // Xóa dấu phẩy/chấm nếu người dùng có nhập định dạng tiền tệ (VD: 15,000,000 -> 15000000)
                 string tienLuong = txtLuong.Text.Replace(",", "").Replace(".", "");
                 if (!decimal.TryParse(tienLuong, out luongNV))
                 {
@@ -191,9 +223,8 @@ namespace QuanLyCuaHangTiVi.forms
 
             try
             {
-                if (isThem) // TRƯỜNG HỢP THÊM MỚI
+                if (isThem)
                 {
-                    // Kiểm tra trùng mã ID trước khi thêm
                     var checkID = db.NhanViens.Find(txtMaNhanVien.Text);
                     if (checkID != null)
                     {
@@ -201,7 +232,6 @@ namespace QuanLyCuaHangTiVi.forms
                         return;
                     }
 
-                    // Bắt buộc nhập mật khẩu khi tạo tài khoản mới
                     if (string.IsNullOrWhiteSpace(txtMatKhau.Text))
                     {
                         MessageBox.Show("Nhân viên mới cần phải có mật khẩu!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -209,23 +239,19 @@ namespace QuanLyCuaHangTiVi.forms
                         return;
                     }
 
-                    // Tạo đối tượng nhân viên mới
                     NhanVien nv = new NhanVien();
                     nv.MaNhanVien = txtMaNhanVien.Text.Trim();
                     nv.HoTenNhanVien = txtHoTenNhanVien.Text.Trim();
                     nv.TenDangNhap = txtTenDangNhap.Text.Trim();
                     nv.MatKhau = txtMatKhau.Text;
                     nv.QuyenHan = cboQuyenHan.Text;
-
-                    // LƯU LƯƠNG NHÂN VIÊN
+                    nv.NgaySinh = dtpNgaySinh.Value; // Lưu Ngày Sinh
                     nv.Luong = luongNV;
-
-                    // LƯU TÊN ẢNH: Gán tên file ảnh đã chọn vào cột trong DB
                     nv.AnhChanDung = tenFileAnhNV;
 
                     db.NhanViens.Add(nv);
                 }
-                else // TRƯỜNG HỢP SỬA (UPDATE)
+                else
                 {
                     var nvSua = db.NhanViens.Find(txtMaNhanVien.Text);
                     if (nvSua != null)
@@ -233,17 +259,14 @@ namespace QuanLyCuaHangTiVi.forms
                         nvSua.HoTenNhanVien = txtHoTenNhanVien.Text.Trim();
                         nvSua.TenDangNhap = txtTenDangNhap.Text.Trim();
                         nvSua.QuyenHan = cboQuyenHan.Text;
-
-                        // CẬP NHẬT LƯƠNG NHÂN VIÊN
+                        nvSua.NgaySinh = dtpNgaySinh.Value; // Cập nhật Ngày Sinh
                         nvSua.Luong = luongNV;
 
-                        // Nếu người dùng có nhập mật khẩu mới thì mới cập nhật
                         if (!string.IsNullOrWhiteSpace(txtMatKhau.Text))
                         {
                             nvSua.MatKhau = txtMatKhau.Text;
                         }
 
-                        // CẬP NHẬT ẢNH: Chỉ cập nhật nếu người dùng có chọn ảnh mới
                         if (!string.IsNullOrEmpty(tenFileAnhNV))
                         {
                             nvSua.AnhChanDung = tenFileAnhNV;
@@ -256,17 +279,14 @@ namespace QuanLyCuaHangTiVi.forms
                     }
                 }
 
-                // Lưu tất cả thay đổi xuống Database
                 db.SaveChanges();
                 MessageBox.Show("Đã lưu thông tin nhân viên thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // Reset trạng thái Form
-                tenFileAnhNV = ""; // Reset biến tạm sau khi lưu xong
-                FrmNhanVien_Load(sender, e); // Tải lại danh sách lên lưới
+                tenFileAnhNV = "";
+                FrmNhanVien_Load(sender, e);
             }
             catch (Exception ex)
             {
-                // Hiển thị chi tiết lỗi nếu có (lỗi DB, lỗi kết nối...)
                 MessageBox.Show("Lỗi khi lưu dữ liệu: " + (ex.InnerException?.Message ?? ex.Message), "Lỗi Hệ Thống", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -291,18 +311,15 @@ namespace QuanLyCuaHangTiVi.forms
             {
                 try
                 {
-                    // Đường dẫn "nhảy" ngược ra thư mục Images của Solution Explorer
                     string projectDir = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName;
                     string thuMucAnh = Path.Combine(projectDir, "images");
 
                     if (!Directory.Exists(thuMucAnh)) Directory.CreateDirectory(thuMucAnh);
 
-                    // Lấy tên file và copy vào thư mục Images
                     tenFileAnhNV = Path.GetFileName(openFile.FileName);
                     string duongDanDich = Path.Combine(thuMucAnh, tenFileAnhNV);
                     File.Copy(openFile.FileName, duongDanDich, true);
 
-                    // Hiển thị ảnh lên Form để xem trước
                     if (picAnhNhanVien.Image != null) picAnhNhanVien.Image.Dispose();
                     picAnhNhanVien.Image = Image.FromFile(duongDanDich);
                 }
@@ -333,23 +350,19 @@ namespace QuanLyCuaHangTiVi.forms
 
         private void dgvDanhSachNhanVien_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            // Kiểm tra đúng tên cột "CotHinhAnh" mà bạn đã đặt trong Design
             if (dgvDanhSachNhanVien.Columns[e.ColumnIndex].Name == "CotHinhAnh" && e.RowIndex >= 0)
             {
-                // Lấy đối tượng nhân viên của dòng hiện tại
                 var nv = dgvDanhSachNhanVien.Rows[e.RowIndex].DataBoundItem as NhanVien;
 
                 if (nv != null && !string.IsNullOrEmpty(nv.AnhChanDung))
                 {
                     try
                     {
-                        // Đường dẫn trỏ vào folder Images trong Solution (giống code TiVi của bạn)
                         string projectDir = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName;
                         string path = Path.Combine(projectDir, "Images", nv.AnhChanDung);
 
                         if (File.Exists(path))
                         {
-                            // Dùng MemoryStream để tránh chiếm dụng file (giống hệt bên TiVi)
                             byte[] bytes = File.ReadAllBytes(path);
                             using (MemoryStream ms = new MemoryStream(bytes))
                             {

@@ -23,8 +23,7 @@ namespace QuanLyCuaHangTiVi.forms
         // Biến lưu ID của chi phí vận hành để phục vụ chức năng Sửa
         int chiPhiID_HienTai = 0;
         private void frmThongkeChiPhi_Load(object sender, EventArgs e)
-        {
-            // Mặc định gán Tháng/Năm hiện tại
+        {// Mặc định gán Tháng/Năm hiện tại
             nudThang.Value = DateTime.Now.Month;
             nudNam.Value = DateTime.Now.Year;
 
@@ -84,7 +83,29 @@ namespace QuanLyCuaHangTiVi.forms
                 dgvChiPhiLuongNhanVien.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
                 decimal tongLuongMotThang = dsNhanVien.Any() ? dsNhanVien.Sum(x => x.Luong) : 0;
-                decimal tongLuong = (thang == 0) ? (tongLuongMotThang * 12) : tongLuongMotThang;
+                decimal tongLuong = 0;
+
+                if (thang == 0) // Cả năm
+                {
+                    var cacThangBanHang = db.HoaDonChiTiets
+                                            .Where(ct => ct.HoaDon.NgayLap.Year == nam)
+                                            .Select(ct => ct.HoaDon.NgayLap.Month)
+                                            .ToList();
+
+                    var cacThangCoChiPhi = db.ChiPhiVanHanhs
+                                             .Where(cp => cp.Nam == nam)
+                                             .Select(cp => cp.Thang)
+                                             .ToList();
+
+                    int soThangHoatDong = cacThangBanHang.Concat(cacThangCoChiPhi).Distinct().Count();
+                    if (soThangHoatDong == 0) soThangHoatDong = 1;
+
+                    tongLuong = tongLuongMotThang * soThangHoatDong;
+                }
+                else // Từng tháng
+                {
+                    tongLuong = tongLuongMotThang;
+                }
                 txtTongLuong.Text = tongLuong.ToString("N0") + " VNĐ";
 
                 // --- PHẦN 3: THỐNG KÊ CHI PHÍ VẬN HÀNH ---

@@ -64,8 +64,7 @@ namespace QuanLyCuaHangTiVi.forms
         }
 
         private void frmQuanLyTiVi_Load(object sender, EventArgs e)
-        {
-            // Tạo thư mục images nếu nó chưa tồn tại để tránh lỗi
+        {// Tạo thư mục images nếu nó chưa tồn tại để tránh lỗi
             if (!Directory.Exists(imagesFolder))
             {
                 Directory.CreateDirectory(imagesFolder);
@@ -86,7 +85,10 @@ namespace QuanLyCuaHangTiVi.forms
             if (dgvDanhSachTiVi.Columns.Contains("Ten")) dgvDanhSachTiVi.Columns["Ten"].DataPropertyName = "TenTiVi";
             if (dgvDanhSachTiVi.Columns.Contains("Hang")) dgvDanhSachTiVi.Columns["Hang"].DataPropertyName = "HangSanXuat";
             if (dgvDanhSachTiVi.Columns.Contains("Nhap")) dgvDanhSachTiVi.Columns["Nhap"].DataPropertyName = "NgayTao";
-            if (dgvDanhSachTiVi.Columns.Contains("Gia")) dgvDanhSachTiVi.Columns["Gia"].DataPropertyName = "DonGiaBan";
+
+            // CỘT GIÁ HIỂN THỊ GIÁ ĐÃ GIẢM (GiaHienTai)
+            if (dgvDanhSachTiVi.Columns.Contains("Gia")) dgvDanhSachTiVi.Columns["Gia"].DataPropertyName = "GiaHienTai";
+
             if (dgvDanhSachTiVi.Columns.Contains("KM")) dgvDanhSachTiVi.Columns["KM"].DataPropertyName = "KhuyenMai";
             if (dgvDanhSachTiVi.Columns.Contains("SL")) dgvDanhSachTiVi.Columns["SL"].DataPropertyName = "SoLuongTon";
 
@@ -108,15 +110,79 @@ namespace QuanLyCuaHangTiVi.forms
             txtDonGiaBan.DataBindings.Add("Text", bindingSource, "DonGiaBan", true, DataSourceUpdateMode.Never);
             txtKhuyenMai.DataBindings.Add("Text", bindingSource, "KhuyenMai", true, DataSourceUpdateMode.Never);
             txtSoLuongTon.DataBindings.Add("Text", bindingSource, "SoLuongTon", true, DataSourceUpdateMode.Never);
-           
+
             if (dgvDanhSachTiVi.Columns.Contains("CotHinhAnh"))
             {
                 DataGridViewImageColumn imgCol = (DataGridViewImageColumn)dgvDanhSachTiVi.Columns["CotHinhAnh"];
-                imgCol.ImageLayout = DataGridViewImageCellLayout.Zoom; // Thu nhỏ ảnh vừa ô
-                imgCol.Width = 80; // Bạn có thể chỉnh độ rộng cột tại đây
+                imgCol.ImageLayout = DataGridViewImageCellLayout.Zoom;
+                imgCol.Width = 80;
+            }
+
+            // --- GẮN SỰ KIỆN RÀNG BUỘC NHẬP LIỆU ---
+            txtSoLuongTon.KeyPress += ChiNhapSo_KeyPress;
+            txtDonGiaBan.KeyPress += ChiNhapSo_KeyPress;
+            txtKhuyenMai.KeyPress += ChiNhapSo_KeyPress;
+
+            // Tính giá hiện tại tự động khi gõ
+            txtDonGiaBan.TextChanged += CapNhatGia_TextChanged;
+            txtKhuyenMai.TextChanged += CapNhatGia_TextChanged;
+
+            // KHOẢN MỚI THÊM: Kiểm tra trùng Mã TiVi ngay khi rời khỏi ô Textbox
+            txtMaTiVi.Leave += TxtMaTiVi_Leave;
+        }
+        private void TxtMaTiVi_Leave(object sender, EventArgs e)
+        {
+            // Chỉ kiểm tra trùng mã khi đang ở trạng thái Thêm Mới
+            if (xuLyThem && !string.IsNullOrWhiteSpace(txtMaTiVi.Text))
+            {
+                string maKiemTra = txtMaTiVi.Text.Trim();
+                bool daTonTai = context.QuanLyTiVis.Any(x => x.MaTiVi == maKiemTra);
+
+                if (daTonTai)
+                {
+                    MessageBox.Show($"Mã TiVi '{maKiemTra}' đã tồn tại! Vui lòng nhập một mã khác.", "Cảnh báo trùng mã", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtMaTiVi.Clear();
+                    txtMaTiVi.Focus(); // Trả lại con trỏ chuột về ô Mã TiVi bắt nhập lại
+                }
+            }
+        }
+        private void ChiNhapSo_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Cho phép các phím điều khiển (Backspace) và các phím số từ 0-9
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true; // Chặn phím
+                MessageBox.Show("Trường này chỉ được phép nhập số!", "Lỗi nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        private void TinhGiaHienTai()
+        {
+            decimal donGia = 0;
+            decimal khuyenMai = 0;
+
+            decimal.TryParse(txtDonGiaBan.Text, out donGia);
+            decimal.TryParse(txtKhuyenMai.Text, out khuyenMai);
+
+            // Kiểm tra không cho nhập khuyến mãi quá 100%
+            if (khuyenMai > 100)
+            {
+                MessageBox.Show("Khuyến mãi không được vượt quá 100%!", "Lỗi nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtKhuyenMai.Text = "100";
+                txtKhuyenMai.SelectionStart = txtKhuyenMai.Text.Length;
+                khuyenMai = 100;
+            }
+
+            decimal giaHienTai = donGia - (donGia * khuyenMai / 100);
+
+            // NẾU BẠN CÓ TẠO 1 TEXTBOX (Ví dụ: txtGiaHienTai) ĐỂ HIỂN THỊ TRÊN FORM, BỎ DẤU // DƯỚI ĐÂY:
+            // txtGiaHienTai.Text = giaHienTai.ToString("N0");
+        }
+
+        private void CapNhatGia_TextChanged(object sender, EventArgs e)
+        {
+            TinhGiaHienTai();
+        }
         private void btnThem_Click(object sender, EventArgs e)
         {
             xuLyThem = true;
@@ -173,14 +239,12 @@ namespace QuanLyCuaHangTiVi.forms
 
                     try
                     {
-                        // Dùng imagesFolder
                         string path = Path.Combine(imagesFolder, fileAnhCanXoa);
                         if (File.Exists(path))
                         {
                             if (picAnhMinhHoa.Image != null) picAnhMinhHoa.Image.Dispose();
                             picAnhMinhHoa.Image = null;
 
-                            // Xóa luôn trong kho tạm để dọn dẹp RAM
                             if (khoAnhTam.ContainsKey(fileAnhCanXoa))
                             {
                                 khoAnhTam[fileAnhCanXoa]?.Dispose();
@@ -190,7 +254,7 @@ namespace QuanLyCuaHangTiVi.forms
                             File.Delete(path);
                         }
                     }
-                    catch { /* Bỏ qua nếu file đang bị khóa bởi tiến trình khác */ }
+                    catch { }
 
                     frmQuanLyTiVi_Load(sender, e);
                 }
@@ -207,13 +271,18 @@ namespace QuanLyCuaHangTiVi.forms
 
             if (xuLyThem == true && string.IsNullOrEmpty(tenFileAnhHienTai))
             {
-                MessageBox.Show("Bạn chưa chọn ảnh minh họa cho TiVi. Vui lòng chọn ảnh trước khi lưu!", "Yêu cầu chọn ảnh", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Bạn chưa chọn ảnh minh họa cho TiVi. Vui lòng chọn ảnh trước khi lưu!", "Yêu cầu", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 btnChonAnh.Focus();
                 return;
             }
 
             try
             {
+                // Lấy dữ liệu an toàn để tránh crash khi ô nhập số bị bỏ trống
+                decimal donGia = string.IsNullOrWhiteSpace(txtDonGiaBan.Text) ? 0 : decimal.Parse(txtDonGiaBan.Text);
+                decimal km = string.IsNullOrWhiteSpace(txtKhuyenMai.Text) ? 0 : decimal.Parse(txtKhuyenMai.Text);
+                int sl = string.IsNullOrWhiteSpace(txtSoLuongTon.Text) ? 0 : int.Parse(txtSoLuongTon.Text);
+
                 if (xuLyThem)
                 {
                     if (context.QuanLyTiVis.Any(x => x.MaTiVi == txtMaTiVi.Text))
@@ -226,9 +295,9 @@ namespace QuanLyCuaHangTiVi.forms
                     tv.TenTiVi = txtTenTiVi.Text;
                     tv.HangSanXuat = cboHangSanXuat.Text;
                     tv.NgayTao = dtpNgayTao.Value;
-                    tv.DonGiaBan = decimal.Parse(txtDonGiaBan.Text);
-                    tv.KhuyenMai = decimal.Parse(txtKhuyenMai.Text);
-                    tv.SoLuongTon = int.Parse(txtSoLuongTon.Text);
+                    tv.DonGiaBan = donGia;
+                    tv.KhuyenMai = km;
+                    tv.SoLuongTon = sl;
                     tv.AnhMinhHoa = tenFileAnhHienTai;
 
                     context.QuanLyTiVis.Add(tv);
@@ -240,8 +309,9 @@ namespace QuanLyCuaHangTiVi.forms
                     {
                         tvSua.TenTiVi = txtTenTiVi.Text;
                         tvSua.HangSanXuat = cboHangSanXuat.Text;
-                        tvSua.DonGiaBan = decimal.Parse(txtDonGiaBan.Text);
-                        tvSua.SoLuongTon = int.Parse(txtSoLuongTon.Text);
+                        tvSua.DonGiaBan = donGia;
+                        tvSua.KhuyenMai = km;
+                        tvSua.SoLuongTon = sl;
 
                         if (!string.IsNullOrEmpty(tenFileAnhHienTai))
                         {
@@ -296,10 +366,9 @@ namespace QuanLyCuaHangTiVi.forms
                         picAnhMinhHoa.Image = new Bitmap(imgTemp);
                     }
 
-                    // Cập nhật lại kho tạm nếu người dùng chọn đè ảnh mới trùng tên ảnh cũ
                     if (khoAnhTam.ContainsKey(tenFileAnhHienTai))
                     {
-                        khoAnhTam[tenFileAnhHienTai]?.Dispose(); // Dọn ảnh cũ trong cache
+                        khoAnhTam[tenFileAnhHienTai]?.Dispose();
                         using (Image imgTemp = Image.FromFile(duongDanDich))
                         {
                             khoAnhTam[tenFileAnhHienTai] = new Bitmap(imgTemp);
@@ -320,7 +389,6 @@ namespace QuanLyCuaHangTiVi.forms
                 var tv = dgvDanhSachTiVi.Rows[e.RowIndex].DataBoundItem as QuanLyTiVi;
                 if (tv != null && !string.IsNullOrEmpty(tv.AnhMinhHoa))
                 {
-                    // Lấy ảnh từ cache (khoAnhTam)
                     if (!khoAnhTam.ContainsKey(tv.AnhMinhHoa))
                     {
                         string path = Path.Combine(imagesFolder, tv.AnhMinhHoa);

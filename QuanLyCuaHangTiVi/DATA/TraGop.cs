@@ -13,14 +13,16 @@ namespace QuanLyCuaHangTiVi.DATA
     public class TraGop
     {
         [Key]
-        [StringLength(20)]
-        public string MaTraGop { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)] // Đánh dấu cho DB tự động tăng số
+        public int MaTraGop { get; set; }
 
-        // ✅ SỬA: Xóa bỏ [StringLength(20)] vì kiểu int không dùng thuộc tính này
         public int MaHoaDon { get; set; }
 
-        [ForeignKey("MaHoaDon")] // ✅ Nên thêm thuộc tính này để tường minh
-        public virtual HoaDon HoaDon { get; set; }
+        [ForeignKey("MaHoaDon")]
+        public virtual HoaDon HoaDon { get; set; } = null!;
+
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal PhiPhuThuDinhKy { get; set; }
 
         [Column(TypeName = "decimal(18, 2)")]
         public decimal LaiSuat { get; set; }
@@ -32,7 +34,7 @@ namespace QuanLyCuaHangTiVi.DATA
         public decimal SoTienConNo { get; set; }
 
         public int KyHanTra { get; set; }
-        // Thêm dòng này vào bên trong class TraGop, ngay dưới các thuộc tính cũ
+
         public virtual ICollection<ChiTietTraGop> ChiTietTraGops { get; set; } = new List<ChiTietTraGop>();
     }
 }

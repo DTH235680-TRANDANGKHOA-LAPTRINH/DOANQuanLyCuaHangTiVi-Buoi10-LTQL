@@ -12,8 +12,8 @@ using QuanLyCuaHangTiVi.DATA;
 namespace QuanLyCuaHangTiVi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260312025207_SyncDatabaseStructure")]
-    partial class SyncDatabaseStructure
+    [Migration("20260404090059_KhoiTaoLaiToanBo")]
+    partial class KhoiTaoLaiToanBo
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,37 @@ namespace QuanLyCuaHangTiVi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.ChiPhiVanHanh", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("Nam")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Thang")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TienBaoTri")
+                        .HasColumnType("decimal(18, 0)");
+
+                    b.Property<decimal>("TienDien")
+                        .HasColumnType("decimal(18, 0)");
+
+                    b.Property<decimal>("TienMatBang")
+                        .HasColumnType("decimal(18, 0)");
+
+                    b.Property<decimal>("TienNuoc")
+                        .HasColumnType("decimal(18, 0)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("ChiPhiVanHanh");
+                });
 
             modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.ChiTietPhieuNhap", b =>
                 {
@@ -56,6 +87,52 @@ namespace QuanLyCuaHangTiVi.Migrations
                     b.HasIndex("MaTiVi");
 
                     b.ToTable("ChiTietPhieuNhap");
+                });
+
+            modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.ChiTietTraGop", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("KyThu")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaTraGop")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("NgayCanDong")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("NgayThucDong")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NguoiNopTien")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("SoTienDaDong")
+                        .HasColumnType("decimal(18, 0)");
+
+                    b.Property<decimal>("SoTienGoc")
+                        .HasColumnType("decimal(18, 0)");
+
+                    b.Property<decimal>("SoTienLai")
+                        .HasColumnType("decimal(18, 0)");
+
+                    b.Property<decimal>("SoTienPhat")
+                        .HasColumnType("decimal(18, 0)");
+
+                    b.Property<decimal>("TongTienDong")
+                        .HasColumnType("decimal(18, 0)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("MaTraGop");
+
+                    b.ToTable("ChiTietTraGop");
                 });
 
             modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.HoaDon", b =>
@@ -174,10 +251,16 @@ namespace QuanLyCuaHangTiVi.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<decimal>("Luong")
+                        .HasColumnType("decimal(18, 0)");
+
                     b.Property<string>("MatKhau")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("NgaySinh")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("QuyenHan")
                         .IsRequired()
@@ -263,9 +346,11 @@ namespace QuanLyCuaHangTiVi.Migrations
 
             modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.TraGop", b =>
                 {
-                    b.Property<string>("MaTraGop")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                    b.Property<int>("MaTraGop")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaTraGop"));
 
                     b.Property<int>("KyHanTra")
                         .HasColumnType("int");
@@ -275,6 +360,9 @@ namespace QuanLyCuaHangTiVi.Migrations
 
                     b.Property<int>("MaHoaDon")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("PhiPhuThuDinhKy")
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("SoTienConNo")
                         .HasColumnType("decimal(18, 0)");
@@ -306,6 +394,17 @@ namespace QuanLyCuaHangTiVi.Migrations
                     b.Navigation("PhieuNhap");
 
                     b.Navigation("QuanLyTiVi");
+                });
+
+            modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.ChiTietTraGop", b =>
+                {
+                    b.HasOne("QuanLyCuaHangTiVi.DATA.TraGop", "TraGop")
+                        .WithMany("ChiTietTraGops")
+                        .HasForeignKey("MaTraGop")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TraGop");
                 });
 
             modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.HoaDon", b =>
@@ -391,6 +490,11 @@ namespace QuanLyCuaHangTiVi.Migrations
                     b.Navigation("ChiTietPhieuNhaps");
 
                     b.Navigation("HoaDonChiTiets");
+                });
+
+            modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.TraGop", b =>
+                {
+                    b.Navigation("ChiTietTraGops");
                 });
 #pragma warning restore 612, 618
         }

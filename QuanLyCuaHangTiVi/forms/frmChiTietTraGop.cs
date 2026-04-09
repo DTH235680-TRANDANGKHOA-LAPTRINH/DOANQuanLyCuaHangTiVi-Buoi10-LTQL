@@ -13,83 +13,208 @@ namespace QuanLyCuaHangTiVi.forms
 {
     public partial class frmChiTietTraGop : Form
     {
-
         AppDbContext db = new AppDbContext();
-        private string _maTraGop = "";
-        public frmChiTietTraGop(string maTraGopTruyenVao)
+        private int _maTraGop;
+        public frmChiTietTraGop(int maTraGop)
         {
             InitializeComponent();
-            _maTraGop = maTraGopTruyenVao;
+            _maTraGop = maTraGop;
+
         }
 
         private void frmChiTietTraGop_Load(object sender, EventArgs e)
         {
-            lblTieuDe.Text = "LỊCH TRÌNH TRẢ GÓP - HỢP ĐỒNG: " + _maTraGop;
+            lblTieuDe.Text = "LỊCH TRÌNH TRẢ GÓP SỐ: " + _maTraGop.ToString();
+            dtpNgayNop.Value = DateTime.Now;
             LoadDanhSach();
+            txtSoTienNop.KeyPress += ChiNhapSo_KeyPress;
+            txtSoTienNop.TextChanged += txtSoTienNop_TextChanged;
         }
+
         private void LoadDanhSach()
         {
-            var ds = db.ChiTietTraGops
-                       .Where(ct => ct.MaTraGop == _maTraGop)
-                       .OrderBy(ct => ct.KyThu) // Xếp từ tháng 1, 2, 3...
-                       .ToList();
-
+            // Dòng này bây giờ sẽ không còn báo lỗi đỏ (CS0019) nữa vì cả 2 đều là int
+            var ds = db.ChiTietTraGops.Where(ct => ct.MaTraGop == _maTraGop).OrderBy(ct => ct.KyThu).ToList();
             dgvChiTiet.DataSource = ds;
 
-            // Chỉnh lại UI cột cho chuyên nghiệp
             if (dgvChiTiet.Columns["TraGop"] != null) dgvChiTiet.Columns["TraGop"].Visible = false;
             if (dgvChiTiet.Columns["MaTraGop"] != null) dgvChiTiet.Columns["MaTraGop"].Visible = false;
             if (dgvChiTiet.Columns["ID"] != null) dgvChiTiet.Columns["ID"].Visible = false;
 
-            dgvChiTiet.Columns["KyThu"].HeaderText = "Kỳ Thứ";
-            dgvChiTiet.Columns["NgayCanDong"].HeaderText = "Ngày Phải Đóng";
-            dgvChiTiet.Columns["SoTienGoc"].HeaderText = "Tiền Gốc";
-            dgvChiTiet.Columns["SoTienLai"].HeaderText = "Tiền Lãi";
-            dgvChiTiet.Columns["TongTienDong"].HeaderText = "TỔNG THU";
-            dgvChiTiet.Columns["DaThanhToan"].HeaderText = "Đã Nộp Tiền?";
+            dgvChiTiet.Columns["KyThu"].HeaderText = "Kỳ";
+            dgvChiTiet.Columns["NgayCanDong"].HeaderText = "Hạn Chót";
+            dgvChiTiet.Columns["TongTienDong"].HeaderText = "Cần Thu (Gốc+Lãi)";
+            dgvChiTiet.Columns["SoTienPhat"].HeaderText = "Tiền Phạt";
+            dgvChiTiet.Columns["SoTienDaDong"].HeaderText = "Thực Tế Khách Đưa";
+            dgvChiTiet.Columns["NgayThucDong"].HeaderText = "Ngày Khách Nộp";
+            dgvChiTiet.Columns["NguoiNopTien"].HeaderText = "Ai Đi Nộp?";
+            dgvChiTiet.Columns["TrangThai"].HeaderText = "Tình Trạng";
 
-            // Định dạng ngày tháng và tiền tệ
-            dgvChiTiet.Columns["NgayCanDong"].DefaultCellStyle.Format = "dd/MM/yyyy";
-            dgvChiTiet.Columns["SoTienGoc"].DefaultCellStyle.Format = "N0";
-            dgvChiTiet.Columns["SoTienLai"].DefaultCellStyle.Format = "N0";
             dgvChiTiet.Columns["TongTienDong"].DefaultCellStyle.Format = "N0";
+            dgvChiTiet.Columns["SoTienDaDong"].DefaultCellStyle.Format = "N0";
+            dgvChiTiet.Columns["SoTienPhat"].DefaultCellStyle.Format = "N0";
+            dgvChiTiet.Columns["NgayCanDong"].DefaultCellStyle.Format = "dd/MM/yyyy";
+            dgvChiTiet.Columns["NgayThucDong"].DefaultCellStyle.Format = "dd/MM/yyyy";
         }
+        private void ChiNhapSo_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Cho phép phím Backspace (xóa ngược) và các phím số từ 0-9
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true; // Chặn phím không cho gõ vào
+                MessageBox.Show("Số tiền nộp chỉ được phép nhập số!", "Lỗi nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private void txtSoTienNop_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(txtSoTienNop.Text)) return;
 
+                // Xóa dấu phẩy cũ, chuyển sang số rồi định dạng lại thành chuỗi có dấu phẩy
+                decimal value = decimal.Parse(txtSoTienNop.Text.Replace(",", ""));
+                txtSoTienNop.Text = value.ToString("N0");
+
+                // Đưa con trỏ chuột về cuối dòng sau khi định dạng
+                txtSoTienNop.SelectionStart = txtSoTienNop.Text.Length;
+            }
+            catch { }
+        }
+        private void dgvChiTiet_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dgvChiTiet.Rows[e.RowIndex].DataBoundItem is ChiTietTraGop row)
+            {
+                decimal tienCanThu = row.TongTienDong + row.SoTienPhat;
+
+                // 1. Nếu ĐÃ ĐÓNG ĐỦ (hoặc dư) -> Xanh lá
+                if (row.SoTienDaDong >= tienCanThu)
+                {
+                    e.CellStyle.BackColor = Color.LightGreen;
+                }
+                // 2. Nếu CÒN THIẾU và ĐÃ QUÁ HẠN -> Đỏ (Bất kể trước đó có đóng mớ nào hay chưa)
+                else if (DateTime.Now.Date >= row.NgayCanDong.Date)
+                {
+                    e.CellStyle.BackColor = Color.LightCoral;
+                    e.CellStyle.ForeColor = Color.White;
+                }
+                // 3. Nếu CÒN THIẾU nhưng VẪN TRONG HẠN -> Vàng
+                else if (row.SoTienDaDong > 0 && row.SoTienDaDong < tienCanThu)
+                {
+                    e.CellStyle.BackColor = Color.LightYellow;
+                }
+            }
+        }
         private void btnThuTien_Click(object sender, EventArgs e)
         {
-            if (dgvChiTiet.CurrentRow == null)
+            // 1. Kiểm tra đầu vào
+            if (!decimal.TryParse(txtSoTienNop.Text.Replace(",", ""), out decimal soTienKhachDua) || soTienKhachDua <= 0)
             {
-                MessageBox.Show("Vui lòng chọn 1 kỳ (tháng) trên lưới để thu tiền!", "Nhắc nhở", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng nhập số tiền khách nộp hợp lệ!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Lấy ID của dòng đang chọn trên DataGridView
-            int idKyDong = (int)dgvChiTiet.CurrentRow.Cells["ID"].Value;
-            var kyGop = db.ChiTietTraGops.Find(idKyDong);
-
-            if (kyGop != null)
+            if (dgvChiTiet.CurrentRow == null || dgvChiTiet.CurrentRow.DataBoundItem == null)
             {
-                if (kyGop.DaThanhToan)
+                MessageBox.Show("Vui lòng click chọn Kỳ (Tháng) mà khách muốn nộp tiền trên danh sách!", "Hướng dẫn", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // Lấy ra kỳ mà nhân viên đang click chuột vào
+            var kyDangChon = dgvChiTiet.CurrentRow.DataBoundItem as ChiTietTraGop;
+            DateTime ngayKhachNop = dtpNgayNop.Value.Date;
+            string nguoiNop = string.IsNullOrWhiteSpace(txtNguoiNop.Text) ? "Chủ hợp đồng" : txtNguoiNop.Text;
+
+            decimal soTienDu = soTienKhachDua;
+
+            // =====================================================================
+            // BƯỚC 1: ƯU TIÊN ĐẮP TIỀN VÀO KỲ ĐANG ĐƯỢC CHỌN TRÊN LƯỚI TRƯỚC
+            // =====================================================================
+
+            // Tính tiền phạt (nếu có) cho kỳ đang chọn
+            if (ngayKhachNop > kyDangChon.NgayCanDong.Date && kyDangChon.SoTienDaDong < (kyDangChon.TongTienDong + kyDangChon.SoTienPhat))
+            {
+                int soNgayTre = (ngayKhachNop - kyDangChon.NgayCanDong.Date).Days;
+                kyDangChon.SoTienPhat = soNgayTre * 10000;
+            }
+
+            decimal tienCanThuKyNay = (kyDangChon.TongTienDong + kyDangChon.SoTienPhat) - kyDangChon.SoTienDaDong;
+
+            if (tienCanThuKyNay > 0)
+            {
+                // Rót tiền vào kỳ này (đổ tối đa bằng số tiền kỳ này cần)
+                decimal tienDapVao = Math.Min(soTienDu, tienCanThuKyNay);
+                kyDangChon.SoTienDaDong += tienDapVao;
+                kyDangChon.NgayThucDong = ngayKhachNop;
+                kyDangChon.NguoiNopTien = nguoiNop;
+
+                // Trừ đi số tiền đã đập vào. Nếu khách nộp thiếu, soTienDu sẽ về 0.
+                soTienDu -= tienDapVao;
+            }
+
+            // =====================================================================
+            // BƯỚC 2: NẾU KỲ VỪA CHỌN ĐÃ ĐÓNG ĐỦ MÀ KHÁCH VẪN ĐƯA DƯ TIỀN
+            // Mang phần dư đi quét TẤT CẢ các kỳ (ưu tiên từ kỳ 1 trở đi) để trả nợ
+            // =====================================================================
+            if (soTienDu > 0)
+            {
+                // Lấy tất cả các kỳ khác kỳ đang chọn, sắp xếp từ kỳ 1 đến kỳ cuối
+                var cacKyKhac = db.ChiTietTraGops
+                                  .Where(ct => ct.MaTraGop == _maTraGop && ct.KyThu != kyDangChon.KyThu)
+                                  .OrderBy(ct => ct.KyThu)
+                                  .ToList();
+
+                foreach (var kyGop in cacKyKhac)
                 {
-                    MessageBox.Show("Kỳ này khách hàng ĐÃ ĐÓNG TIỀN rồi, không thể thu lần nữa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                    return;
-                }
+                    if (soTienDu <= 0) break; // Hết tiền dư thì dừng
 
-                // Hỏi lại cho chắc
-                DialogResult xacNhan = MessageBox.Show(
-                    $"Xác nhận thu {kyGop.TongTienDong:N0} VNĐ cho kỳ số {kyGop.KyThu}?",
-                    "Thu tiền",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    // Tính tiền phạt cho kỳ này (nếu có)
+                    if (ngayKhachNop > kyGop.NgayCanDong.Date && kyGop.SoTienDaDong < (kyGop.TongTienDong + kyGop.SoTienPhat))
+                    {
+                        int soNgayTre = (ngayKhachNop - kyGop.NgayCanDong.Date).Days;
+                        kyGop.SoTienPhat = soNgayTre * 10000;
+                    }
 
-                if (xacNhan == DialogResult.Yes)
-                {
-                    kyGop.DaThanhToan = true; // Bật cờ đã thanh toán
-                    db.SaveChanges(); // Lưu vào SQL
+                    decimal canThu = (kyGop.TongTienDong + kyGop.SoTienPhat) - kyGop.SoTienDaDong;
 
-                    MessageBox.Show("Đã thu tiền thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LoadDanhSach(); // Refresh lại lưới
+                    // Nếu kỳ này đóng đủ rồi thì bỏ qua sang kỳ tiếp
+                    if (canThu <= 0) continue;
+
+                    // Lấy phần tiền dư rót vào kỳ này
+                    decimal tienDapVao = Math.Min(soTienDu, canThu);
+                    kyGop.SoTienDaDong += tienDapVao;
+                    kyGop.NgayThucDong = ngayKhachNop;
+                    kyGop.NguoiNopTien = nguoiNop;
+
+                    soTienDu -= tienDapVao;
                 }
             }
+
+            // =====================================================================
+            // BƯỚC 3: QUÉT SẠCH SẼ MỌI KỲ MÀ VẪN CÒN DƯ TIỀN (Khách trả trước hạn)
+            // Đẩy hết tiền thừa vào kỳ cuối cùng
+            // =====================================================================
+            if (soTienDu > 0)
+            {
+                var kyCuoi = db.ChiTietTraGops
+                               .Where(ct => ct.MaTraGop == _maTraGop)
+                               .OrderByDescending(ct => ct.KyThu)
+                               .FirstOrDefault();
+                if (kyCuoi != null)
+                {
+                    kyCuoi.SoTienDaDong += soTienDu;
+                    kyCuoi.NgayThucDong = ngayKhachNop;
+                    kyCuoi.NguoiNopTien = nguoiNop;
+                }
+                MessageBox.Show($"Khách thanh toán dư {soTienDu:N0} VNĐ.\nTiền thừa được cộng dồn vào kỳ cuối cùng!", "Lưu ý");
+            }
+
+            // 4. Lưu Database
+            db.SaveChanges();
+            MessageBox.Show("Thu tiền thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            LoadDanhSach();
+            txtSoTienNop.Clear();
+            txtNguoiNop.Clear();
         }
 
         private void btnThoat_Click(object sender, EventArgs e)

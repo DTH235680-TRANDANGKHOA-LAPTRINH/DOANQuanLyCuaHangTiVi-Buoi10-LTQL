@@ -29,10 +29,13 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmChiTietHoaDon));
-            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
+            btnSua = new Button();
+            lblTrangThaiTiVi = new Label();
+            btnThemKhachNhanh = new Button();
             txtGhiChu = new TextBox();
             label1 = new Label();
             txtKhuyenMai = new TextBox();
@@ -67,6 +70,9 @@
             // groupBox1
             // 
             groupBox1.BackColor = Color.FromArgb(224, 224, 224);
+            groupBox1.Controls.Add(btnSua);
+            groupBox1.Controls.Add(lblTrangThaiTiVi);
+            groupBox1.Controls.Add(btnThemKhachNhanh);
             groupBox1.Controls.Add(txtGhiChu);
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(txtKhuyenMai);
@@ -94,6 +100,37 @@
             groupBox1.TabIndex = 3;
             groupBox1.TabStop = false;
             groupBox1.Text = "Thông Tin Chi Tiết Hóa Đơn";
+            // 
+            // btnSua
+            // 
+            btnSua.BackColor = Color.Yellow;
+            btnSua.Image = (Image)resources.GetObject("btnSua.Image");
+            btnSua.ImageAlign = ContentAlignment.MiddleLeft;
+            btnSua.Location = new Point(506, 191);
+            btnSua.Name = "btnSua";
+            btnSua.Size = new Size(122, 45);
+            btnSua.TabIndex = 54;
+            btnSua.Text = "Sửa";
+            btnSua.UseVisualStyleBackColor = false;
+            btnSua.Click += btnSua_Click;
+            // 
+            // lblTrangThaiTiVi
+            // 
+            lblTrangThaiTiVi.AutoSize = true;
+            lblTrangThaiTiVi.Location = new Point(60, 149);
+            lblTrangThaiTiVi.Name = "lblTrangThaiTiVi";
+            lblTrangThaiTiVi.Size = new Size(0, 25);
+            lblTrangThaiTiVi.TabIndex = 53;
+            // 
+            // btnThemKhachNhanh
+            // 
+            btnThemKhachNhanh.Location = new Point(1090, 191);
+            btnThemKhachNhanh.Name = "btnThemKhachNhanh";
+            btnThemKhachNhanh.Size = new Size(245, 45);
+            btnThemKhachNhanh.TabIndex = 52;
+            btnThemKhachNhanh.Text = "Thêm Khách Hàng ";
+            btnThemKhachNhanh.UseVisualStyleBackColor = true;
+            btnThemKhachNhanh.Click += btnThemKhachNhanh_Click;
             // 
             // txtGhiChu
             // 
@@ -191,7 +228,7 @@
             btnThoat.BackColor = Color.FromArgb(128, 255, 128);
             btnThoat.Image = (Image)resources.GetObject("btnThoat.Image");
             btnThoat.ImageAlign = ContentAlignment.MiddleLeft;
-            btnThoat.Location = new Point(657, 188);
+            btnThoat.Location = new Point(807, 191);
             btnThoat.Name = "btnThoat";
             btnThoat.Size = new Size(120, 48);
             btnThoat.TabIndex = 39;
@@ -204,7 +241,7 @@
             btnLuu.BackColor = Color.Yellow;
             btnLuu.Image = (Image)resources.GetObject("btnLuu.Image");
             btnLuu.ImageAlign = ContentAlignment.MiddleLeft;
-            btnLuu.Location = new Point(515, 188);
+            btnLuu.Location = new Point(655, 189);
             btnLuu.Name = "btnLuu";
             btnLuu.Size = new Size(117, 48);
             btnLuu.TabIndex = 37;
@@ -326,9 +363,9 @@
             // colSoLuong
             // 
             colSoLuong.DataPropertyName = "SoLuongBan";
-            dataGridViewCellStyle10.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle10.Format = "N0";
-            colSoLuong.DefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.Format = "N0";
+            colSoLuong.DefaultCellStyle = dataGridViewCellStyle1;
             colSoLuong.HeaderText = "Số Lượng";
             colSoLuong.MinimumWidth = 8;
             colSoLuong.Name = "colSoLuong";
@@ -337,9 +374,9 @@
             // colDonGia
             // 
             colDonGia.DataPropertyName = "DonGiaBan";
-            dataGridViewCellStyle11.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle11.Format = "N0";
-            colDonGia.DefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle2.Format = "N0";
+            colDonGia.DefaultCellStyle = dataGridViewCellStyle2;
             colDonGia.HeaderText = "Đơn Gía";
             colDonGia.MinimumWidth = 8;
             colDonGia.Name = "colDonGia";
@@ -348,9 +385,9 @@
             // colThanhTien
             // 
             colThanhTien.DataPropertyName = "ThanhTien";
-            dataGridViewCellStyle12.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle12.Format = "N0";
-            colThanhTien.DefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle3.Format = "N0";
+            colThanhTien.DefaultCellStyle = dataGridViewCellStyle3;
             colThanhTien.HeaderText = "Thành Tiền";
             colThanhTien.MinimumWidth = 8;
             colThanhTien.Name = "colThanhTien";
@@ -402,5 +439,8 @@
         private DataGridViewTextBoxColumn colSoLuong;
         private DataGridViewTextBoxColumn colDonGia;
         private DataGridViewTextBoxColumn colThanhTien;
+        private Label lblTrangThaiTiVi;
+        private Button btnThemKhachNhanh;
+        private Button btnSua;
     }
 }

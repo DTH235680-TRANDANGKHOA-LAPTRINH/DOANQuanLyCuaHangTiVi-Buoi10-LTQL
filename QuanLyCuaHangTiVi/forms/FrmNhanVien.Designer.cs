@@ -31,6 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmNhanVien));
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             panel1 = new Panel();
+            label7 = new Label();
+            dtpNgaySinh = new DateTimePicker();
             txtLuong = new TextBox();
             label6 = new Label();
             btnChonAnh = new Button();
@@ -53,6 +55,7 @@
             btnThem = new Button();
             dgvDanhSachNhanVien = new DataGridView();
             MaNhanVien = new DataGridViewTextBoxColumn();
+            Colngaysinh = new DataGridViewTextBoxColumn();
             HoTenNhanVien = new DataGridViewTextBoxColumn();
             TenDangNhap = new DataGridViewTextBoxColumn();
             MatKhau = new DataGridViewTextBoxColumn();
@@ -67,6 +70,8 @@
             // panel1
             // 
             panel1.BackColor = Color.FromArgb(192, 192, 255);
+            panel1.Controls.Add(label7);
+            panel1.Controls.Add(dtpNgaySinh);
             panel1.Controls.Add(txtLuong);
             panel1.Controls.Add(label6);
             panel1.Controls.Add(btnChonAnh);
@@ -92,6 +97,22 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(1351, 233);
             panel1.TabIndex = 1;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(287, 123);
+            label7.Name = "label7";
+            label7.Size = new Size(191, 25);
+            label7.TabIndex = 24;
+            label7.Text = "Ngày/tháng/năm sinh ";
+            // 
+            // dtpNgaySinh
+            // 
+            dtpNgaySinh.Location = new Point(502, 123);
+            dtpNgaySinh.Name = "dtpNgaySinh";
+            dtpNgaySinh.Size = new Size(300, 31);
+            dtpNgaySinh.TabIndex = 23;
             // 
             // txtLuong
             // 
@@ -134,7 +155,7 @@
             // cboQuyenHan
             // 
             cboQuyenHan.FormattingEnabled = true;
-            cboQuyenHan.Items.AddRange(new object[] { "Quản Lý", "Nhân Viên " });
+            cboQuyenHan.Items.AddRange(new object[] { "Quản Lý", "Nhân Viên Xuất Sắc", "Nhân Viên Trả Góp", "Nhân Viên " });
             cboQuyenHan.Location = new Point(781, 17);
             cboQuyenHan.Name = "cboQuyenHan";
             cboQuyenHan.Size = new Size(182, 33);
@@ -145,7 +166,7 @@
             btnThoat.BackColor = Color.FromArgb(255, 192, 192);
             btnThoat.Image = (Image)resources.GetObject("btnThoat.Image");
             btnThoat.ImageAlign = ContentAlignment.MiddleLeft;
-            btnThoat.Location = new Point(845, 146);
+            btnThoat.Location = new Point(843, 160);
             btnThoat.Name = "btnThoat";
             btnThoat.Size = new Size(126, 67);
             btnThoat.TabIndex = 17;
@@ -158,7 +179,7 @@
             btnHuyBo.BackColor = Color.FromArgb(128, 255, 255);
             btnHuyBo.Image = (Image)resources.GetObject("btnHuyBo.Image");
             btnHuyBo.ImageAlign = ContentAlignment.MiddleLeft;
-            btnHuyBo.Location = new Point(690, 146);
+            btnHuyBo.Location = new Point(688, 160);
             btnHuyBo.Name = "btnHuyBo";
             btnHuyBo.Size = new Size(131, 67);
             btnHuyBo.TabIndex = 16;
@@ -171,7 +192,7 @@
             btnLuu.BackColor = Color.Fuchsia;
             btnLuu.Image = (Image)resources.GetObject("btnLuu.Image");
             btnLuu.ImageAlign = ContentAlignment.MiddleLeft;
-            btnLuu.Location = new Point(525, 146);
+            btnLuu.Location = new Point(523, 160);
             btnLuu.Name = "btnLuu";
             btnLuu.Size = new Size(141, 67);
             btnLuu.TabIndex = 15;
@@ -184,7 +205,7 @@
             btnSua.BackColor = Color.FromArgb(255, 255, 128);
             btnSua.Image = (Image)resources.GetObject("btnSua.Image");
             btnSua.ImageAlign = ContentAlignment.MiddleLeft;
-            btnSua.Location = new Point(360, 146);
+            btnSua.Location = new Point(358, 160);
             btnSua.Name = "btnSua";
             btnSua.Size = new Size(141, 67);
             btnSua.TabIndex = 14;
@@ -197,7 +218,7 @@
             btnXoa.BackColor = Color.Red;
             btnXoa.Image = (Image)resources.GetObject("btnXoa.Image");
             btnXoa.ImageAlign = ContentAlignment.MiddleLeft;
-            btnXoa.Location = new Point(193, 146);
+            btnXoa.Location = new Point(191, 160);
             btnXoa.Name = "btnXoa";
             btnXoa.Size = new Size(143, 67);
             btnXoa.TabIndex = 13;
@@ -284,7 +305,7 @@
             btnThem.BackColor = Color.FromArgb(128, 255, 128);
             btnThem.Image = (Image)resources.GetObject("btnThem.Image");
             btnThem.ImageAlign = ContentAlignment.MiddleLeft;
-            btnThem.Location = new Point(25, 143);
+            btnThem.Location = new Point(23, 157);
             btnThem.Name = "btnThem";
             btnThem.Size = new Size(144, 67);
             btnThem.TabIndex = 0;
@@ -299,7 +320,7 @@
             dgvDanhSachNhanVien.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvDanhSachNhanVien.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvDanhSachNhanVien.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvDanhSachNhanVien.Columns.AddRange(new DataGridViewColumn[] { MaNhanVien, HoTenNhanVien, TenDangNhap, MatKhau, QuyenHan, ColLuong, CotHinhAnh });
+            dgvDanhSachNhanVien.Columns.AddRange(new DataGridViewColumn[] { MaNhanVien, Colngaysinh, HoTenNhanVien, TenDangNhap, MatKhau, QuyenHan, ColLuong, CotHinhAnh });
             dgvDanhSachNhanVien.Location = new Point(0, 233);
             dgvDanhSachNhanVien.MultiSelect = false;
             dgvDanhSachNhanVien.Name = "dgvDanhSachNhanVien";
@@ -315,6 +336,13 @@
             MaNhanVien.HeaderText = "Mã Nhân Viên";
             MaNhanVien.MinimumWidth = 8;
             MaNhanVien.Name = "MaNhanVien";
+            // 
+            // Colngaysinh
+            // 
+            Colngaysinh.DataPropertyName = "NgaySinh";
+            Colngaysinh.HeaderText = "Ngày Sinh";
+            Colngaysinh.MinimumWidth = 8;
+            Colngaysinh.Name = "Colngaysinh";
             // 
             // HoTenNhanVien
             // 
@@ -404,7 +432,10 @@
         private PictureBox picAnhNhanVien;
         private TextBox txtLuong;
         private Label label6;
+        private Label label7;
+        private DateTimePicker dtpNgaySinh;
         private DataGridViewTextBoxColumn MaNhanVien;
+        private DataGridViewTextBoxColumn Colngaysinh;
         private DataGridViewTextBoxColumn HoTenNhanVien;
         private DataGridViewTextBoxColumn TenDangNhap;
         private DataGridViewTextBoxColumn MatKhau;

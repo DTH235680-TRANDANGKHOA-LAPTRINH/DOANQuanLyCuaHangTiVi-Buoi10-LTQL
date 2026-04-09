@@ -18,6 +18,9 @@ namespace QuanLyCuaHangTiVi.DATA
         [StringLength(100)]
         public string HoTenNhanVien { get; set; }
 
+        // BỔ SUNG THÊM DÒNG NÀY ĐỂ LƯU NGÀY SINH
+        public DateTime NgaySinh { get; set; }
+
         [Required]
         [StringLength(50)]
         public string TenDangNhap { get; set; }
@@ -27,11 +30,11 @@ namespace QuanLyCuaHangTiVi.DATA
         public string MatKhau { get; set; }
 
         [StringLength(50)]
-        public string QuyenHan { get; set; } // Ví dụ: "Quản lý", "Nhân viên"
-        public string AnhChanDung { get; set; } // Thêm dòng này vào class NhanVien
+        public string QuyenHan { get; set; }
+        public string AnhChanDung { get; set; }
 
         [Column(TypeName = "decimal(18, 0)")]
-        public decimal Luong { get; set; } // Bạn có thể dùng kiểu int hoặc double tùy nhu cầu
+        public decimal Luong { get; set; }
 
         // Quan hệ
         public virtual ICollection<HoaDon> HoaDons { get; set; }

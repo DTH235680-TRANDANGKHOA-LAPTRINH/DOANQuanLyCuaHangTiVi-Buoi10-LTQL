@@ -249,8 +249,9 @@
             btnTroGiup.Name = "btnTroGiup";
             btnTroGiup.Size = new Size(158, 36);
             btnTroGiup.TabIndex = 32;
-            btnTroGiup.Text = "Trợ Giúp";
+            btnTroGiup.Text = "Báo Cáo";
             btnTroGiup.UseVisualStyleBackColor = false;
+            btnTroGiup.Click += btnTroGiup_Click;
             // 
             // btnDangXuat
             // 

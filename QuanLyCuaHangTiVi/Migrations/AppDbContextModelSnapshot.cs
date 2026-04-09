@@ -94,24 +94,32 @@ namespace QuanLyCuaHangTiVi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<bool>("DaThanhToan")
-                        .HasColumnType("bit");
-
                     b.Property<int>("KyThu")
                         .HasColumnType("int");
 
-                    b.Property<string>("MaTraGop")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                    b.Property<int>("MaTraGop")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("NgayCanDong")
                         .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("NgayThucDong")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NguoiNopTien")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("SoTienDaDong")
+                        .HasColumnType("decimal(18, 0)");
 
                     b.Property<decimal>("SoTienGoc")
                         .HasColumnType("decimal(18, 0)");
 
                     b.Property<decimal>("SoTienLai")
+                        .HasColumnType("decimal(18, 0)");
+
+                    b.Property<decimal>("SoTienPhat")
                         .HasColumnType("decimal(18, 0)");
 
                     b.Property<decimal>("TongTienDong")
@@ -248,6 +256,9 @@ namespace QuanLyCuaHangTiVi.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<DateTime>("NgaySinh")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("QuyenHan")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -332,9 +343,11 @@ namespace QuanLyCuaHangTiVi.Migrations
 
             modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.TraGop", b =>
                 {
-                    b.Property<string>("MaTraGop")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                    b.Property<int>("MaTraGop")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaTraGop"));
 
                     b.Property<int>("KyHanTra")
                         .HasColumnType("int");
@@ -344,6 +357,9 @@ namespace QuanLyCuaHangTiVi.Migrations
 
                     b.Property<int>("MaHoaDon")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("PhiPhuThuDinhKy")
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("SoTienConNo")
                         .HasColumnType("decimal(18, 0)");

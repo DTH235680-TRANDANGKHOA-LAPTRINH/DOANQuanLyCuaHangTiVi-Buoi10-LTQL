@@ -25,13 +25,12 @@ namespace QuanLyCuaHangTiVi.forms
 
         // Các biến lưu Form con để tránh mở nhiều lần
         FrmNhanVien frmNV = null;
-        // frmQuanLyTiVi frmTiVi = null; // Khai báo thêm các form khác ở đây...
 
 
         private void frmTrangChu_Load(object sender, EventArgs e)
         {
             ChuaDangNhap(); // Khóa menu trước
-            ThucHienDangNhap(); // Hiện bảng đăng nhập sau
+            ThucHienDangNhap();
         }
         private void ThucHienDangNhap()
         {
@@ -43,8 +42,27 @@ namespace QuanLyCuaHangTiVi.forms
                     var nv = TaiKhoanHienTai.NhanVienDangNhap;
                     if (nv != null)
                     {
-                        if (nv.QuyenHan == "Quản lý") QuyenQuanLy(nv.HoTenNhanVien);
-                        else QuyenNhanVien(nv.HoTenNhanVien);
+                        // Lấy quyền hạn, loại bỏ khoảng trắng thừa để so sánh cho chính xác
+                        string quyen = nv.QuyenHan != null ? nv.QuyenHan.Trim() : "";
+
+                        // --- PHÂN QUYỀN THEO 4 MỨC ---
+                        if (quyen == "Quản lý")
+                        {
+                            QuyenQuanLy(nv.HoTenNhanVien);
+                        }
+                        else if (quyen == "Nhân viên trả góp")
+                        {
+                            QuyenNhanVienTraGop(nv.HoTenNhanVien);
+                        }
+                        else if (quyen == "Nhân viên nhập hàng")
+                        {
+                            QuyenNhanVienNhapHang(nv.HoTenNhanVien);
+                        }
+                        else
+                        {
+                            // Mặc định là quyền nhân viên thường
+                            QuyenNhanVien(nv.HoTenNhanVien);
+                        }
                     }
                 }
                 else
@@ -55,7 +73,7 @@ namespace QuanLyCuaHangTiVi.forms
             }
         }
 
-        // --- PHÂN QUYỀN (Duyệt trong tableLayoutPanel1) ---
+        // --- HÀM SET TRẠNG THÁI MENU (Duyệt trong tableLayoutPanel1) ---
         private void SetMenuStatus(bool status)
         {
             // Trong hình bạn gửi, các nút nằm trong tableLayoutPanel1
@@ -70,6 +88,7 @@ namespace QuanLyCuaHangTiVi.forms
             }
         }
 
+        // --- CÁC HÀM CẤP QUYỀN ---
         public void ChuaDangNhap()
         {
             SetMenuStatus(false);
@@ -78,23 +97,52 @@ namespace QuanLyCuaHangTiVi.forms
 
         public void QuyenQuanLy(string hoTen)
         {
-            SetMenuStatus(true);
+            SetMenuStatus(true); // Mở khóa toàn bộ
             lblTrangThai.Text = "Quản lý: " + hoTen;
             this.Text = "Trang Chủ - Quản Lý TiVi | Quản lý: " + hoTen;
         }
 
         public void QuyenNhanVien(string hoTen)
         {
-            SetMenuStatus(true);
-            // Khóa các chức năng của Quản lý
-            btnNhanVien.Enabled = false;
-            btnTKChiPhi.Enabled = false;
-            btnTKDoanhThu.Enabled = false;
-           
+            SetMenuStatus(false); // Khóa toàn bộ
+
+            // 1. Nhân viên chỉ lập hóa đơn
+            btnHoaDon.Enabled = true;
+
+            // (Tùy chọn: Mở thêm nút Khách Hàng / TiVi nếu cần tra cứu thông tin để lập hóa đơn)
+             btnKhachHang.Enabled = true;
+            // btnQuanLyTiVi.Enabled = true;
 
             lblTrangThai.Text = "Nhân viên: " + hoTen;
             this.Text = "Trang Chủ - Quản Lý TiVi | Nhân viên: " + hoTen;
         }
+
+        public void QuyenNhanVienTraGop(string hoTen)
+        {
+            SetMenuStatus(false); // Khóa toàn bộ
+
+            // 2. Nhân viên trả góp chỉ được lập hóa đơn và trả góp
+            btnKhachHang.Enabled = true;
+            btnHoaDon.Enabled = true;
+            btnTraGop.Enabled = true;
+
+            lblTrangThai.Text = "NV Trả góp: " + hoTen;
+            this.Text = "Trang Chủ - Quản Lý TiVi | NV Trả góp: " + hoTen;
+        }
+
+        public void QuyenNhanVienNhapHang(string hoTen)
+        {
+            SetMenuStatus(false); // Khóa toàn bộ
+
+            // 3. Nhân viên nhập hàng chỉ được sử dụng phiếu nhập và chi tiết phiếu nhập
+            btnPhieuNhap.Enabled = true;
+            btnCTPhieuNhap.Enabled = true;
+
+            lblTrangThai.Text = "NV Nhập hàng: " + hoTen;
+            this.Text = "Trang Chủ - Quản Lý TiVi | NV Nhập hàng: " + hoTen;
+        }
+
+
 
         // --- MỞ FORM CON TRONG PANEL ---
         private void MoFormCon<T>() where T : Form, new()
@@ -128,7 +176,8 @@ namespace QuanLyCuaHangTiVi.forms
         {
             if (MessageBox.Show("Bạn có muốn đăng xuất không?", "Xác nhận", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                foreach (Form child in MdiChildren) child.Close();
+                // Dọn dẹp form hiện tại
+                panelContent.Controls.Clear();
                 TaiKhoanHienTai.NhanVienDangNhap = null;
                 ChuaDangNhap();
                 ThucHienDangNhap();
@@ -179,6 +228,11 @@ namespace QuanLyCuaHangTiVi.forms
         {
             MoFormCon<frmThongKeDoanhThu>();
 
+        }
+
+        private void btnTroGiup_Click(object sender, EventArgs e)
+        {
+            MoFormCon<FrmBaoCao>();
         }
     }
 }

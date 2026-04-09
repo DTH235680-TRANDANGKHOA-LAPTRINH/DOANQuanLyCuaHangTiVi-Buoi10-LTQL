@@ -16,14 +16,17 @@ namespace QuanLyCuaHangTiVi.DATA
         public int MaCTPN { get; set; }
 
         [StringLength(20)]
-        public string MaPhieuNhap { get; set; }
+        // Thêm = null! để tắt cảnh báo vàng
+        public string MaPhieuNhap { get; set; } = null!;
+
         [ForeignKey("MaPhieuNhap")]
-        public virtual PhieuNhap PhieuNhap { get; set; }
+        public virtual PhieuNhap PhieuNhap { get; set; } = null!;
 
         [StringLength(20)]
-        public string MaTiVi { get; set; }
+        public string MaTiVi { get; set; } = null!;
+
         [ForeignKey("MaTiVi")]
-        public virtual QuanLyTiVi QuanLyTiVi { get; set; }
+        public virtual QuanLyTiVi QuanLyTiVi { get; set; } = null!;
 
         public int SoLuongNhap { get; set; }
 

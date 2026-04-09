@@ -22,19 +22,18 @@ namespace QuanLyCuaHangTiVi.DATA
         [StringLength(50)]
         public string HangSanXuat { get; set; }
 
-        public DateTime NgayTao { get; set; } = DateTime.Now;   
+        public DateTime NgayTao { get; set; } = DateTime.Now;
 
         [Column(TypeName = "decimal(18, 0)")]
         public decimal DonGiaBan { get; set; }
 
         [Column(TypeName = "decimal(18, 2)")]
-        public decimal KhuyenMai { get; set; } // % hoặc số tiền
+        public decimal KhuyenMai { get; set; } // % khuyến mãi
 
         public int SoLuongTon { get; set; }
 
         [StringLength(255)]
         public string AnhMinhHoa { get; set; }
-
 
         // --- Logic hiển thị (Không lưu vào database - NotMapped) ---
         [NotMapped]
@@ -47,6 +46,9 @@ namespace QuanLyCuaHangTiVi.DATA
                 return "Còn hàng";
             }
         }
+
+       
+        
 
         // Quan hệ
         public virtual ICollection<HoaDonChiTiet> HoaDonChiTiets { get; set; }

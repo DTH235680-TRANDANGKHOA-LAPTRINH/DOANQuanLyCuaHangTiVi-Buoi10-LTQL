@@ -115,7 +115,7 @@
             txtDonGiaNhap.Name = "txtDonGiaNhap";
             txtDonGiaNhap.Size = new Size(150, 31);
             txtDonGiaNhap.TabIndex = 24;
-            txtDonGiaNhap.TextChanged += txtSoLuong_TextChanged;
+           
             // 
             // label6
             // 
@@ -240,7 +240,7 @@
             txtSoLuong.Name = "txtSoLuong";
             txtSoLuong.Size = new Size(150, 31);
             txtSoLuong.TabIndex = 11;
-            txtSoLuong.TextChanged += txtSoLuong_TextChanged;
+         
             // 
             // label5
             // 

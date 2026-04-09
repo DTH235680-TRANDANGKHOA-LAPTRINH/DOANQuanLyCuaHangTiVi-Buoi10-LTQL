@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmTraGop));
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
-            btnXemChiTiet = new Button();
+            btnXemLichTrinh = new Button();
             cboMaHoaDon = new ComboBox();
             txtKyHanTra = new TextBox();
             label4 = new Label();
@@ -66,7 +66,7 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(btnXemChiTiet);
+            groupBox1.Controls.Add(btnXemLichTrinh);
             groupBox1.Controls.Add(cboMaHoaDon);
             groupBox1.Controls.Add(txtKyHanTra);
             groupBox1.Controls.Add(label4);
@@ -93,15 +93,15 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Thông Tin Trả Góp";
             // 
-            // btnXemChiTiet
+            // btnXemLichTrinh
             // 
-            btnXemChiTiet.Location = new Point(198, 416);
-            btnXemChiTiet.Name = "btnXemChiTiet";
-            btnXemChiTiet.Size = new Size(208, 65);
-            btnXemChiTiet.TabIndex = 45;
-            btnXemChiTiet.Text = "Xem Lịch Trình Trả góp";
-            btnXemChiTiet.UseVisualStyleBackColor = true;
-            btnXemChiTiet.Click += btnXemLichTrinh_Click;
+            btnXemLichTrinh.Location = new Point(198, 416);
+            btnXemLichTrinh.Name = "btnXemLichTrinh";
+            btnXemLichTrinh.Size = new Size(208, 65);
+            btnXemLichTrinh.TabIndex = 45;
+            btnXemLichTrinh.Text = "Xem Lịch Trình Trả góp";
+            btnXemLichTrinh.UseVisualStyleBackColor = true;
+            btnXemLichTrinh.Click += btnXemLichTrinh_Click;
             // 
             // cboMaHoaDon
             // 
@@ -206,6 +206,7 @@
             // 
             txtSoTienConNo.Location = new Point(155, 319);
             txtSoTienConNo.Name = "txtSoTienConNo";
+            txtSoTienConNo.ReadOnly = true;
             txtSoTienConNo.Size = new Size(182, 31);
             txtSoTienConNo.TabIndex = 33;
             // 
@@ -249,14 +250,15 @@
             label2.AutoSize = true;
             label2.Location = new Point(7, 108);
             label2.Name = "label2";
-            label2.Size = new Size(114, 25);
+            label2.Size = new Size(147, 25);
             label2.TabIndex = 26;
-            label2.Text = "Mã Hóa Đơn";
+            label2.Text = "Khách hàng / Tivi";
             // 
             // txtMaTraGop
             // 
             txtMaTraGop.Location = new Point(155, 52);
             txtMaTraGop.Name = "txtMaTraGop";
+            txtMaTraGop.ReadOnly = true;
             txtMaTraGop.Size = new Size(182, 31);
             txtMaTraGop.TabIndex = 25;
             // 
@@ -341,9 +343,9 @@
             // ColSoTienTraTruoc
             // 
             ColSoTienTraTruoc.DataPropertyName = "SoTienTraTruoc";
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle5.Format = "N0";
-            ColSoTienTraTruoc.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle3.Format = "N0";
+            ColSoTienTraTruoc.DefaultCellStyle = dataGridViewCellStyle3;
             ColSoTienTraTruoc.HeaderText = "Số Tiền Trả Trước";
             ColSoTienTraTruoc.MinimumWidth = 8;
             ColSoTienTraTruoc.Name = "ColSoTienTraTruoc";
@@ -351,9 +353,9 @@
             // ColSoTienConNo
             // 
             ColSoTienConNo.DataPropertyName = "SoTienConNo";
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle6.Format = "N0";
-            ColSoTienConNo.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle4.Format = "N0";
+            ColSoTienConNo.DefaultCellStyle = dataGridViewCellStyle4;
             ColSoTienConNo.HeaderText = "Số Tiền Còn Nợ";
             ColSoTienConNo.MinimumWidth = 8;
             ColSoTienConNo.Name = "ColSoTienConNo";
@@ -404,6 +406,6 @@
         private DataGridViewTextBoxColumn ColSoTienTraTruoc;
         private DataGridViewTextBoxColumn ColSoTienConNo;
         private ComboBox cboMaHoaDon;
-        private Button btnXemChiTiet;
+        private Button btnXemLichTrinh;
     }
 }

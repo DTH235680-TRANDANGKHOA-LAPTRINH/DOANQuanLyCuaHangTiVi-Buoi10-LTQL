@@ -15,7 +15,7 @@ namespace QuanLyCuaHangTiVi.DATA
         public DbSet<KhachHang> KhachHangs { get; set; }
         public DbSet<HoaDon> HoaDons { get; set; }
         public DbSet<HoaDonChiTiet> HoaDonChiTiets { get; set; }
-        public DbSet<TraGop> TraGops { get; set; }
+       public DbSet<TraGop> TraGops { get; set; }
         public DbSet<PhieuNhap> PhieuNhaps { get; set; }
         public DbSet<ChiTietPhieuNhap> ChiTietPhieuNhaps { get; set; }
         public DbSet<ChiPhiVanHanh> ChiPhiVanHanhs { get; set; }

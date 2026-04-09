@@ -12,17 +12,16 @@ namespace QuanLyCuaHangTiVi.DATA
     public class ChiTietTraGop
     {
         [Key]
-        public int ID { get; set; } // Khóa chính tự tăng
+        public int ID { get; set; }
 
-        [Required]
-        [StringLength(20)]
-        public string MaTraGop { get; set; } // Khóa ngoại liên kết với hợp đồng Trả Góp gốc
+        // ✅ SỬA: Đổi kiểu từ string sang int và xóa [StringLength]
+        public int MaTraGop { get; set; }
 
         [ForeignKey("MaTraGop")]
         public virtual TraGop TraGop { get; set; } = null!;
 
-        public int KyThu { get; set; } // Kỳ thứ mấy (1, 2, 3...)
-        public DateTime NgayCanDong { get; set; } // Hạn chót phải đóng của kỳ này
+        public int KyThu { get; set; }
+        public DateTime NgayCanDong { get; set; }
 
         [Column(TypeName = "decimal(18, 0)")]
         public decimal SoTienGoc { get; set; }
@@ -33,7 +32,30 @@ namespace QuanLyCuaHangTiVi.DATA
         [Column(TypeName = "decimal(18, 0)")]
         public decimal TongTienDong { get; set; }
 
-        // Cực kỳ quan trọng: Để đánh dấu khách đã đem tiền tới đóng cho tháng này chưa
-        public bool DaThanhToan { get; set; } = false;
+        [Column(TypeName = "decimal(18, 0)")]
+        public decimal SoTienDaDong { get; set; } = 0;
+
+        public DateTime? NgayThucDong { get; set; }
+
+        [StringLength(100)]
+        public string? NguoiNopTien { get; set; }
+
+        [Column(TypeName = "decimal(18, 0)")]
+        public decimal SoTienPhat { get; set; } = 0;
+
+        [NotMapped]
+        public string TrangThai
+        {
+            get
+            {
+                if (SoTienDaDong == 0) return "Chưa đóng";
+
+                decimal tienCanThu = TongTienDong + SoTienPhat;
+                if (SoTienDaDong < tienCanThu) return $"Đóng thiếu {tienCanThu - SoTienDaDong:N0}";
+                if (SoTienDaDong > tienCanThu) return $"Đóng dư {SoTienDaDong - tienCanThu:N0}";
+
+                return "Đã đóng đủ";
+            }
+        }
     }
 }

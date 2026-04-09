@@ -55,5 +55,10 @@ namespace QuanLyCuaHangTiVi.forms
         {
             if (e.KeyCode == Keys.Enter) btnDangNhap_Click(sender, e);
         }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
     }
 }

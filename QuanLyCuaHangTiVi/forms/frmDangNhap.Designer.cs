@@ -92,6 +92,7 @@
             groupBox1.TabIndex = 3;
             groupBox1.TabStop = false;
             groupBox1.Text = "Thông Tin Đăng Nhập";
+            groupBox1.Enter += groupBox1_Enter;
             // 
             // btnHuyBo
             // 

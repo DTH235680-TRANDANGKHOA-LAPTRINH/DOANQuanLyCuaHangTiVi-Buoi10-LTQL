@@ -69,6 +69,11 @@ namespace QuanLyCuaHangTiVi.forms
             LoadComboBox();
             dgvDanhSachHD.AutoGenerateColumns = false;
 
+            // [MỚI] Tự động gán sự kiện chặn nhập chữ cho các TextBox trực tiếp bằng code
+            txtSoLuong.KeyPress += ChinhNhapSo_KeyPress;
+            txtDonGia.KeyPress += ChinhNhapSo_KeyPress;
+            txtKhuyenMai.KeyPress += ChinhNhapSo_KeyPress;
+
             if (id == 0)
                 BatTatChucNang(false);
             else
@@ -85,7 +90,6 @@ namespace QuanLyCuaHangTiVi.forms
                     txtGhiChu.Text = hoaDon.GhiChuHoaDon;
                 }
 
-                // --- FIX: Gán dữ liệu vào biến hoaDonChiTiet thay vì chỉ tạo biến ct ---
                 var ct = context.HoaDonChiTiets.Where(r => r.HoaDonID == id).Select(r => new DanhSachHoaDonChiTiet
                 {
                     ID = r.ID,
@@ -98,15 +102,34 @@ namespace QuanLyCuaHangTiVi.forms
                     ThanhTien = (r.SoLuongBan * r.DonGiaBan) - (r.KhuyenMai ?? 0)
                 }).ToList();
 
-                // Ghi đè danh sách tạm bằng dữ liệu từ DB
                 hoaDonChiTiet.Clear();
                 foreach (var item in ct) hoaDonChiTiet.Add(item);
             }
 
-            dgvDanhSachHD.DataSource = hoaDonChiTiet; // Gán nguồn dữ liệu
+            dgvDanhSachHD.DataSource = hoaDonChiTiet;
 
         }
+        private void ChinhNhapSo_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Kiểm tra nếu phím bấm không phải là số, không phải phím điều khiển (như Backspace) và không phải dấu chấm
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
+            {
+                e.Handled = true; // Hủy thao tác nhập ký tự đó
 
+                // HIỆN THÔNG BÁO NGAY LẬP TỨC
+                MessageBox.Show("Bạn chỉ được phép nhập số vào ô này!", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Chỉ cho phép nhập 1 dấu chấm thập phân duy nhất
+            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
+            {
+                e.Handled = true; // Hủy thao tác nhập dấu chấm thứ 2
+
+                // HIỆN THÔNG BÁO KHI NHẬP DƯ DẤU CHẤM
+                MessageBox.Show("Chỉ được nhập một dấu chấm thập phân!", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
         private void btnThem_Click(object sender, EventArgs e)
         {
             // 1. Nếu form đang khóa, nhấn Thêm để mở khóa nhập liệu
@@ -132,7 +155,6 @@ namespace QuanLyCuaHangTiVi.forms
 
             try
             {
-                // Lấy số lượng và khuyến mãi từ giao diện
                 decimal soLuong = Convert.ToDecimal(txtSoLuong.Text);
                 decimal khuyenMai = string.IsNullOrEmpty(txtKhuyenMai.Text) ? 0 : Convert.ToDecimal(txtKhuyenMai.Text);
 
@@ -143,41 +165,42 @@ namespace QuanLyCuaHangTiVi.forms
                 }
 
                 string maTiVi = cboTenTiVi.SelectedValue.ToString();
+                var tivi = context.QuanLyTiVis.Find(maTiVi);
                 decimal donGia = 0;
 
-                // Tự động lấy đơn giá từ DB nếu trên form trống
-                if (string.IsNullOrEmpty(txtDonGia.Text))
+                if (tivi != null)
                 {
-                    var tivi = context.QuanLyTiVis.Find(maTiVi);
-                    if (tivi != null)
+                    // =========================================================================
+                    // [MỚI] TÍNH NĂNG 2: KIỂM TRA SỐ LƯỢNG TỒN KHO TRƯỚC KHI CHO THÊM VÀO GIỎ
+                    // =========================================================================
+                    if (tivi.SoLuongTon == 0)
                     {
-                        donGia = tivi.DonGiaBan;
-                        txtDonGia.Text = donGia.ToString();
+                        MessageBox.Show("Rất tiếc! Tivi này hiện đã hết hàng trong kho.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
                     }
-                }
-                else
-                {
-                    donGia = Convert.ToDecimal(txtDonGia.Text);
+
+                    if (soLuong > tivi.SoLuongTon)
+                    {
+                        MessageBox.Show($"Trong kho chỉ còn {tivi.SoLuongTon} sản phẩm. Không đủ số lượng bạn yêu cầu!", "Lỗi số lượng", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    donGia = tivi.DonGiaBan;
+                    txtDonGia.Text = donGia.ToString();
                 }
 
-                // Tính thành tiền ban đầu
                 decimal thanhTien = (soLuong * donGia) - khuyenMai;
-
-                // Kiểm tra xem Tivi này đã có trong lưới chưa
                 var itemExist = hoaDonChiTiet.FirstOrDefault(x => x.MaTiVi == maTiVi);
 
                 if (itemExist != null)
                 {
-                    // --- ĐÃ FIX Ở ĐÂY ---
-                    // Nếu đã có, CẬP NHẬT lại số lượng và khuyến mãi mới (dùng dấu = thay vì +=)
                     itemExist.SoLuongBan = (int)soLuong;
                     itemExist.KhuyenMai = khuyenMai;
                     itemExist.ThanhTien = (itemExist.SoLuongBan * donGia) - itemExist.KhuyenMai;
-                    dgvDanhSachHD.Refresh(); // Làm mới lưới để hiện số liệu mới
+                    dgvDanhSachHD.Refresh();
                 }
                 else
                 {
-                    // Nếu chưa có thì thêm một dòng hoàn toàn mới vào lưới
                     hoaDonChiTiet.Add(new DanhSachHoaDonChiTiet
                     {
                         MaTiVi = maTiVi,
@@ -189,12 +212,10 @@ namespace QuanLyCuaHangTiVi.forms
                     });
                 }
 
-                // 3. Cập nhật lại lưới và kiểm tra bật/tắt nút Lưu
                 dgvDanhSachHD.DataSource = null;
                 dgvDanhSachHD.DataSource = hoaDonChiTiet;
                 BatTatChucNang(true);
 
-                // 4. Xóa trắng các ô nhập liệu để chuẩn bị nhập mặt hàng tiếp theo
                 txtSoLuong.Clear();
                 txtKhuyenMai.Text = "0";
                 cboTenTiVi.Focus();
@@ -209,19 +230,26 @@ namespace QuanLyCuaHangTiVi.forms
         {
             if (dgvDanhSachHD.CurrentRow != null)
             {
-                string maTiVi = dgvDanhSachHD.CurrentRow.Cells["MaTiVi"].Value.ToString();
-                var chiTiet = hoaDonChiTiet.FirstOrDefault(x => x.MaTiVi == maTiVi);
-                if (chiTiet != null)
+                // =========================================================================
+                // [MỚI] TÍNH NĂNG 3: HIỆN THÔNG BÁO XÁC NHẬN KHI XÓA KHỎI GIỎ HÀNG
+                // =========================================================================
+                DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn xóa Tivi này khỏi hóa đơn không?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
                 {
-                    hoaDonChiTiet.Remove(chiTiet);
-                    BatTatChucNang(true);
+                    string maTiVi = dgvDanhSachHD.CurrentRow.Cells["MaTiVi"].Value.ToString();
+                    var chiTiet = hoaDonChiTiet.FirstOrDefault(x => x.MaTiVi == maTiVi);
+                    if (chiTiet != null)
+                    {
+                        hoaDonChiTiet.Remove(chiTiet);
+                        BatTatChucNang(true);
+                    }
                 }
             }
         }
 
         private void btnLuu_Click(object sender, EventArgs e)
         {
-            // 1. Kiểm tra ràng buộc dữ liệu đầu vào cơ bản
             if (cboNhanVien.SelectedValue == null || cboKhachHang.SelectedValue == null)
             {
                 MessageBox.Show("Vui lòng chọn Khách Hàng và Nhân Viên!", "Thông báo");
@@ -234,13 +262,12 @@ namespace QuanLyCuaHangTiVi.forms
                 return;
             }
 
-            // 2. Sử dụng Transaction để đảm bảo an toàn dữ liệu (tránh lỗi trừ kho mà không lưu được hóa đơn)
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
                     HoaDon hd;
-                    if (id != 0) // TRƯỜNG HỢP: SỬA HÓA ĐƠN ĐÃ CÓ
+                    if (id != 0)
                     {
                         hd = context.HoaDons.Find(id);
                         if (hd == null) throw new Exception("Không tìm thấy hóa đơn cần sửa!");
@@ -250,18 +277,15 @@ namespace QuanLyCuaHangTiVi.forms
                         hd.NgayLap = dtpNgayLap.Value;
                         hd.GhiChuHoaDon = txtGhiChu.Text;
 
-                        // --- BƯỚC 1: HOÀN TRẢ KHO CŨ ---
                         var oldDetails = context.HoaDonChiTiets.Where(r => r.HoaDonID == id).ToList();
                         foreach (var old in oldDetails)
                         {
                             var tvCu = context.QuanLyTiVis.Find(old.MaTiVi);
-                            if (tvCu != null) tvCu.SoLuongTon += old.SoLuongBan; // Cộng lại kho
+                            if (tvCu != null) tvCu.SoLuongTon += old.SoLuongBan;
                         }
-
-                        // Xóa các chi tiết cũ để chuẩn bị ghi đè chi tiết mới
                         context.HoaDonChiTiets.RemoveRange(oldDetails);
                     }
-                    else // TRƯỜNG HỢP: THÊM MỚI HÓA ĐƠN
+                    else
                     {
                         hd = new HoaDon
                         {
@@ -273,29 +297,23 @@ namespace QuanLyCuaHangTiVi.forms
                         context.HoaDons.Add(hd);
                     }
 
-                    // LƯU LẦN 1: Để Entity Framework và SQL tạo ID tự động cho hóa đơn
                     context.SaveChanges();
 
-                    // --- BƯỚC 2: DUYỆT DANH SÁCH TRÊN LƯỚI ĐỂ LƯU CHI TIẾT VÀ TRỪ KHO ---
                     foreach (var item in hoaDonChiTiet)
                     {
-                        // Thêm chi tiết hóa đơn mới
                         context.HoaDonChiTiets.Add(new HoaDonChiTiet
                         {
-                            HoaDonID = hd.ID, // Lấy ID vừa sinh ra ở trên (QUAN TRỌNG)
+                            HoaDonID = hd.ID,
                             MaTiVi = item.MaTiVi,
                             SoLuongBan = item.SoLuongBan,
                             DonGiaBan = item.DonGiaBan,
-                            KhuyenMai = item.KhuyenMai // Đảm bảo không truyền null vào DB
+                            KhuyenMai = item.KhuyenMai
                         });
 
-                        // Cập nhật lại số lượng tồn kho (Trừ kho)
                         var tvMoi = context.QuanLyTiVis.Find(item.MaTiVi);
                         if (tvMoi != null)
                         {
                             tvMoi.SoLuongTon -= item.SoLuongBan;
-
-                            // Kiểm tra nếu kho bị âm thì báo lỗi ngay
                             if (tvMoi.SoLuongTon < 0)
                             {
                                 throw new Exception($"Sản phẩm '{item.TenTiVi}' không đủ số lượng trong kho!");
@@ -303,23 +321,14 @@ namespace QuanLyCuaHangTiVi.forms
                         }
                     }
 
-                    // LƯU LẦN 2: Chốt tất cả thay đổi chi tiết và số lượng kho
                     context.SaveChanges();
-
-                    // Xác nhận hoàn tất giao dịch
                     transaction.Commit();
 
                     MessageBox.Show("Lưu hóa đơn và cập nhật kho thành công!", "Hoàn tất");
-
-                    // Sau khi lưu thành công, khóa form lại
                     BatTatChucNang(false);
-
-                    // Tùy chọn: Đóng form sau khi lưu
-                    // this.Close(); 
                 }
                 catch (Exception ex)
                 {
-                    // Nếu có bất kỳ lỗi nào, hủy bỏ toàn bộ quá trình (không lưu gì cả, kho không bị trừ bậy)
                     transaction.Rollback();
                     MessageBox.Show("Lỗi khi lưu dữ liệu: " + ex.Message, "Lỗi");
                 }
@@ -345,7 +354,6 @@ namespace QuanLyCuaHangTiVi.forms
 
         private void cboTenTiVi_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Đảm bảo là đã chọn một item
             if (cboTenTiVi.SelectedValue != null)
             {
                 string maTiVi = cboTenTiVi.SelectedValue.ToString();
@@ -354,8 +362,81 @@ namespace QuanLyCuaHangTiVi.forms
                 if (tivi != null)
                 {
                     txtDonGia.Text = tivi.DonGiaBan.ToString();
+
+                    // =========================================================================
+                    // [MỚI] TÍNH NĂNG 4: NHẬN BIẾT BÁN CHẠY/ CHẬM & THÔNG BÁO TỒN KHO LÊN LABEL
+                    // =========================================================================
+                    int tongDaBan = context.HoaDonChiTiets.Where(ct => ct.MaTiVi == maTiVi).Sum(ct => (int?)ct.SoLuongBan) ?? 0;
+                    string doHot = tongDaBan >= 20 ? "🔥 Rất được ưa chuộng" : "❄️ Mức bán bình thường";
+
+                    // (Đảm bảo bạn đã tạo 1 Label tên là lblTrangThaiTiVi trên giao diện như Hướng dẫn Bước 1)
+                    if (lblTrangThaiTiVi != null)
+                    {
+                        lblTrangThaiTiVi.Text = $"Kho còn: {tivi.SoLuongTon} cái | {tivi.TrangThai} | {doHot}";
+                        lblTrangThaiTiVi.ForeColor = tivi.SoLuongTon == 0 ? Color.Red : Color.Green;
+                    }
                 }
+            }
+        }
+
+        private void btnThemKhachNhanh_Click(object sender, EventArgs e)
+        {
+            // Thay frmKhachHang bằng tên Form Quản lý khách hàng thực tế của bạn
+            using (frmKhachHang fKhachHang = new frmKhachHang())
+            {
+                fKhachHang.ShowDialog(); // Mở Form Khách lên
+
+                // Load lại dữ liệu vào ComboBox sau khi Form Khách Hàng đóng lại
+                cboKhachHang.DataSource = null;
+                cboKhachHang.DataSource = context.KhachHangs.ToList();
+                cboKhachHang.ValueMember = "MaKhachHang";
+                cboKhachHang.DisplayMember = "TenKhachHang";
+
+                // Tự động focus vào người khách cuối cùng vừa mới tạo
+                var khachMoiNhat = context.KhachHangs.OrderByDescending(k => k.MaKhachHang).FirstOrDefault();
+                if (khachMoiNhat != null)
+                {
+                    cboKhachHang.SelectedValue = khachMoiNhat.MaKhachHang;
+                }
+            }
+        }
+
+        private void btnSua_Click(object sender, EventArgs e)
+        {
+            // 1. Kiểm tra xem người dùng đã chọn dòng nào trên DataGridView chưa
+            if (dgvDanhSachHD.CurrentRow != null && dgvDanhSachHD.CurrentRow.Index >= 0)
+            {
+                // Lấy Mã TiVi từ dòng đang chọn (Đảm bảo cột chứa mã TiVi tên là "MaTiVi")
+                string maTiVi = dgvDanhSachHD.CurrentRow.Cells["MaTiVi"].Value.ToString();
+
+                // 2. Tìm sản phẩm đó trong danh sách giỏ hàng (BindingList)
+                var chiTiet = hoaDonChiTiet.FirstOrDefault(x => x.MaTiVi == maTiVi);
+
+                if (chiTiet != null)
+                {
+                    // 3. Đưa thông tin từ dưới lưới ngược lên các ô nhập liệu
+                    cboTenTiVi.SelectedValue = chiTiet.MaTiVi;
+                    txtSoLuong.Text = chiTiet.SoLuongBan.ToString();
+                    txtKhuyenMai.Text = chiTiet.KhuyenMai.ToString();
+                    txtDonGia.Text = chiTiet.DonGiaBan.ToString();
+
+                    // Mở khóa các ô nhập liệu để người dùng thao tác
+                    BatTatChucNang(true);
+
+                    // [Tùy chọn UX] Khóa ComboBox TiVi lại để người dùng chỉ được sửa Số Lượng/Khuyến Mãi
+                    // Tránh việc họ chọn nhầm sang TiVi khác gây lỗi logic sửa. 
+                    // Nút "Thêm" sau khi chạy xong sẽ tự động mở khóa lại ComboBox này.
+                    cboTenTiVi.Enabled = false;
+
+                    // Focus con trỏ chuột vào ô Số lượng để tiện gõ luôn
+                    txtSoLuong.Focus();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn một mặt hàng trong danh sách bên dưới để sửa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
     }
 }
+

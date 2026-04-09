@@ -126,6 +126,7 @@
             txtMaPhieuNhap.Name = "txtMaPhieuNhap";
             txtMaPhieuNhap.Size = new Size(150, 31);
             txtMaPhieuNhap.TabIndex = 2;
+            txtMaPhieuNhap.TextChanged += txtMaPhieuNhap_TextChanged;
             // 
             // label5
             // 
