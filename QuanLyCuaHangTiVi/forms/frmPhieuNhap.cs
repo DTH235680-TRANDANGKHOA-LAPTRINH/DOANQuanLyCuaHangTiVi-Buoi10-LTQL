@@ -18,21 +18,42 @@ namespace QuanLyCuaHangTiVi.forms
         bool xuLyThem = false;
         BindingSource bindingSource = new BindingSource();
 
-        // BIẾN MỚI THÊM: Dùng để lưu mã cũ khi sửa và ErrorProvider báo lỗi
-        string maPhieuNhapCu = "";
-        ErrorProvider errorProvider = new ErrorProvider();
         public frmPhieuNhap()
         {
             InitializeComponent();
         }
 
-        // 2. Hàm Bật/Tắt chức năng giống hệt frmQuanLyTiVi
+        // --- HÀM MỚI: TỰ ĐỘNG SINH MÃ PHIẾU NHẬP ---
+        private string GenerateMaPhieuNhap()
+        {
+            var dsMaPN = context.PhieuNhaps.Select(k => k.MaPhieuNhap).ToList();
+            if (dsMaPN.Count == 0) return "PN001";
+
+            int maxId = 0;
+            foreach (var ma in dsMaPN)
+            {
+                // Tìm các mã bắt đầu bằng "PN" và lấy số phía sau
+                if (ma.StartsWith("PN") && ma.Length > 2)
+                {
+                    string soPhanDuoi = ma.Substring(2);
+                    if (int.TryParse(soPhanDuoi, out int so))
+                    {
+                        if (so > maxId) maxId = so;
+                    }
+                }
+            }
+            return "PN" + (maxId + 1).ToString("D3");
+        }
+
         // 2. Hàm Bật/Tắt chức năng
         private void BatTatChucNang(bool giaTri)
         {
             btnLuu.Enabled = giaTri;
             btnHuyBo.Enabled = giaTri;
-            txtMaPhieuNhap.Enabled = giaTri;
+
+            // ĐÃ THAY ĐỔI: Luôn khóa ô nhập mã vì mã đã được sinh tự động
+            txtMaPhieuNhap.Enabled = false;
+
             txtNguoiGiaoHang.Enabled = giaTri;
             txtGhiChu.Enabled = giaTri;
             dtpNgayNhap.Enabled = giaTri;
@@ -45,11 +66,9 @@ namespace QuanLyCuaHangTiVi.forms
 
 
 
-
         private void frmPhieuNhap_Load(object sender, EventArgs e)
         {
             BatTatChucNang(false);
-            errorProvider.Clear(); // Xóa mọi cảnh báo lỗi trên form nếu có
 
             // 3. Load dữ liệu và nạp vào BindingSource
             var listPhieu = context.PhieuNhaps.ToList();
@@ -59,7 +78,7 @@ namespace QuanLyCuaHangTiVi.forms
             dgvPhieuNhap.AutoGenerateColumns = false;
             dgvPhieuNhap.DataSource = bindingSource;
 
-            // Ánh xạ cột (MaPN, GhiChu, NguoiGiao phải trùng tên cột thiết kế)
+            // Ánh xạ cột
             if (dgvPhieuNhap.Columns.Contains("MaPN")) dgvPhieuNhap.Columns["MaPN"].DataPropertyName = "MaPhieuNhap";
             if (dgvPhieuNhap.Columns.Contains("NgayNhap")) dgvPhieuNhap.Columns["NgayNhap"].DataPropertyName = "NgayNhap";
             if (dgvPhieuNhap.Columns.Contains("GhiChu")) dgvPhieuNhap.Columns["GhiChu"].DataPropertyName = "GhiChu";
@@ -81,13 +100,15 @@ namespace QuanLyCuaHangTiVi.forms
         {
             xuLyThem = true;
             BatTatChucNang(true);
-            errorProvider.Clear();
 
-            txtMaPhieuNhap.Clear();
+            // GỌI HÀM TẠO MÃ TỰ ĐỘNG
+            txtMaPhieuNhap.Text = GenerateMaPhieuNhap();
+
             txtNguoiGiaoHang.Clear();
             txtGhiChu.Clear();
             dtpNgayNhap.Value = DateTime.Now;
-            txtMaPhieuNhap.Focus();
+
+            txtNguoiGiaoHang.Focus(); // Bỏ qua txtMaPhieuNhap vì đã bị khóa
         }
 
         private void dgvChiTietPhieuNhap_CellValueChanged(object sender, DataGridViewCellEventArgs e)
@@ -98,7 +119,7 @@ namespace QuanLyCuaHangTiVi.forms
         {// Kiểm tra rỗng
             if (string.IsNullOrWhiteSpace(txtMaPhieuNhap.Text))
             {
-                MessageBox.Show("Vui lòng nhập Mã Phiếu!");
+                MessageBox.Show("Lỗi: Mã Phiếu Nhập trống. Hãy thử bấm Hủy và Thêm lại.");
                 return;
             }
 
@@ -106,11 +127,11 @@ namespace QuanLyCuaHangTiVi.forms
             {
                 if (xuLyThem) // Trường hợp Thêm mới
                 {
-                    // Đề phòng trường hợp lỗi mạng/nhấn đúp, ta vẫn check cứng lại 1 lần nữa
-                    if (context.PhieuNhaps.Any(x => x.MaPhieuNhap == txtMaPhieuNhap.Text))
+                    var checkID = context.PhieuNhaps.Find(txtMaPhieuNhap.Text);
+                    if (checkID != null)
                     {
-                        MessageBox.Show("Mã phiếu này đã tồn tại!");
-                        return;
+                        // Đề phòng lỗi trùng, tự sinh mã mới nhất
+                        txtMaPhieuNhap.Text = GenerateMaPhieuNhap();
                     }
 
                     PhieuNhap pn = new PhieuNhap();
@@ -121,38 +142,14 @@ namespace QuanLyCuaHangTiVi.forms
 
                     context.PhieuNhaps.Add(pn);
                 }
-                else // Trường hợp Sửa
+                else // Trường hợp Sửa (RẤT GỌN VÌ KHÔNG ĐỔI MÃ)
                 {
-                    string maMoi = txtMaPhieuNhap.Text.Trim();
-
-                    if (maMoi == maPhieuNhapCu)
+                    var pnSua = context.PhieuNhaps.Find(txtMaPhieuNhap.Text.Trim());
+                    if (pnSua != null)
                     {
-                        // Nếu mã không thay đổi, cập nhật bình thường
-                        var pnSua = context.PhieuNhaps.Find(maPhieuNhapCu);
-                        if (pnSua != null)
-                        {
-                            pnSua.NguoiGiaoHang = txtNguoiGiaoHang.Text;
-                            pnSua.GhiChu = txtGhiChu.Text;
-                            pnSua.NgayNhap = dtpNgayNhap.Value;
-                        }
-                    }
-                    else
-                    {
-                        // Nếu mã ĐÃ BỊ THAY ĐỔI, cần tạo mới record và xóa cái cũ đi
-                        var pnCu = context.PhieuNhaps.Find(maPhieuNhapCu);
-                        if (pnCu != null)
-                        {
-                            // 1. Thêm record với dữ liệu mới
-                            PhieuNhap pnMoi = new PhieuNhap();
-                            pnMoi.MaPhieuNhap = maMoi;
-                            pnMoi.NguoiGiaoHang = txtNguoiGiaoHang.Text;
-                            pnMoi.GhiChu = txtGhiChu.Text;
-                            pnMoi.NgayNhap = dtpNgayNhap.Value;
-                            context.PhieuNhaps.Add(pnMoi);
-
-                            // 2. Xóa record cũ đi
-                            context.PhieuNhaps.Remove(pnCu);
-                        }
+                        pnSua.NguoiGiaoHang = txtNguoiGiaoHang.Text;
+                        pnSua.GhiChu = txtGhiChu.Text;
+                        pnSua.NgayNhap = dtpNgayNhap.Value;
                     }
                 }
 
@@ -168,7 +165,7 @@ namespace QuanLyCuaHangTiVi.forms
 
         private void btnHuyBo_Click(object sender, EventArgs e)
         {
-            errorProvider.Clear();
+           
             frmPhieuNhap_Load(sender, e);
         }
 
@@ -188,13 +185,8 @@ namespace QuanLyCuaHangTiVi.forms
             {
                 xuLyThem = false;
                 BatTatChucNang(true);
-                errorProvider.Clear();
-
-                // Mở khóa để cho phép sửa đổi Mã Phiếu Nhập
-                txtMaPhieuNhap.Enabled = true;
-
-                // Lưu lại mã phiếu nhập hiện tại trước khi bị người dùng gõ sửa
-                maPhieuNhapCu = txtMaPhieuNhap.Text.Trim();
+                // Ghi chú: txtMaPhieuNhap vẫn bị khóa theo hàm BatTatChucNang
+                // Người dùng chỉ được sửa Người giao hàng, Ngày nhập, Ghi chú
             }
         }
 
@@ -220,50 +212,12 @@ namespace QuanLyCuaHangTiVi.forms
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Không thể xóa phiếu nhập này vì có thể nó đã có chi tiết phiếu nhập đi kèm.\nLỗi chi tiết: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Không thể xóa phiếu nhập này vì nó đã có chi tiết phiếu nhập đi kèm.\nLỗi chi tiết: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
         }
 
-        private void txtMaPhieuNhap_TextChanged(object sender, EventArgs e)
-        {
-
-            string maNhapVao = txtMaPhieuNhap.Text.Trim();
-
-            // Nếu để trống thì không báo lỗi trùng, nhưng khi bấm Lưu vẫn sẽ bị chặn lại
-            if (string.IsNullOrWhiteSpace(maNhapVao))
-            {
-                errorProvider.Clear();
-                btnLuu.Enabled = true;
-                return;
-            }
-
-            bool isDuplicate = false;
-
-            if (xuLyThem)
-            {
-                // Thêm mới: Chỉ cần tìm có mã nào trong DB giống chữ vừa gõ không
-                isDuplicate = context.PhieuNhaps.Any(x => x.MaPhieuNhap == maNhapVao);
-            }
-            else
-            {
-                // Sửa: Tìm xem có trùng không, nhưng phải LOẠI TRỪ mã cũ của chính nó
-                isDuplicate = context.PhieuNhaps.Any(x => x.MaPhieuNhap == maNhapVao && x.MaPhieuNhap != maPhieuNhapCu);
-            }
-
-            if (isDuplicate)
-            {
-                // Báo lỗi bằng dấu chấm than đỏ và khóa nút Lưu ngay lập tức
-                errorProvider.SetError(txtMaPhieuNhap, "Mã phiếu nhập này đã tồn tại! Vui lòng nhập mã khác.");
-                btnLuu.Enabled = false;
-            }
-            else
-            {
-                // Tắt báo lỗi và mở nút Lưu
-                errorProvider.Clear();
-                btnLuu.Enabled = true;
-            }
-        }
+       
     }
 }

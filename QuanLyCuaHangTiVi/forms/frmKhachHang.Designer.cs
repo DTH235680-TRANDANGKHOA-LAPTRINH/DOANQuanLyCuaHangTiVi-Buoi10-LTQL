@@ -170,21 +170,21 @@
             // 
             // txtDiaChi
             // 
-            txtDiaChi.Location = new Point(1158, 97);
+            txtDiaChi.Location = new Point(1046, 97);
             txtDiaChi.Name = "txtDiaChi";
             txtDiaChi.Size = new Size(150, 31);
             txtDiaChi.TabIndex = 33;
             // 
             // txtCCCD
             // 
-            txtCCCD.Location = new Point(1158, 52);
+            txtCCCD.Location = new Point(1054, 52);
             txtCCCD.Name = "txtCCCD";
             txtCCCD.Size = new Size(150, 31);
             txtCCCD.TabIndex = 32;
             // 
             // txtTenKhachHang
             // 
-            txtTenKhachHang.Location = new Point(156, 97);
+            txtTenKhachHang.Location = new Point(236, 97);
             txtTenKhachHang.Name = "txtTenKhachHang";
             txtTenKhachHang.Size = new Size(150, 31);
             txtTenKhachHang.TabIndex = 31;
@@ -192,7 +192,7 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(1048, 100);
+            label6.Location = new Point(984, 100);
             label6.Name = "label6";
             label6.Size = new Size(68, 25);
             label6.TabIndex = 30;
@@ -201,7 +201,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(1048, 55);
+            label5.Location = new Point(992, 55);
             label5.Name = "label5";
             label5.Size = new Size(58, 25);
             label5.TabIndex = 29;
@@ -210,7 +210,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(409, 100);
+            label4.Location = new Point(441, 100);
             label4.Name = "label4";
             label4.Size = new Size(93, 25);
             label4.TabIndex = 28;
@@ -219,7 +219,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(409, 55);
+            label3.Location = new Point(449, 55);
             label3.Name = "label3";
             label3.Size = new Size(122, 25);
             label3.TabIndex = 27;
@@ -228,7 +228,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(12, 100);
+            label2.Location = new Point(140, 100);
             label2.Name = "label2";
             label2.Size = new Size(138, 25);
             label2.TabIndex = 26;
@@ -236,15 +236,16 @@
             // 
             // txtMaKhachHang
             // 
-            txtMaKhachHang.Location = new Point(155, 52);
+            txtMaKhachHang.Location = new Point(243, 52);
             txtMaKhachHang.Name = "txtMaKhachHang";
+            txtMaKhachHang.ReadOnly = true;
             txtMaKhachHang.Size = new Size(150, 31);
             txtMaKhachHang.TabIndex = 25;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(12, 55);
+            label1.Location = new Point(148, 55);
             label1.Name = "label1";
             label1.Size = new Size(137, 25);
             label1.TabIndex = 24;

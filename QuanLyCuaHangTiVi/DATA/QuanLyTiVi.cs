@@ -47,8 +47,16 @@ namespace QuanLyCuaHangTiVi.DATA
             }
         }
 
-       
-        
+
+        // --- Thêm logic tính Giá Hiện Tại ---
+        [NotMapped]
+        public decimal GiaHienTai
+        {
+            get
+            {
+                return DonGiaBan - (DonGiaBan * KhuyenMai / 100);
+            }
+        }
 
         // Quan hệ
         public virtual ICollection<HoaDonChiTiet> HoaDonChiTiets { get; set; }

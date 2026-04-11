@@ -19,7 +19,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmTrangChu));
             groupBox1 = new GroupBox();
-            tableLayoutPanel1 = new TableLayoutPanel();
+            flowLayoutPanelMenu = new FlowLayoutPanel();
             btnQuanLyTiVi = new Button();
             btnNhanVien = new Button();
             btnKhachHang = new Button();
@@ -37,7 +37,7 @@
             panelContent = new Panel();
             pictureBox1 = new PictureBox();
             groupBox1.SuspendLayout();
-            tableLayoutPanel1.SuspendLayout();
+            flowLayoutPanelMenu.SuspendLayout();
             statusStrip1.SuspendLayout();
             panelContent.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -46,7 +46,8 @@
             // groupBox1
             // 
             groupBox1.BackColor = Color.FromArgb(45, 66, 91);
-            groupBox1.Controls.Add(tableLayoutPanel1);
+            groupBox1.Controls.Add(flowLayoutPanelMenu);
+            groupBox1.Controls.Add(btnDangXuat);
             groupBox1.Dock = DockStyle.Left;
             groupBox1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             groupBox1.ForeColor = Color.White;
@@ -58,52 +59,38 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "DANH MỤC";
             // 
-            // tableLayoutPanel1
+            // flowLayoutPanelMenu
             // 
-            tableLayoutPanel1.ColumnCount = 1;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Controls.Add(btnQuanLyTiVi, 0, 0);
-            tableLayoutPanel1.Controls.Add(btnNhanVien, 0, 1);
-            tableLayoutPanel1.Controls.Add(btnKhachHang, 0, 2);
-            tableLayoutPanel1.Controls.Add(btnPhieuNhap, 0, 3);
-            tableLayoutPanel1.Controls.Add(btnCTPhieuNhap, 0, 4);
-            tableLayoutPanel1.Controls.Add(btnHoaDon, 0, 5);
-            tableLayoutPanel1.Controls.Add(btnTraGop, 0, 6);
-            tableLayoutPanel1.Controls.Add(btnTKChiPhi, 0, 7);
-            tableLayoutPanel1.Controls.Add(btnTKDoanhThu, 0, 8);
-            tableLayoutPanel1.Controls.Add(btnTroGiup, 0, 9);
-            tableLayoutPanel1.Controls.Add(btnDangXuat, 0, 12);
-            tableLayoutPanel1.Dock = DockStyle.Fill;
-            tableLayoutPanel1.Location = new Point(10, 37);
-            tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 13;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
-            tableLayoutPanel1.Size = new Size(188, 488);
-            tableLayoutPanel1.TabIndex = 0;
+            flowLayoutPanelMenu.AutoScroll = true;
+            flowLayoutPanelMenu.Controls.Add(btnQuanLyTiVi);
+            flowLayoutPanelMenu.Controls.Add(btnNhanVien);
+            flowLayoutPanelMenu.Controls.Add(btnKhachHang);
+            flowLayoutPanelMenu.Controls.Add(btnPhieuNhap);
+            flowLayoutPanelMenu.Controls.Add(btnCTPhieuNhap);
+            flowLayoutPanelMenu.Controls.Add(btnHoaDon);
+            flowLayoutPanelMenu.Controls.Add(btnTraGop);
+            flowLayoutPanelMenu.Controls.Add(btnTKChiPhi);
+            flowLayoutPanelMenu.Controls.Add(btnTKDoanhThu);
+            flowLayoutPanelMenu.Controls.Add(btnTroGiup);
+            flowLayoutPanelMenu.Dock = DockStyle.Fill;
+            flowLayoutPanelMenu.FlowDirection = FlowDirection.TopDown;
+            flowLayoutPanelMenu.Location = new Point(10, 35);
+            flowLayoutPanelMenu.Name = "flowLayoutPanelMenu";
+            flowLayoutPanelMenu.Padding = new Padding(2, 5, 0, 0);
+            flowLayoutPanelMenu.Size = new Size(188, 440);
+            flowLayoutPanelMenu.TabIndex = 0;
+            flowLayoutPanelMenu.WrapContents = false;
             // 
             // btnQuanLyTiVi
             // 
             btnQuanLyTiVi.BackColor = Color.FromArgb(60, 85, 115);
-            btnQuanLyTiVi.Dock = DockStyle.Fill;
             btnQuanLyTiVi.FlatAppearance.BorderSize = 0;
             btnQuanLyTiVi.FlatStyle = FlatStyle.Flat;
             btnQuanLyTiVi.ForeColor = Color.White;
-            btnQuanLyTiVi.Location = new Point(15, 2);
-            btnQuanLyTiVi.Margin = new Padding(15, 2, 15, 2);
+            btnQuanLyTiVi.Location = new Point(5, 10);
+            btnQuanLyTiVi.Margin = new Padding(3, 5, 3, 5);
             btnQuanLyTiVi.Name = "btnQuanLyTiVi";
-            btnQuanLyTiVi.Size = new Size(158, 36);
+            btnQuanLyTiVi.Size = new Size(175, 40);
             btnQuanLyTiVi.TabIndex = 0;
             btnQuanLyTiVi.Text = "Quản Lý TiVi";
             btnQuanLyTiVi.UseVisualStyleBackColor = false;
@@ -112,14 +99,13 @@
             // btnNhanVien
             // 
             btnNhanVien.BackColor = Color.FromArgb(60, 85, 115);
-            btnNhanVien.Dock = DockStyle.Fill;
             btnNhanVien.FlatAppearance.BorderSize = 0;
             btnNhanVien.FlatStyle = FlatStyle.Flat;
             btnNhanVien.ForeColor = Color.White;
-            btnNhanVien.Location = new Point(15, 42);
-            btnNhanVien.Margin = new Padding(15, 2, 15, 2);
+            btnNhanVien.Location = new Point(5, 60);
+            btnNhanVien.Margin = new Padding(3, 5, 3, 5);
             btnNhanVien.Name = "btnNhanVien";
-            btnNhanVien.Size = new Size(158, 36);
+            btnNhanVien.Size = new Size(175, 40);
             btnNhanVien.TabIndex = 1;
             btnNhanVien.Text = "Nhân Viên";
             btnNhanVien.UseVisualStyleBackColor = false;
@@ -128,14 +114,13 @@
             // btnKhachHang
             // 
             btnKhachHang.BackColor = Color.FromArgb(60, 85, 115);
-            btnKhachHang.Dock = DockStyle.Fill;
             btnKhachHang.FlatAppearance.BorderSize = 0;
             btnKhachHang.FlatStyle = FlatStyle.Flat;
             btnKhachHang.ForeColor = Color.White;
-            btnKhachHang.Location = new Point(15, 82);
-            btnKhachHang.Margin = new Padding(15, 2, 15, 2);
+            btnKhachHang.Location = new Point(5, 110);
+            btnKhachHang.Margin = new Padding(3, 5, 3, 5);
             btnKhachHang.Name = "btnKhachHang";
-            btnKhachHang.Size = new Size(158, 36);
+            btnKhachHang.Size = new Size(175, 40);
             btnKhachHang.TabIndex = 2;
             btnKhachHang.Text = "Khách Hàng";
             btnKhachHang.UseVisualStyleBackColor = false;
@@ -144,14 +129,13 @@
             // btnPhieuNhap
             // 
             btnPhieuNhap.BackColor = Color.FromArgb(60, 85, 115);
-            btnPhieuNhap.Dock = DockStyle.Fill;
             btnPhieuNhap.FlatAppearance.BorderSize = 0;
             btnPhieuNhap.FlatStyle = FlatStyle.Flat;
             btnPhieuNhap.ForeColor = Color.White;
-            btnPhieuNhap.Location = new Point(15, 122);
-            btnPhieuNhap.Margin = new Padding(15, 2, 15, 2);
+            btnPhieuNhap.Location = new Point(5, 160);
+            btnPhieuNhap.Margin = new Padding(3, 5, 3, 5);
             btnPhieuNhap.Name = "btnPhieuNhap";
-            btnPhieuNhap.Size = new Size(158, 36);
+            btnPhieuNhap.Size = new Size(175, 40);
             btnPhieuNhap.TabIndex = 3;
             btnPhieuNhap.Text = "Phiếu Nhập";
             btnPhieuNhap.UseVisualStyleBackColor = false;
@@ -160,14 +144,13 @@
             // btnCTPhieuNhap
             // 
             btnCTPhieuNhap.BackColor = Color.FromArgb(60, 85, 115);
-            btnCTPhieuNhap.Dock = DockStyle.Fill;
             btnCTPhieuNhap.FlatAppearance.BorderSize = 0;
             btnCTPhieuNhap.FlatStyle = FlatStyle.Flat;
             btnCTPhieuNhap.ForeColor = Color.White;
-            btnCTPhieuNhap.Location = new Point(15, 162);
-            btnCTPhieuNhap.Margin = new Padding(15, 2, 15, 2);
+            btnCTPhieuNhap.Location = new Point(5, 210);
+            btnCTPhieuNhap.Margin = new Padding(3, 5, 3, 5);
             btnCTPhieuNhap.Name = "btnCTPhieuNhap";
-            btnCTPhieuNhap.Size = new Size(158, 36);
+            btnCTPhieuNhap.Size = new Size(175, 40);
             btnCTPhieuNhap.TabIndex = 4;
             btnCTPhieuNhap.Text = "CT Phiếu Nhập";
             btnCTPhieuNhap.UseVisualStyleBackColor = false;
@@ -176,14 +159,13 @@
             // btnHoaDon
             // 
             btnHoaDon.BackColor = Color.FromArgb(60, 85, 115);
-            btnHoaDon.Dock = DockStyle.Fill;
             btnHoaDon.FlatAppearance.BorderSize = 0;
             btnHoaDon.FlatStyle = FlatStyle.Flat;
             btnHoaDon.ForeColor = Color.White;
-            btnHoaDon.Location = new Point(15, 202);
-            btnHoaDon.Margin = new Padding(15, 2, 15, 2);
+            btnHoaDon.Location = new Point(5, 260);
+            btnHoaDon.Margin = new Padding(3, 5, 3, 5);
             btnHoaDon.Name = "btnHoaDon";
-            btnHoaDon.Size = new Size(158, 36);
+            btnHoaDon.Size = new Size(175, 40);
             btnHoaDon.TabIndex = 5;
             btnHoaDon.Text = "Hóa Đơn";
             btnHoaDon.UseVisualStyleBackColor = false;
@@ -192,14 +174,13 @@
             // btnTraGop
             // 
             btnTraGop.BackColor = Color.FromArgb(60, 85, 115);
-            btnTraGop.Dock = DockStyle.Fill;
             btnTraGop.FlatAppearance.BorderSize = 0;
             btnTraGop.FlatStyle = FlatStyle.Flat;
             btnTraGop.ForeColor = Color.White;
-            btnTraGop.Location = new Point(15, 242);
-            btnTraGop.Margin = new Padding(15, 2, 15, 2);
+            btnTraGop.Location = new Point(5, 310);
+            btnTraGop.Margin = new Padding(3, 5, 3, 5);
             btnTraGop.Name = "btnTraGop";
-            btnTraGop.Size = new Size(158, 36);
+            btnTraGop.Size = new Size(175, 40);
             btnTraGop.TabIndex = 29;
             btnTraGop.Text = "Trả Góp";
             btnTraGop.UseVisualStyleBackColor = false;
@@ -208,14 +189,13 @@
             // btnTKChiPhi
             // 
             btnTKChiPhi.BackColor = Color.FromArgb(60, 85, 115);
-            btnTKChiPhi.Dock = DockStyle.Fill;
             btnTKChiPhi.FlatAppearance.BorderSize = 0;
             btnTKChiPhi.FlatStyle = FlatStyle.Flat;
             btnTKChiPhi.ForeColor = Color.White;
-            btnTKChiPhi.Location = new Point(15, 282);
-            btnTKChiPhi.Margin = new Padding(15, 2, 15, 2);
+            btnTKChiPhi.Location = new Point(5, 360);
+            btnTKChiPhi.Margin = new Padding(3, 5, 3, 5);
             btnTKChiPhi.Name = "btnTKChiPhi";
-            btnTKChiPhi.Size = new Size(158, 36);
+            btnTKChiPhi.Size = new Size(175, 40);
             btnTKChiPhi.TabIndex = 30;
             btnTKChiPhi.Text = "TK Chi Phí";
             btnTKChiPhi.UseVisualStyleBackColor = false;
@@ -224,14 +204,13 @@
             // btnTKDoanhThu
             // 
             btnTKDoanhThu.BackColor = Color.FromArgb(60, 85, 115);
-            btnTKDoanhThu.Dock = DockStyle.Fill;
             btnTKDoanhThu.FlatAppearance.BorderSize = 0;
             btnTKDoanhThu.FlatStyle = FlatStyle.Flat;
             btnTKDoanhThu.ForeColor = Color.White;
-            btnTKDoanhThu.Location = new Point(15, 322);
-            btnTKDoanhThu.Margin = new Padding(15, 2, 15, 2);
+            btnTKDoanhThu.Location = new Point(5, 410);
+            btnTKDoanhThu.Margin = new Padding(3, 5, 3, 5);
             btnTKDoanhThu.Name = "btnTKDoanhThu";
-            btnTKDoanhThu.Size = new Size(158, 36);
+            btnTKDoanhThu.Size = new Size(175, 40);
             btnTKDoanhThu.TabIndex = 31;
             btnTKDoanhThu.Text = "TK Doanh Thu";
             btnTKDoanhThu.UseVisualStyleBackColor = false;
@@ -240,14 +219,13 @@
             // btnTroGiup
             // 
             btnTroGiup.BackColor = Color.FromArgb(60, 85, 115);
-            btnTroGiup.Dock = DockStyle.Fill;
             btnTroGiup.FlatAppearance.BorderSize = 0;
             btnTroGiup.FlatStyle = FlatStyle.Flat;
             btnTroGiup.ForeColor = Color.White;
-            btnTroGiup.Location = new Point(15, 362);
-            btnTroGiup.Margin = new Padding(15, 2, 15, 2);
+            btnTroGiup.Location = new Point(5, 460);
+            btnTroGiup.Margin = new Padding(3, 5, 3, 5);
             btnTroGiup.Name = "btnTroGiup";
-            btnTroGiup.Size = new Size(158, 36);
+            btnTroGiup.Size = new Size(175, 40);
             btnTroGiup.TabIndex = 32;
             btnTroGiup.Text = "Báo Cáo";
             btnTroGiup.UseVisualStyleBackColor = false;
@@ -256,12 +234,13 @@
             // btnDangXuat
             // 
             btnDangXuat.BackColor = Color.FromArgb(220, 53, 69);
+            btnDangXuat.Dock = DockStyle.Bottom;
             btnDangXuat.FlatStyle = FlatStyle.Flat;
             btnDangXuat.ForeColor = Color.White;
-            btnDangXuat.Location = new Point(15, 443);
-            btnDangXuat.Margin = new Padding(15, 5, 15, 5);
+            btnDangXuat.Location = new Point(10, 475);
+            btnDangXuat.Margin = new Padding(15, 15, 15, 10);
             btnDangXuat.Name = "btnDangXuat";
-            btnDangXuat.Size = new Size(158, 40);
+            btnDangXuat.Size = new Size(188, 50);
             btnDangXuat.TabIndex = 28;
             btnDangXuat.Text = "ĐĂNG XUẤT";
             btnDangXuat.UseVisualStyleBackColor = false;
@@ -322,7 +301,7 @@
             WindowState = FormWindowState.Maximized;
             Load += frmTrangChu_Load;
             groupBox1.ResumeLayout(false);
-            tableLayoutPanel1.ResumeLayout(false);
+            flowLayoutPanelMenu.ResumeLayout(false);
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
             panelContent.ResumeLayout(false);
@@ -334,12 +313,11 @@
         #endregion
 
         private GroupBox groupBox1;
-        private TableLayoutPanel tableLayoutPanel1;
+        private FlowLayoutPanel flowLayoutPanelMenu;
         private StatusStrip statusStrip1;
-        public ToolStripStatusLabel lblTrangThai; // Đổi thành Public để dễ điều khiển
+        public ToolStripStatusLabel lblTrangThai;
         private ToolStripStatusLabel toolStripStatusLabel4;
 
-        // Khai báo các Button là Public để file .cs điều khiển được (Enable/Disable)
         public Button btnQuanLyTiVi;
         public Button btnNhanVien;
         public Button btnKhachHang;

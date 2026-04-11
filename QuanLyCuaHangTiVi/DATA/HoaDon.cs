@@ -25,6 +25,8 @@ namespace QuanLyCuaHangTiVi.DATA
 
         public DateTime NgayLap { get; set; } = DateTime.Now;
         public string? GhiChuHoaDon { get; set; }
+        [StringLength(50)]
+        public string HinhThucThanhToan { get; set; } = "Tiền mặt";
 
         // Quan hệ
         public virtual ICollection<HoaDonChiTiet> HoaDonChiTiets { get; set; } = new List<HoaDonChiTiet>();
@@ -46,6 +48,7 @@ namespace QuanLyCuaHangTiVi.DATA
         public string TenKhachHang { get; set; }
         public DateTime NgayLap { get; set; }
         public decimal TongTien { get; set; }
+        public string HinhThucThanhToan { get; set; } = "Tiền mặt";
         public string XemChiTiet { get; set; } = "Xem chi tiết";
     }
 }

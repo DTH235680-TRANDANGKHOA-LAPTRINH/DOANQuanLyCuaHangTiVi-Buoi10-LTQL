@@ -126,7 +126,6 @@
             txtMaPhieuNhap.Name = "txtMaPhieuNhap";
             txtMaPhieuNhap.Size = new Size(150, 31);
             txtMaPhieuNhap.TabIndex = 2;
-            txtMaPhieuNhap.TextChanged += txtMaPhieuNhap_TextChanged;
             // 
             // label5
             // 
@@ -227,7 +226,7 @@
             // 
             // panel1
             // 
-            panel1.BackColor = Color.FromArgb(192, 255, 192);
+            panel1.BackColor = Color.FromArgb(224, 224, 224);
             panel1.Controls.Add(dtpNgayNhap);
             panel1.Controls.Add(label2);
             panel1.Controls.Add(txtGhiChu);

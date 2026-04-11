@@ -72,22 +72,19 @@ namespace QuanLyCuaHangTiVi.forms
                 }
             }
         }
-
-        // --- HÀM SET TRẠNG THÁI MENU (Duyệt trong tableLayoutPanel1) ---
+        // --- HÀM SET TRẠNG THÁI MENU (Duyệt trong flowLayoutPanelMenu) ---
         private void SetMenuStatus(bool status)
         {
-            // Trong hình bạn gửi, các nút nằm trong tableLayoutPanel1
-            foreach (Control ctrl in tableLayoutPanel1.Controls)
+            // Duyệt qua tất cả các control trong flowLayoutPanelMenu
+            // Lưu ý: Nút Đăng Xuất đã được đẩy ra ngoài nên không bị ẩn theo
+            foreach (Control ctrl in flowLayoutPanelMenu.Controls)
             {
                 if (ctrl is Button btn)
                 {
-                    // Nút Đăng xuất không bao giờ bị khóa
-                    if (btn.Name == "btnDangXuat") btn.Enabled = true;
-                    else btn.Enabled = status;
+                    btn.Visible = status; // Ẩn hoặc hiện các nút khác theo status
                 }
             }
         }
-
         // --- CÁC HÀM CẤP QUYỀN ---
         public void ChuaDangNhap()
         {
@@ -97,21 +94,19 @@ namespace QuanLyCuaHangTiVi.forms
 
         public void QuyenQuanLy(string hoTen)
         {
-            SetMenuStatus(true); // Mở khóa toàn bộ
+            SetMenuStatus(true); // Mở hiển thị toàn bộ
             lblTrangThai.Text = "Quản lý: " + hoTen;
             this.Text = "Trang Chủ - Quản Lý TiVi | Quản lý: " + hoTen;
         }
 
         public void QuyenNhanVien(string hoTen)
         {
-            SetMenuStatus(false); // Khóa toàn bộ
+            SetMenuStatus(false); // Ẩn toàn bộ trước
 
-            // 1. Nhân viên chỉ lập hóa đơn
-            btnHoaDon.Enabled = true;
-
-            // (Tùy chọn: Mở thêm nút Khách Hàng / TiVi nếu cần tra cứu thông tin để lập hóa đơn)
-             btnKhachHang.Enabled = true;
-            // btnQuanLyTiVi.Enabled = true;
+            // 1. Nhân viên chỉ lập hóa đơn (Chỉ hiện các nút được phép)
+            btnHoaDon.Visible = true;
+            btnKhachHang.Visible = true;
+            // btnQuanLyTiVi.Visible = true; // Bỏ comment nếu muốn nhân viên xem thông tin Tivi
 
             lblTrangThai.Text = "Nhân viên: " + hoTen;
             this.Text = "Trang Chủ - Quản Lý TiVi | Nhân viên: " + hoTen;
@@ -119,12 +114,12 @@ namespace QuanLyCuaHangTiVi.forms
 
         public void QuyenNhanVienTraGop(string hoTen)
         {
-            SetMenuStatus(false); // Khóa toàn bộ
+            SetMenuStatus(false); // Ẩn toàn bộ trước
 
             // 2. Nhân viên trả góp chỉ được lập hóa đơn và trả góp
-            btnKhachHang.Enabled = true;
-            btnHoaDon.Enabled = true;
-            btnTraGop.Enabled = true;
+            btnKhachHang.Visible = true;
+            btnHoaDon.Visible = true;
+            btnTraGop.Visible = true;
 
             lblTrangThai.Text = "NV Trả góp: " + hoTen;
             this.Text = "Trang Chủ - Quản Lý TiVi | NV Trả góp: " + hoTen;
@@ -132,11 +127,11 @@ namespace QuanLyCuaHangTiVi.forms
 
         public void QuyenNhanVienNhapHang(string hoTen)
         {
-            SetMenuStatus(false); // Khóa toàn bộ
+            SetMenuStatus(false); // Ẩn toàn bộ trước
 
             // 3. Nhân viên nhập hàng chỉ được sử dụng phiếu nhập và chi tiết phiếu nhập
-            btnPhieuNhap.Enabled = true;
-            btnCTPhieuNhap.Enabled = true;
+            btnPhieuNhap.Visible = true;
+            btnCTPhieuNhap.Visible = true;
 
             lblTrangThai.Text = "NV Nhập hàng: " + hoTen;
             this.Text = "Trang Chủ - Quản Lý TiVi | NV Nhập hàng: " + hoTen;

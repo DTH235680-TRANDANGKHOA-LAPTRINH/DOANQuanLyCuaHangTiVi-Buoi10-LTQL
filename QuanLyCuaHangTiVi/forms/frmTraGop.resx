@@ -118,6 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="btnThuTien.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAW
+        JQAAFiUBSVIk8AAAAZRJREFUSEtjGAUDD4o3qv4nGm/CIgbDUDmosQhQsE7l/5PPZ6iCC9cpY1qQt0rp
+        /933B/8vP1v8fxkQLz9bBKUhfAguAouDxBAYWawIbEbeauX/lplCqD7JWa70//Krzf8XnswG0+TgBVC9
+        OSsU/2e0hKP6JGuJwv8TTxb+n3UkEUzDcMwESaxsbHyYXpBZqU1BqD7JWCD/f/fdvv+T9oeDaRAGGQDC
+        MDY+GoRhetOBZiU2+KL6JHWu7P+1Vyv/d+70AdMwDDKAGBqEYXrTgGbF1Lmi+IQheZbM/wXnUv83bXEE
+        0zAMMgAbGxsfphdkVni1LYpPGBKny/yffDzof9V6czBNDobpTZwu/T+w3BTFJwzxU6X+dxx0+F+yWg+I
+        dbFgfOIIDDIjforUf59SXRSfMMRNkvxft8eIKjhuktR/9yJVFJ8wgMITgiWgNBD3Q/n9UDEYDcdQOTAG
+        yUPFgHJO+bIoPoHmBgYGwxje/3a5ElTByD6BGs9AM59AjUcAavsEaiwCoLgOxqbAJ1BjR8GAAQYGAFUg
+        ajrYr1sUAAAAAElFTkSuQmCC
+</value>
+  </data>
   <data name="btnThoat.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAW
@@ -261,25 +274,7 @@
         +y2HN1lDM1e4Do1G8w8nKO8on5UW6wAAAABJRU5ErkJggg==
 </value>
   </data>
-  <metadata name="ColMaTraGop.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="ColMaHoaDon.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="ColLaiSuat.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="ColKyHanTra.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="ColSoTienTraTruoc.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="ColSoTienConNo.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="ColMaTraGop.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="ColID.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <metadata name="ColMaHoaDon.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

@@ -13,8 +13,8 @@ namespace QuanLyCuaHangTiVi.DATA
     public class TraGop
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)] // Đánh dấu cho DB tự động tăng số
-        public int MaTraGop { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)] // Tự động tăng 1, 2, 3...
+        public int ID { get; set; } // SỬA: Đổi từ MaTraGop sang ID
 
         public int MaHoaDon { get; set; }
 

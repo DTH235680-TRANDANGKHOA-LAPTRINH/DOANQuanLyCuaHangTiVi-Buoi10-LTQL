@@ -34,6 +34,10 @@ namespace QuanLyCuaHangTiVi.forms
                 MaKhachHang = r.MaKhachHang,
                 TenKhachHang = r.KhachHang.TenKhachHang,
                 NgayLap = r.NgayLap,
+
+                // ---> THÊM DÒNG NÀY ĐỂ LẤY HÌNH THỨC THANH TOÁN TỪ DB <---
+                HinhThucThanhToan = r.HinhThucThanhToan,
+
                 // Sử dụng (decimal)(ct.KhuyenMai ?? 0) để tránh lỗi null và sai kiểu dữ liệu
                 TongTien = r.HoaDonChiTiets.Sum(ct => (ct.SoLuongBan * ct.DonGiaBan) - (ct.KhuyenMai ?? 0)),
                 XemChiTiet = "Xem chi tiết"
@@ -135,27 +139,30 @@ namespace QuanLyCuaHangTiVi.forms
                         // ==========================================
                         DataTable dtHoaDon = new DataTable();
                         dtHoaDon.Columns.AddRange(new DataColumn[] {
-                    new DataColumn("Mã HĐ", typeof(int)),
-                    new DataColumn("Tên Nhân Viên", typeof(string)),
-                    new DataColumn("Tên Khách Hàng", typeof(string)),
-                    new DataColumn("Ngày Lập", typeof(DateTime)),
-                    new DataColumn("Tổng Tiền", typeof(decimal)) // Dùng decimal cho tiền tệ
-                });
+            new DataColumn("Mã HĐ", typeof(int)),
+            new DataColumn("Tên Nhân Viên", typeof(string)),
+            new DataColumn("Tên Khách Hàng", typeof(string)),
+            new DataColumn("Ngày Lập", typeof(DateTime)),
+            new DataColumn("Hình Thức TT", typeof(string)), // ---> THÊM CỘT NÀY VÀO EXCEL
+            new DataColumn("Tổng Tiền", typeof(decimal))
+        });
 
-                        // Lấy dữ liệu Hóa Đơn (giống với cách bạn load lên DataGridView)
+                        // Lấy dữ liệu Hóa Đơn 
                         var dsHoaDon = context.HoaDons.Select(r => new
                         {
                             ID = r.ID,
                             HoTenNhanVien = r.NhanVien.HoTenNhanVien,
                             TenKhachHang = r.KhachHang.TenKhachHang,
                             NgayLap = r.NgayLap,
+                            HinhThucThanhToan = r.HinhThucThanhToan, // ---> LẤY DỮ LIỆU TỪ DB
                             TongTien = r.HoaDonChiTiets.Sum(ct => (ct.SoLuongBan * ct.DonGiaBan) - (ct.KhuyenMai ?? 0))
                         }).ToList();
 
                         // Đổ dữ liệu vào DataTable
                         foreach (var hd in dsHoaDon)
                         {
-                            dtHoaDon.Rows.Add(hd.ID, hd.HoTenNhanVien, hd.TenKhachHang, hd.NgayLap, hd.TongTien);
+                            // ---> THÊM hd.HinhThucThanhToan VÀO DÒNG BÊN DƯỚI
+                            dtHoaDon.Rows.Add(hd.ID, hd.HoTenNhanVien, hd.TenKhachHang, hd.NgayLap, hd.HinhThucThanhToan, hd.TongTien);
                         }
                         var sheetHD = wb.Worksheets.Add(dtHoaDon, "DanhSachHoaDon");
                         sheetHD.Columns().AdjustToContents(); // Tự động giãn cột cho đẹp
@@ -165,21 +172,19 @@ namespace QuanLyCuaHangTiVi.forms
                         // ==========================================
                         DataTable dtChiTiet = new DataTable();
                         dtChiTiet.Columns.AddRange(new DataColumn[] {
-                    new DataColumn("Mã HĐ", typeof(int)),
-                    new DataColumn("Mã TiVi", typeof(string)),
-                    new DataColumn("Số Lượng", typeof(int)),
-                    new DataColumn("Đơn Giá", typeof(decimal)),
-                    new DataColumn("Khuyến Mãi", typeof(decimal)),
-                    new DataColumn("Thành Tiền", typeof(decimal))
-                });
+            new DataColumn("Mã HĐ", typeof(int)),
+            new DataColumn("Mã TiVi", typeof(string)),
+            new DataColumn("Số Lượng", typeof(int)),
+            new DataColumn("Đơn Giá", typeof(decimal)),
+            new DataColumn("Khuyến Mãi", typeof(decimal)),
+            new DataColumn("Thành Tiền", typeof(decimal))
+        });
 
                         // Lấy dữ liệu Chi Tiết Hóa Đơn
                         var dsChiTiet = context.HoaDonChiTiets.Select(ct => new
                         {
                             HoaDonID = ct.HoaDonID,
                             MaTiVi = ct.MaTiVi,
-                            // Nếu bạn có class QuanLyTiVi lồng trong HoaDonChiTiet, bạn có thể lấy tên TiVi như sau:
-                            // TenTiVi = ct.QuanLyTiVi.TenTiVi,
                             SoLuongBan = ct.SoLuongBan,
                             DonGiaBan = ct.DonGiaBan,
                             KhuyenMai = ct.KhuyenMai ?? 0,

@@ -69,7 +69,7 @@
             // 
             // panel1
             // 
-            panel1.BackColor = Color.FromArgb(192, 192, 255);
+            panel1.BackColor = Color.White;
             panel1.Controls.Add(label7);
             panel1.Controls.Add(dtpNgaySinh);
             panel1.Controls.Add(txtLuong);

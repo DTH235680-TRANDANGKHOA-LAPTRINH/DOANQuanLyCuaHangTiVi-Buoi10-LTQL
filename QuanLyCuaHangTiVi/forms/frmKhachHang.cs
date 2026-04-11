@@ -17,13 +17,46 @@ namespace QuanLyCuaHangTiVi.forms
         AppDbContext db = new AppDbContext();
         bool isThem = false; // true = Đang thêm, false = Đang sửa
 
-        // 2. Hàm điều khiển trạng thái các nút và ô nhập
+        // ==========================================================
+        // CÁC HÀM BỔ TRỢ
+        // ==========================================================
+
+        // Hàm tự động sinh mã Khách Hàng
+        private string GenerateMaKhachHang()
+        {
+            var dsMaKH = db.KhachHangs.Select(k => k.MaKhachHang).ToList();
+
+            if (dsMaKH.Count == 0)
+            {
+                return "KH001";
+            }
+
+            int maxId = 0;
+            foreach (var ma in dsMaKH)
+            {
+                if (ma.StartsWith("KH") && ma.Length > 2)
+                {
+                    string soPhanDuoi = ma.Substring(2);
+                    if (int.TryParse(soPhanDuoi, out int so))
+                    {
+                        if (so > maxId)
+                        {
+                            maxId = so;
+                        }
+                    }
+                }
+            }
+            return "KH" + (maxId + 1).ToString("D3");
+        }
+
+        // Hàm điều khiển trạng thái bật/tắt các nút và ô nhập
         private void BatTatChucNang(bool dangThaoTac)
         {
             btnLuu.Enabled = dangThaoTac;
             btnHuyBo.Enabled = dangThaoTac;
 
-            txtMaKhachHang.Enabled = dangThaoTac;
+            txtMaKhachHang.Enabled = false; // Luôn khóa vì tự sinh mã
+
             txtTenKhachHang.Enabled = dangThaoTac;
             txtSoDienThoai.Enabled = dangThaoTac;
             txtCCCD.Enabled = dangThaoTac;
@@ -34,6 +67,7 @@ namespace QuanLyCuaHangTiVi.forms
             btnSua.Enabled = !dangThaoTac;
             btnXoa.Enabled = !dangThaoTac;
             btnThoat.Enabled = !dangThaoTac;
+            dgvDanhSachKhachHang.Enabled = !dangThaoTac; // Khóa lưới khi đang nhập để tránh lỗi click nhầm
         }
         public frmKhachHang()
         {
@@ -47,15 +81,13 @@ namespace QuanLyCuaHangTiVi.forms
             // Tải dữ liệu từ CSDL
             var danhSachKH = db.KhachHangs.ToList();
 
-            // Tạo BindingSource
             BindingSource bindingSource = new BindingSource();
             bindingSource.DataSource = danhSachKH;
 
-            // Gán dữ liệu cho DataGridView
             dgvDanhSachKhachHang.AutoGenerateColumns = false;
             dgvDanhSachKhachHang.DataSource = bindingSource;
 
-            // --- CẤU HÌNH CỘT CHO LƯỚI ---
+            // Cấu hình cột
             if (dgvDanhSachKhachHang.Columns.Contains("Ma")) dgvDanhSachKhachHang.Columns["Ma"].DataPropertyName = "MaKhachHang";
             if (dgvDanhSachKhachHang.Columns.Contains("Ten")) dgvDanhSachKhachHang.Columns["Ten"].DataPropertyName = "TenKhachHang";
             if (dgvDanhSachKhachHang.Columns.Contains("SDT")) dgvDanhSachKhachHang.Columns["SDT"].DataPropertyName = "SoDienThoai";
@@ -63,7 +95,7 @@ namespace QuanLyCuaHangTiVi.forms
             if (dgvDanhSachKhachHang.Columns.Contains("CCCD")) dgvDanhSachKhachHang.Columns["CCCD"].DataPropertyName = "CCCD";
             if (dgvDanhSachKhachHang.Columns.Contains("DiaChi")) dgvDanhSachKhachHang.Columns["DiaChi"].DataPropertyName = "DiaChi";
 
-            // --- DATABINDING ---
+            // DataBinding
             txtMaKhachHang.DataBindings.Clear();
             txtTenKhachHang.DataBindings.Clear();
             txtSoDienThoai.DataBindings.Clear();
@@ -78,67 +110,68 @@ namespace QuanLyCuaHangTiVi.forms
             txtDiaChi.DataBindings.Add("Text", bindingSource, "DiaChi", true, DataSourceUpdateMode.Never);
             dtpNgayThangNamSinh.DataBindings.Add("Value", bindingSource, "NgayThangNamSinh", true, DataSourceUpdateMode.Never);
 
-            // 1. Giới hạn độ dài tối đa
+            // Giới hạn độ dài tối đa
             txtSoDienThoai.MaxLength = 10;
             txtCCCD.MaxLength = 12;
 
-            // 2. Gắn sự kiện chặn chữ (đã có)
+            // Gắn sự kiện (hủy đăng ký trước để tránh bị lặp sự kiện nếu Load nhiều lần)
             txtSoDienThoai.KeyPress -= ChiNhapSo_KeyPress;
             txtCCCD.KeyPress -= ChiNhapSo_KeyPress;
             txtSoDienThoai.KeyPress += ChiNhapSo_KeyPress;
             txtCCCD.KeyPress += ChiNhapSo_KeyPress;
 
-            // 3. Gắn sự kiện kiểm tra độ dài khi rời ô (đã có)
             txtSoDienThoai.Leave -= txtSoDienThoai_Leave;
             txtSoDienThoai.Leave += txtSoDienThoai_Leave;
             txtCCCD.Leave -= txtCCCD_Leave;
             txtCCCD.Leave += txtCCCD_Leave;
-
-            // --- ĐÂY LÀ PHẦN THÊM MỚI (KIỂM TRA TRÙNG MÃ GIỐNG TIVI) ---
-            txtMaKhachHang.Leave -= txtMaKhachHang_Leave;
-            txtMaKhachHang.Leave += txtMaKhachHang_Leave;
         }
         private void ChiNhapSo_KeyPress(object sender, KeyPressEventArgs e)
         {
-            // Chỉ cho phép nhập số và phím điều khiển (như Backspace)
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
             {
                 e.Handled = true;
                 MessageBox.Show("Vui lòng chỉ nhập số, không được nhập chữ hay ký tự đặc biệt!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
-        // Bạn cũng cần thêm hàm xử lý này ở bên ngoài hàm Load
-        private void txtMaKhachHang_Leave(object sender, EventArgs e)
-        {
-            // isThem là biến bool bạn dùng để xác định đang nhấn nút Thêm
-            if (isThem && !string.IsNullOrWhiteSpace(txtMaKhachHang.Text))
-            {
-                string maCheck = txtMaKhachHang.Text.Trim();
-                bool biTrung = db.KhachHangs.Any(x => x.MaKhachHang == maCheck);
 
-                if (biTrung)
-                {
-                    MessageBox.Show($"Mã khách hàng '{maCheck}' đã tồn tại! Vui lòng nhập mã khác.",
-                                    "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    txtMaKhachHang.Clear();
-                    txtMaKhachHang.Focus();
-                }
-            }
-        }
         private void txtSoDienThoai_Leave(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(txtSoDienThoai.Text) && txtSoDienThoai.Text.Length != 10)
+            string sdt = txtSoDienThoai.Text.Trim();
+            if (string.IsNullOrWhiteSpace(sdt)) return;
+
+            if (sdt.Length != 10)
             {
                 MessageBox.Show("Số điện thoại phải bao gồm đúng 10 số!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtSoDienThoai.Focus();
+                return;
+            }
+
+            string maKHCurrent = txtMaKhachHang.Text.Trim();
+            bool isTrung = db.KhachHangs.Any(k => k.SoDienThoai == sdt && k.MaKhachHang != maKHCurrent);
+            if (isTrung)
+            {
+                MessageBox.Show("Số điện thoại này đã được sử dụng cho một khách hàng khác!", "Trùng dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtSoDienThoai.Focus();
             }
         }
 
         private void txtCCCD_Leave(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(txtCCCD.Text) && txtCCCD.Text.Length != 12)
+            string cccd = txtCCCD.Text.Trim();
+            if (string.IsNullOrWhiteSpace(cccd)) return;
+
+            if (cccd.Length != 12)
             {
                 MessageBox.Show("Căn cước công dân phải bao gồm đúng 12 số!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtCCCD.Focus();
+                return;
+            }
+
+            string maKHCurrent = txtMaKhachHang.Text.Trim();
+            bool isTrung = db.KhachHangs.Any(k => k.CCCD == cccd && k.MaKhachHang != maKHCurrent);
+            if (isTrung)
+            {
+                MessageBox.Show("Số CCCD này đã tồn tại trong hệ thống!", "Trùng dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtCCCD.Focus();
             }
         }
@@ -147,16 +180,15 @@ namespace QuanLyCuaHangTiVi.forms
             isThem = true;
             BatTatChucNang(true);
 
-            txtMaKhachHang.Clear();
+            txtMaKhachHang.Text = GenerateMaKhachHang();
+
             txtTenKhachHang.Clear();
             txtSoDienThoai.Clear();
             txtCCCD.Clear();
             txtDiaChi.Clear();
 
-            // Mặc định lùi lại 18 năm để đủ tuổi
             dtpNgayThangNamSinh.Value = DateTime.Now.AddYears(-18);
-
-            txtMaKhachHang.Focus();
+            txtTenKhachHang.Focus();
         }
 
         private void btnSua_Click(object sender, EventArgs e)
@@ -169,7 +201,7 @@ namespace QuanLyCuaHangTiVi.forms
 
             isThem = false;
             BatTatChucNang(true);
-            txtMaKhachHang.Enabled = false; // Khóa mã KH khi sửa
+            txtTenKhachHang.Focus();
         }
 
         private void btnXoa_Click(object sender, EventArgs e)
@@ -199,11 +231,10 @@ namespace QuanLyCuaHangTiVi.forms
 
         private void btnLuu_Click(object sender, EventArgs e)
         {
-            // 1. Kiểm tra Dữ liệu rỗng
+            // 1. Kiểm tra rỗng
             if (string.IsNullOrWhiteSpace(txtMaKhachHang.Text))
             {
-                MessageBox.Show("Vui lòng nhập Mã Khách Hàng");
-                txtMaKhachHang.Focus();
+                MessageBox.Show("Lỗi: Mã Khách Hàng trống. Hãy thử bấm Hủy và Thêm lại.");
                 return;
             }
             if (string.IsNullOrWhiteSpace(txtTenKhachHang.Text))
@@ -213,21 +244,40 @@ namespace QuanLyCuaHangTiVi.forms
                 return;
             }
 
+            string sdtCheck = txtSoDienThoai.Text.Trim();
+            string cccdCheck = txtCCCD.Text.Trim();
+            string maKHCurrent = txtMaKhachHang.Text.Trim();
+
             // 2. Kiểm tra độ dài SDT & CCCD (chốt chặn an toàn)
-            if (txtSoDienThoai.Text.Length != 10)
+            if (sdtCheck.Length != 10)
             {
                 MessageBox.Show("Số điện thoại không hợp lệ (phải đủ 10 số)!");
                 txtSoDienThoai.Focus();
                 return;
             }
-            if (txtCCCD.Text.Length != 12)
+            if (cccdCheck.Length != 12)
             {
                 MessageBox.Show("CCCD không hợp lệ (phải đủ 12 số)!");
                 txtCCCD.Focus();
                 return;
             }
 
-            // 3. Kiểm tra Tuổi (>= 18)
+            // 3. Kiểm tra trùng (chốt chặn cuối nếu họ bấm Lưu nhanh mà chưa kích hoạt sự kiện Leave)
+            if (db.KhachHangs.Any(k => k.SoDienThoai == sdtCheck && k.MaKhachHang != maKHCurrent))
+            {
+                MessageBox.Show("Số điện thoại này đã được sử dụng cho một khách hàng khác!", "Trùng dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtSoDienThoai.Focus();
+                return;
+            }
+
+            if (db.KhachHangs.Any(k => k.CCCD == cccdCheck && k.MaKhachHang != maKHCurrent))
+            {
+                MessageBox.Show("Số CCCD này đã tồn tại trong hệ thống!", "Trùng dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtCCCD.Focus();
+                return;
+            }
+
+            // 4. Kiểm tra Tuổi (>= 18)
             int tuoi = DateTime.Now.Year - dtpNgayThangNamSinh.Value.Year;
             if (dtpNgayThangNamSinh.Value.Date > DateTime.Now.AddYears(-tuoi)) tuoi--;
 
@@ -238,7 +288,7 @@ namespace QuanLyCuaHangTiVi.forms
                 return;
             }
 
-            // 4. Lưu dữ liệu
+            // 5. Lưu dữ liệu
             try
             {
                 if (isThem)
@@ -246,8 +296,7 @@ namespace QuanLyCuaHangTiVi.forms
                     var checkID = db.KhachHangs.Find(txtMaKhachHang.Text);
                     if (checkID != null)
                     {
-                        MessageBox.Show("Mã khách hàng này đã tồn tại!");
-                        return;
+                        txtMaKhachHang.Text = GenerateMaKhachHang();
                     }
 
                     KhachHang kh = new KhachHang();
@@ -279,7 +328,7 @@ namespace QuanLyCuaHangTiVi.forms
                 db.SaveChanges();
                 MessageBox.Show("Lưu dữ liệu thành công!");
 
-                frmKhachHang_Load(sender, e);
+                frmKhachHang_Load(sender, e); // Load lại form và khóa control
             }
             catch (Exception ex)
             {

@@ -2,6 +2,16 @@
 GO
 
 -- ==========================================
+-- BƯỚC 0: RÀNG BUỘC CHỐNG TRÙNG LẶP SĐT & CCCD (Tùy chọn bảo vệ DB)
+-- ==========================================
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'UQ_KhachHang_SDT' AND object_id = OBJECT_ID('KhachHang'))
+BEGIN
+    ALTER TABLE KhachHang ADD CONSTRAINT UQ_KhachHang_SDT UNIQUE (SoDienThoai);
+    ALTER TABLE KhachHang ADD CONSTRAINT UQ_KhachHang_CCCD UNIQUE (CCCD);
+END
+GO
+
+-- ==========================================
 -- BƯỚC 1: XÓA VÀ DỌN DẸP DỮ LIỆU CŨ 
 -- ==========================================
 DELETE FROM ChiTietTraGop;
@@ -26,9 +36,8 @@ DBCC CHECKIDENT ('ChiPhiVanHanh', RESEED, 0);
 PRINT N'--> BƯỚC 1: Đã dọn dẹp sạch sẽ dữ liệu cũ!';
 
 -- ==========================================
--- BƯỚC 2: THÊM NHÂN VIÊN & KHÁCH HÀNG
+-- BƯỚC 2: THÊM 6 NHÂN VIÊN & 20 KHÁCH HÀNG
 -- ==========================================
--- Đã thêm NgaySinh và điều chỉnh Lương theo đúng yêu cầu
 INSERT INTO NhanVien (MaNhanVien, HoTenNhanVien, NgaySinh, TenDangNhap, MatKhau, QuyenHan, AnhChanDung, Luong) VALUES 
 ('NV01', N'Nguyễn Văn Quản', '1985-01-01', 'admin', '123456', N'Quản lý', 'quanly.jpg', 15000000),
 ('NV02', N'Trần Thị Sale', '1992-05-10', 'nhanvien', '123456', N'Nhân viên', 'sale.jpg', 5000000),
@@ -37,7 +46,6 @@ INSERT INTO NhanVien (MaNhanVien, HoTenNhanVien, NgaySinh, TenDangNhap, MatKhau,
 ('NV05', N'Hoàng Vệ', '1980-03-05', 'baove', '123456', N'Bảo vệ', 'baove.jpg', 5000000),
 ('NV06', N'Đinh Thị Sạch', '1975-09-12', 'laocong', '123456', N'Lao công', 'laocong.jpg', 3000000);
 
--- Thêm 20 khách hàng mẫu (để dùng quay vòng cho 100 hóa đơn)
 INSERT INTO KhachHang (MaKhachHang, TenKhachHang, NgayThangNamSinh, SoDienThoai, DiaChi, CCCD) VALUES 
 ('KH01', N'Nguyễn Văn An', '1985-02-14', '0901111111', N'Tân Châu, An Giang', '089085000001'),
 ('KH02', N'Trần Thị Bình', '1990-05-20', '0902222222', N'Châu Đốc, An Giang', '089090000002'),
@@ -60,13 +68,11 @@ INSERT INTO KhachHang (MaKhachHang, TenKhachHang, NgayThangNamSinh, SoDienThoai,
 ('KH19', N'Lâm Tuấn Hùng', '1993-08-08', '0919191919', N'Thoại Sơn, An Giang', '089093000019'),
 ('KH20', N'Thái Thanh Tâm', '1997-03-17', '0920202020', N'Quận 8, TP.HCM', '079097000020');
 
-PRINT N'--> BƯỚC 2: Thêm Nhân Viên và Khách Hàng xong!';
+PRINT N'--> BƯỚC 2: Thêm 6 Nhân Viên và 20 Khách Hàng xong!';
 
 -- ==========================================
 -- BƯỚC 3: THÊM 17 DÒNG TIVI & PHIẾU NHẬP (Nhập 150 cái, Tồn 50 cái)
 -- ==========================================
--- Giữ nguyên 15 TV cũ, thêm 2 TV mới có khuyến mãi 10%
--- Số lượng tồn được chia đều để tổng tồn kho là 50 cái (TV01->TV16 = 3 cái, TV17 = 2 cái)
 INSERT INTO QuanLyTiVi (MaTiVi, TenTiVi, HangSanXuat, NgayTao, DonGiaBan, KhuyenMai, SoLuongTon, AnhMinhHoa) VALUES 
 ('TV01', N'Sony 4K 43 inch', 'Sony', GETDATE(), 10000000, 0, 3, 'tv01.jpg'),
 ('TV02', N'Sony 4K 50 inch', 'Sony', GETDATE(), 12000000, 0, 3, 'tv02.jpg'),
@@ -83,9 +89,10 @@ INSERT INTO QuanLyTiVi (MaTiVi, TenTiVi, HangSanXuat, NgayTao, DonGiaBan, Khuyen
 ('TV13', N'LG NanoCell 55 inch', 'LG', GETDATE(), 14000000, 0, 3, 'tv13.jpg'),
 ('TV14', N'LG OLED 65 inch', 'LG', GETDATE(), 34000000, 0, 3, 'tv14.jpg'),
 ('TV15', N'TCL 4K 55 inch', 'TCL', GETDATE(), 9000000, 0, 3, 'tv15.jpg'),
-('TV16', N'TCL MiniLED 65 inch', 'TCL', GETDATE(), 25000000, 10, 3, 'tv16.jpg'), -- TV MỚI: KM 10%
-('TV17', N'Hisense ULED 55 inch', 'Hisense', GETDATE(), 18000000, 10, 2, 'tv17.jpg'); -- TV MỚI: KM 10%
+('TV16', N'TCL MiniLED 65 inch', 'TCL', GETDATE(), 25000000, 10, 3, 'tv16.jpg'), 
+('TV17', N'Hisense ULED 55 inch', 'Hisense', GETDATE(), 18000000, 10, 2, 'tv17.jpg'); 
 
+-- KHỚP MODEL C#: Bảng PhieuNhap chỉ có 4 cột (MaPhieuNhap, NguoiGiaoHang, NgayNhap, GhiChu)
 INSERT INTO PhieuNhap (MaPhieuNhap, NguoiGiaoHang, NgayNhap, GhiChu) VALUES 
 ('PN_01', N'Kho tổng miền Nam', GETDATE(), N'Nhập đủ 150 tivi cho cửa hàng');
 
@@ -101,10 +108,10 @@ INSERT INTO ChiTietPhieuNhap (MaPhieuNhap, MaTiVi, SoLuongNhap, DonGiaNhap) VALU
 ('PN_01', 'TV15', 9, 6800000),  ('PN_01', 'TV16', 8, 18000000),
 ('PN_01', 'TV17', 7, 13000000);
 
-PRINT N'--> BƯỚC 3: Đã nhập 150 Tivi và set tồn kho 50!';
+PRINT N'--> BƯỚC 3: Đã nhập 17 dòng Tivi, tổng 150 cái và set tồn kho 50!';
 
 -- ==========================================
--- BƯỚC 4: TẠO 100 HÓA ĐƠN & BÁN 100 TIVI & TẠO 30 TRẢ GÓP (BẰNG VÒNG LẶP)
+-- BƯỚC 4: TẠO 100 HÓA ĐƠN & BÁN 100 TIVI & TẠO 30 TRẢ GÓP 
 -- ==========================================
 DECLARE @i INT = 1;
 DECLARE @MaKH VARCHAR(20);
@@ -115,37 +122,32 @@ DECLARE @MaHoaDonVuaTao INT;
 DECLARE @MaTraGopVuaTao INT;
 DECLARE @NgayLapHoaDon DATETIME;
 
--- Chạy vòng lặp 100 lần để sinh ra 100 hóa đơn
 WHILE @i <= 100
 BEGIN
-    -- 1. Lấy tự động 1 Khách Hàng (xoay vòng từ KH01 đến KH20)
     SET @MaKH = 'KH' + RIGHT('0' + CAST(((@i - 1) % 20) + 1 AS VARCHAR), 2);
-    
-    -- 2. Lấy tự động 1 Tivi (xoay vòng để bán chính xác 100 cái)
     SET @MaTV = 'TV' + RIGHT('0' + CAST(((@i - 1) % 17) + 1 AS VARCHAR), 2);
     
-    -- 3. Truy vấn lấy Đơn Giá và Khuyến Mãi của cái Tivi đó
     SELECT @DonGia = DonGiaBan, @KhuyenMai = KhuyenMai FROM QuanLyTiVi WHERE MaTiVi = @MaTV;
-    SET @NgayLapHoaDon = DATEADD(day, -(@i % 30), GETDATE()); -- Rải đều ngày lập trong 30 ngày qua
+    SET @NgayLapHoaDon = DATEADD(day, -(@i % 30), GETDATE()); 
 
     -- ==================================
-    -- INSERT HÓA ĐƠN
+    -- INSERT HÓA ĐƠN (ĐÃ CẬP NHẬT HÌNH THỨC THANH TOÁN)
     -- ==================================
-    -- Nếu Hóa đơn <= 70 thì là nhân viên NV02 (Tiền mặt), nếu > 70 thì là NV03 (Trả góp)
-    IF @i <= 70
-        INSERT INTO HoaDon (MaNhanVien, MaKhachHang, NgayLap, GhiChuHoaDon)
-        VALUES ('NV02', @MaKH, @NgayLapHoaDon, N'Thanh toán tiền mặt - Hóa đơn tự động');
+    IF @i <= 50
+        INSERT INTO HoaDon (MaNhanVien, MaKhachHang, NgayLap, GhiChuHoaDon, HinhThucThanhToan)
+        VALUES ('NV02', @MaKH, @NgayLapHoaDon, N'Thanh toán tiền mặt - Hóa đơn tự động', N'Tiền mặt');
+    ELSE IF @i <= 70
+        INSERT INTO HoaDon (MaNhanVien, MaKhachHang, NgayLap, GhiChuHoaDon, HinhThucThanhToan)
+        VALUES ('NV02', @MaKH, @NgayLapHoaDon, N'Thanh toán chuyển khoản - Hóa đơn tự động', N'Chuyển khoản');
     ELSE
-        INSERT INTO HoaDon (MaNhanVien, MaKhachHang, NgayLap, GhiChuHoaDon)
-        VALUES ('NV03', @MaKH, @NgayLapHoaDon, N'Mua trả góp - Hóa đơn tự động');
+        INSERT INTO HoaDon (MaNhanVien, MaKhachHang, NgayLap, GhiChuHoaDon, HinhThucThanhToan)
+        VALUES ('NV03', @MaKH, @NgayLapHoaDon, N'Mua trả góp - Hóa đơn tự động', N'Trả góp');
 
-    -- Lấy ID của hóa đơn vừa tạo (Do HoaDon là IDENTITY)
     SET @MaHoaDonVuaTao = SCOPE_IDENTITY();
 
     -- ==================================
     -- INSERT CHI TIẾT HÓA ĐƠN
     -- ==================================
-    -- Mỗi hóa đơn bán đúng 1 tivi
     INSERT INTO HoaDonChiTiet (HoaDonID, MaTiVi, SoLuongBan, DonGiaBan, KhuyenMai)
     VALUES (@MaHoaDonVuaTao, @MaTV, 1, @DonGia, @KhuyenMai);
 
@@ -154,36 +156,32 @@ BEGIN
     -- ==================================
     IF @i > 70
     BEGIN
-        -- Tính toán tiền bạc cho việc trả góp
         DECLARE @GiaSauKhuyenMai DECIMAL(18,0) = @DonGia - (@DonGia * ISNULL(@KhuyenMai, 0) / 100.0);
-        DECLARE @TraTruoc DECIMAL(18,0) = @GiaSauKhuyenMai * 0.3; -- Trả trước 30%
+        DECLARE @TraTruoc DECIMAL(18,0) = @GiaSauKhuyenMai * 0.3; 
         DECLARE @ConNo DECIMAL(18,0) = @GiaSauKhuyenMai - @TraTruoc;
         
-        -- Insert vào bảng TraGop (MaTraGop tự tăng)
+        -- Insert vào bảng TraGop (Đã đổi MaTraGop thành ID trong class TraGop)
         INSERT INTO TraGop (MaHoaDon, PhiPhuThuDinhKy, LaiSuat, SoTienTraTruoc, SoTienConNo, KyHanTra)
-        VALUES (@MaHoaDonVuaTao, 50000, 1.5, @TraTruoc, @ConNo, 2); -- Cố định trả trong 2 kỳ
+        VALUES (@MaHoaDonVuaTao, 50000, 1.5, @TraTruoc, @ConNo, 2); 
 
-        -- Lấy mã trả góp vừa sinh ra
         SET @MaTraGopVuaTao = SCOPE_IDENTITY();
 
-        -- Insert Chi Tiết Trả Góp (Tháng thứ 1)
-        INSERT INTO ChiTietTraGop (MaTraGop, KyThu, NgayCanDong, SoTienGoc, SoTienLai, TongTienDong, SoTienDaDong, SoTienPhat)
+        -- KHỚP MODEL C#: Bảng ChiTietTraGop có cả TraGopID và MaTraGop. Truyền cả 2 để khỏi lỗi.
+        INSERT INTO ChiTietTraGop (TraGopID, MaTraGop, KyThu, NgayCanDong, SoTienGoc, SoTienLai, TongTienDong, SoTienDaDong, SoTienPhat)
         VALUES (
-            @MaTraGopVuaTao, 1, DATEADD(month, 1, @NgayLapHoaDon), 
+            @MaTraGopVuaTao, @MaTraGopVuaTao, 1, DATEADD(month, 1, @NgayLapHoaDon), 
             @ConNo/2, (@ConNo * 0.015), (@ConNo/2) + (@ConNo * 0.015) + 50000, 
             0, 0
         );
 
-        -- Insert Chi Tiết Trả Góp (Tháng thứ 2)
-        INSERT INTO ChiTietTraGop (MaTraGop, KyThu, NgayCanDong, SoTienGoc, SoTienLai, TongTienDong, SoTienDaDong, SoTienPhat)
+        INSERT INTO ChiTietTraGop (TraGopID, MaTraGop, KyThu, NgayCanDong, SoTienGoc, SoTienLai, TongTienDong, SoTienDaDong, SoTienPhat)
         VALUES (
-            @MaTraGopVuaTao, 2, DATEADD(month, 2, @NgayLapHoaDon), 
+            @MaTraGopVuaTao, @MaTraGopVuaTao, 2, DATEADD(month, 2, @NgayLapHoaDon), 
             @ConNo/2, (@ConNo * 0.015), (@ConNo/2) + (@ConNo * 0.015) + 50000, 
             0, 0
         );
     END
 
-    -- Tăng biến đếm
     SET @i = @i + 1;
 END
 

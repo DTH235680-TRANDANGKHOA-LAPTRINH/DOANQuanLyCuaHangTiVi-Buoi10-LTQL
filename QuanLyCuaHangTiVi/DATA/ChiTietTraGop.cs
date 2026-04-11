@@ -12,14 +12,15 @@ namespace QuanLyCuaHangTiVi.DATA
     public class ChiTietTraGop
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
-        // ✅ SỬA: Đổi kiểu từ string sang int và xóa [StringLength]
+        public int TraGopID { get; set; } // SỬA: Đổi MaTraGop thành TraGopID
+
+        [ForeignKey("TraGopID")]
+      //  public virtual TraGop TraGop { get; set; } = null!;
+
         public int MaTraGop { get; set; }
-
-        [ForeignKey("MaTraGop")]
-        public virtual TraGop TraGop { get; set; } = null!;
-
         public int KyThu { get; set; }
         public DateTime NgayCanDong { get; set; }
 

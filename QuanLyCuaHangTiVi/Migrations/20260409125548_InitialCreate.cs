@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace QuanLyCuaHangTiVi.Migrations
 {
     /// <inheritdoc />
-    public partial class KhoiTaoLaiToanBo : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -162,7 +162,7 @@ namespace QuanLyCuaHangTiVi.Migrations
                 name: "TraGop",
                 columns: table => new
                 {
-                    MaTraGop = table.Column<int>(type: "int", nullable: false)
+                    ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     MaHoaDon = table.Column<int>(type: "int", nullable: false),
                     PhiPhuThuDinhKy = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -173,7 +173,7 @@ namespace QuanLyCuaHangTiVi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TraGop", x => x.MaTraGop);
+                    table.PrimaryKey("PK_TraGop", x => x.ID);
                     table.ForeignKey(
                         name: "FK_TraGop_HoaDon_MaHoaDon",
                         column: x => x.MaHoaDon,
@@ -216,6 +216,7 @@ namespace QuanLyCuaHangTiVi.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TraGopID = table.Column<int>(type: "int", nullable: false),
                     MaTraGop = table.Column<int>(type: "int", nullable: false),
                     KyThu = table.Column<int>(type: "int", nullable: false),
                     NgayCanDong = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -231,10 +232,10 @@ namespace QuanLyCuaHangTiVi.Migrations
                 {
                     table.PrimaryKey("PK_ChiTietTraGop", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_ChiTietTraGop_TraGop_MaTraGop",
-                        column: x => x.MaTraGop,
+                        name: "FK_ChiTietTraGop_TraGop_TraGopID",
+                        column: x => x.TraGopID,
                         principalTable: "TraGop",
-                        principalColumn: "MaTraGop",
+                        principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -249,9 +250,9 @@ namespace QuanLyCuaHangTiVi.Migrations
                 column: "MaTiVi");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ChiTietTraGop_MaTraGop",
+                name: "IX_ChiTietTraGop_TraGopID",
                 table: "ChiTietTraGop",
-                column: "MaTraGop");
+                column: "TraGopID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HoaDon_MaKhachHang",

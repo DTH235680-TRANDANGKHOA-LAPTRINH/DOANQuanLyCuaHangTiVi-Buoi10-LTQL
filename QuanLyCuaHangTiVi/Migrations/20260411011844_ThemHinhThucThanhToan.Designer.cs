@@ -12,8 +12,8 @@ using QuanLyCuaHangTiVi.DATA;
 namespace QuanLyCuaHangTiVi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260404090059_KhoiTaoLaiToanBo")]
-    partial class KhoiTaoLaiToanBo
+    [Migration("20260411011844_ThemHinhThucThanhToan")]
+    partial class ThemHinhThucThanhToan
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -128,9 +128,12 @@ namespace QuanLyCuaHangTiVi.Migrations
                     b.Property<decimal>("TongTienDong")
                         .HasColumnType("decimal(18, 0)");
 
+                    b.Property<int>("TraGopID")
+                        .HasColumnType("int");
+
                     b.HasKey("ID");
 
-                    b.HasIndex("MaTraGop");
+                    b.HasIndex("TraGopID");
 
                     b.ToTable("ChiTietTraGop");
                 });
@@ -145,6 +148,11 @@ namespace QuanLyCuaHangTiVi.Migrations
 
                     b.Property<string>("GhiChuHoaDon")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HinhThucThanhToan")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("MaKhachHang")
                         .IsRequired()
@@ -346,11 +354,11 @@ namespace QuanLyCuaHangTiVi.Migrations
 
             modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.TraGop", b =>
                 {
-                    b.Property<int>("MaTraGop")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaTraGop"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<int>("KyHanTra")
                         .HasColumnType("int");
@@ -370,7 +378,7 @@ namespace QuanLyCuaHangTiVi.Migrations
                     b.Property<decimal>("SoTienTraTruoc")
                         .HasColumnType("decimal(18, 0)");
 
-                    b.HasKey("MaTraGop");
+                    b.HasKey("ID");
 
                     b.HasIndex("MaHoaDon");
 
@@ -398,13 +406,11 @@ namespace QuanLyCuaHangTiVi.Migrations
 
             modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.ChiTietTraGop", b =>
                 {
-                    b.HasOne("QuanLyCuaHangTiVi.DATA.TraGop", "TraGop")
+                    b.HasOne("QuanLyCuaHangTiVi.DATA.TraGop", null)
                         .WithMany("ChiTietTraGops")
-                        .HasForeignKey("MaTraGop")
+                        .HasForeignKey("TraGopID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("TraGop");
                 });
 
             modelBuilder.Entity("QuanLyCuaHangTiVi.DATA.HoaDon", b =>

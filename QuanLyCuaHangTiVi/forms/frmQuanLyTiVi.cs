@@ -28,7 +28,6 @@ namespace QuanLyCuaHangTiVi.forms
 
         // KHO LƯU ẢNH TẠM: Giải pháp dứt điểm lỗi "Out of Memory" khi cuộn DataGridView
         Dictionary<string, Image> khoAnhTam = new Dictionary<string, Image>();
-
         private void BatTatChucNang(bool giaTri)
         {
             btnLuu.Enabled = giaTri;
@@ -53,16 +52,41 @@ namespace QuanLyCuaHangTiVi.forms
             cboHangSanXuat.Items.Clear();
             cboHangSanXuat.Items.AddRange(new string[] { "Sony", "Samsung", "LG", "Toshiba", "Panasonic" });
         }
+
+        // ==========================================
+        // HÀM TẠO MÃ TỰ ĐỘNG
+        // ==========================================
+        private string TaoMaTiViTuDong()
+        {
+            // Lấy danh sách tất cả các Mã TiVi hiện có trong Database
+            var danhSachMa = context.QuanLyTiVis.Select(x => x.MaTiVi).ToList();
+
+            // Nếu chưa có tivi nào, trả về mã đầu tiên
+            if (danhSachMa.Count == 0) return "TV001";
+
+            int maxSo = 0;
+            foreach (var ma in danhSachMa)
+            {
+                // Lọc lấy phần số từ chuỗi mã (Ví dụ: "TV012" -> "012")
+                string soStr = new string(ma.Where(char.IsDigit).ToArray());
+
+                // Chuyển phần số thành kiểu int và tìm số lớn nhất
+                if (int.TryParse(soStr, out int so) && so > maxSo)
+                {
+                    maxSo = so;
+                }
+            }
+
+            // Tăng số lớn nhất lên 1 và ghép lại với tiền tố "TV"
+            // "D3" đảm bảo luôn có 3 chữ số (001, 002, ..., 015, ..., 100)
+            return "TV" + (maxSo + 1).ToString("D3");
+        }
         public frmQuanLyTiVi()
         {
             InitializeComponent();
         }
 
-        private void textBox3_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
+  
         private void frmQuanLyTiVi_Load(object sender, EventArgs e)
         {// Tạo thư mục images nếu nó chưa tồn tại để tránh lỗi
             if (!Directory.Exists(imagesFolder))
@@ -85,12 +109,10 @@ namespace QuanLyCuaHangTiVi.forms
             if (dgvDanhSachTiVi.Columns.Contains("Ten")) dgvDanhSachTiVi.Columns["Ten"].DataPropertyName = "TenTiVi";
             if (dgvDanhSachTiVi.Columns.Contains("Hang")) dgvDanhSachTiVi.Columns["Hang"].DataPropertyName = "HangSanXuat";
             if (dgvDanhSachTiVi.Columns.Contains("Nhap")) dgvDanhSachTiVi.Columns["Nhap"].DataPropertyName = "NgayTao";
-
-            // CỘT GIÁ HIỂN THỊ GIÁ ĐÃ GIẢM (GiaHienTai)
             if (dgvDanhSachTiVi.Columns.Contains("Gia")) dgvDanhSachTiVi.Columns["Gia"].DataPropertyName = "GiaHienTai";
-
             if (dgvDanhSachTiVi.Columns.Contains("KM")) dgvDanhSachTiVi.Columns["KM"].DataPropertyName = "KhuyenMai";
             if (dgvDanhSachTiVi.Columns.Contains("SL")) dgvDanhSachTiVi.Columns["SL"].DataPropertyName = "SoLuongTon";
+            if (dgvDanhSachTiVi.Columns.Contains("TrangThai")) dgvDanhSachTiVi.Columns["TrangThai"].DataPropertyName = "TrangThai";
 
             if (dgvDanhSachTiVi.Columns.Contains("AnhMinhHoa"))
                 dgvDanhSachTiVi.Columns["AnhMinhHoa"].Visible = false;
@@ -102,6 +124,9 @@ namespace QuanLyCuaHangTiVi.forms
             txtDonGiaBan.DataBindings.Clear();
             txtKhuyenMai.DataBindings.Clear();
             txtSoLuongTon.DataBindings.Clear();
+            // Map thêm 2 trường chưa có ở bài trước:
+            txtGiaHienTai.DataBindings.Clear();
+            txtTrangThai.DataBindings.Clear();
 
             txtMaTiVi.DataBindings.Add("Text", bindingSource, "MaTiVi", true, DataSourceUpdateMode.Never);
             txtTenTiVi.DataBindings.Add("Text", bindingSource, "TenTiVi", true, DataSourceUpdateMode.Never);
@@ -111,6 +136,10 @@ namespace QuanLyCuaHangTiVi.forms
             txtKhuyenMai.DataBindings.Add("Text", bindingSource, "KhuyenMai", true, DataSourceUpdateMode.Never);
             txtSoLuongTon.DataBindings.Add("Text", bindingSource, "SoLuongTon", true, DataSourceUpdateMode.Never);
 
+            // Format "N0" cho giá hiển thị (định dạng tiền tệ)
+            txtGiaHienTai.DataBindings.Add("Text", bindingSource, "GiaHienTai", true, DataSourceUpdateMode.Never, "", "N0");
+            txtTrangThai.DataBindings.Add("Text", bindingSource, "TrangThai", true, DataSourceUpdateMode.Never);
+
             if (dgvDanhSachTiVi.Columns.Contains("CotHinhAnh"))
             {
                 DataGridViewImageColumn imgCol = (DataGridViewImageColumn)dgvDanhSachTiVi.Columns["CotHinhAnh"];
@@ -118,22 +147,19 @@ namespace QuanLyCuaHangTiVi.forms
                 imgCol.Width = 80;
             }
 
-            // --- GẮN SỰ KIỆN RÀNG BUỘC NHẬP LIỆU ---
+            // --- GẮN SỰ KIỆN ---
             txtSoLuongTon.KeyPress += ChiNhapSo_KeyPress;
             txtDonGiaBan.KeyPress += ChiNhapSo_KeyPress;
             txtKhuyenMai.KeyPress += ChiNhapSo_KeyPress;
 
-            // Tính giá hiện tại tự động khi gõ
             txtDonGiaBan.TextChanged += CapNhatGia_TextChanged;
             txtKhuyenMai.TextChanged += CapNhatGia_TextChanged;
 
-            // KHOẢN MỚI THÊM: Kiểm tra trùng Mã TiVi ngay khi rời khỏi ô Textbox
             txtMaTiVi.Leave += TxtMaTiVi_Leave;
         }
         private void TxtMaTiVi_Leave(object sender, EventArgs e)
         {
-            // Chỉ kiểm tra trùng mã khi đang ở trạng thái Thêm Mới
-            if (xuLyThem && !string.IsNullOrWhiteSpace(txtMaTiVi.Text))
+            if (xuLyThem && !string.IsNullOrWhiteSpace(txtMaTiVi.Text) && txtMaTiVi.Enabled == true)
             {
                 string maKiemTra = txtMaTiVi.Text.Trim();
                 bool daTonTai = context.QuanLyTiVis.Any(x => x.MaTiVi == maKiemTra);
@@ -142,16 +168,16 @@ namespace QuanLyCuaHangTiVi.forms
                 {
                     MessageBox.Show($"Mã TiVi '{maKiemTra}' đã tồn tại! Vui lòng nhập một mã khác.", "Cảnh báo trùng mã", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     txtMaTiVi.Clear();
-                    txtMaTiVi.Focus(); // Trả lại con trỏ chuột về ô Mã TiVi bắt nhập lại
+                    txtMaTiVi.Focus();
                 }
             }
         }
+
         private void ChiNhapSo_KeyPress(object sender, KeyPressEventArgs e)
         {
-            // Cho phép các phím điều khiển (Backspace) và các phím số từ 0-9
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
             {
-                e.Handled = true; // Chặn phím
+                e.Handled = true;
                 MessageBox.Show("Trường này chỉ được phép nhập số!", "Lỗi nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -164,7 +190,6 @@ namespace QuanLyCuaHangTiVi.forms
             decimal.TryParse(txtDonGiaBan.Text, out donGia);
             decimal.TryParse(txtKhuyenMai.Text, out khuyenMai);
 
-            // Kiểm tra không cho nhập khuyến mãi quá 100%
             if (khuyenMai > 100)
             {
                 MessageBox.Show("Khuyến mãi không được vượt quá 100%!", "Lỗi nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -175,8 +200,8 @@ namespace QuanLyCuaHangTiVi.forms
 
             decimal giaHienTai = donGia - (donGia * khuyenMai / 100);
 
-            // NẾU BẠN CÓ TẠO 1 TEXTBOX (Ví dụ: txtGiaHienTai) ĐỂ HIỂN THỊ TRÊN FORM, BỎ DẤU // DƯỚI ĐÂY:
-            // txtGiaHienTai.Text = giaHienTai.ToString("N0");
+            // Hiển thị giá hiện tại lên Form
+            txtGiaHienTai.Text = giaHienTai.ToString("N0");
         }
 
         private void CapNhatGia_TextChanged(object sender, EventArgs e)
@@ -188,7 +213,10 @@ namespace QuanLyCuaHangTiVi.forms
             xuLyThem = true;
             BatTatChucNang(true);
 
-            txtMaTiVi.Clear();
+            // GỌI HÀM SINH MÃ TỰ ĐỘNG VÀ KHÓA Ô TEXTBOX ĐỂ TRÁNH SỬA
+            txtMaTiVi.Text = TaoMaTiViTuDong();
+            txtMaTiVi.Enabled = false;
+
             txtTenTiVi.Clear();
             txtDonGiaBan.Clear();
             txtKhuyenMai.Clear();
@@ -197,6 +225,7 @@ namespace QuanLyCuaHangTiVi.forms
             if (picAnhMinhHoa.Image != null) picAnhMinhHoa.Image.Dispose();
             picAnhMinhHoa.Image = null;
             tenFileAnhHienTai = "";
+            txtTenTiVi.Focus();
         }
 
         private void btnHuyBo_Click(object sender, EventArgs e)
@@ -211,7 +240,7 @@ namespace QuanLyCuaHangTiVi.forms
             {
                 xuLyThem = false;
                 BatTatChucNang(true);
-                txtMaTiVi.Enabled = false;
+                txtMaTiVi.Enabled = false; // Không cho sửa mã khi đang Sửa
             }
         }
 
@@ -220,10 +249,7 @@ namespace QuanLyCuaHangTiVi.forms
             this.Close();
         }
 
-        private void dataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
+        
 
         private void btnXoa_Click(object sender, EventArgs e)
         {
@@ -278,7 +304,6 @@ namespace QuanLyCuaHangTiVi.forms
 
             try
             {
-                // Lấy dữ liệu an toàn để tránh crash khi ô nhập số bị bỏ trống
                 decimal donGia = string.IsNullOrWhiteSpace(txtDonGiaBan.Text) ? 0 : decimal.Parse(txtDonGiaBan.Text);
                 decimal km = string.IsNullOrWhiteSpace(txtKhuyenMai.Text) ? 0 : decimal.Parse(txtKhuyenMai.Text);
                 int sl = string.IsNullOrWhiteSpace(txtSoLuongTon.Text) ? 0 : int.Parse(txtSoLuongTon.Text);
@@ -332,16 +357,7 @@ namespace QuanLyCuaHangTiVi.forms
             }
         }
 
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void label8_Click(object sender, EventArgs e)
-        {
-
-        }
-
+       
         private void btnChonAnh_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFile = new OpenFileDialog();

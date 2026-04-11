@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
             label9 = new Label();
             label7 = new Label();
@@ -41,10 +40,6 @@
             label2 = new Label();
             groupBox4 = new GroupBox();
             dgvCanThuTien = new DataGridView();
-            colTenTiVi = new DataGridViewTextBoxColumn();
-            colHangSanXuat = new DataGridViewTextBoxColumn();
-            colNgayNhap = new DataGridViewTextBoxColumn();
-            colDonGiaNhap = new DataGridViewTextBoxColumn();
             label1 = new Label();
             txtTongChiPhi = new TextBox();
             groupBox3 = new GroupBox();
@@ -182,7 +177,6 @@
             dgvCanThuTien.AllowUserToDeleteRows = false;
             dgvCanThuTien.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvCanThuTien.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvCanThuTien.Columns.AddRange(new DataGridViewColumn[] { colTenTiVi, colHangSanXuat, colNgayNhap, colDonGiaNhap });
             dgvCanThuTien.Dock = DockStyle.Fill;
             dgvCanThuTien.Location = new Point(3, 27);
             dgvCanThuTien.MultiSelect = false;
@@ -190,36 +184,6 @@
             dgvCanThuTien.RowHeadersWidth = 62;
             dgvCanThuTien.Size = new Size(1688, 134);
             dgvCanThuTien.TabIndex = 2;
-            // 
-            // colTenTiVi
-            // 
-            colTenTiVi.DataPropertyName = "TenTiVi";
-            colTenTiVi.HeaderText = "Tên TiVi";
-            colTenTiVi.MinimumWidth = 8;
-            colTenTiVi.Name = "colTenTiVi";
-            // 
-            // colHangSanXuat
-            // 
-            colHangSanXuat.DataPropertyName = "HangSanXuat";
-            colHangSanXuat.HeaderText = "Hãng Sản Xuất";
-            colHangSanXuat.MinimumWidth = 8;
-            colHangSanXuat.Name = "colHangSanXuat";
-            // 
-            // colNgayNhap
-            // 
-            colNgayNhap.DataPropertyName = "NgayNhap";
-            colNgayNhap.HeaderText = "Ngày Nhập Hàng";
-            colNgayNhap.MinimumWidth = 8;
-            colNgayNhap.Name = "colNgayNhap";
-            // 
-            // colDonGiaNhap
-            // 
-            colDonGiaNhap.DataPropertyName = "DonGiaNhap";
-            dataGridViewCellStyle1.Format = "N0";
-            colDonGiaNhap.DefaultCellStyle = dataGridViewCellStyle1;
-            colDonGiaNhap.HeaderText = "Đơn Gía Nhập";
-            colDonGiaNhap.MinimumWidth = 8;
-            colDonGiaNhap.Name = "colDonGiaNhap";
             // 
             // label1
             // 
@@ -322,10 +286,6 @@
         private GroupBox groupBox2;
         private GroupBox groupBox4;
         private DataGridView dgvCanThuTien;
-        private DataGridViewTextBoxColumn colTenTiVi;
-        private DataGridViewTextBoxColumn colHangSanXuat;
-        private DataGridViewTextBoxColumn colNgayNhap;
-        private DataGridViewTextBoxColumn colDonGiaNhap;
         private Button btnChiTietDoanhThu;
         private TextBox txtTongDoanhThu;
         private Label label2;

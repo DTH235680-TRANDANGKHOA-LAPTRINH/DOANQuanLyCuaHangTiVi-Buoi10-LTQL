@@ -141,65 +141,62 @@ namespace QuanLyCuaHangTiVi.forms
 
         private void LoadDanhSachTraGop(int thang, int nam)
         {
-            int thangLoc = (thang == 0) ? 12 : thang;
-
-            var dsCanThu = db.ChiTietTraGops
-                .Include(ct => ct.TraGop)
-                    .ThenInclude(tg => tg.HoaDon)
-                        .ThenInclude(hd => hd.HoaDonChiTiets)
-                            .ThenInclude(hdct => hdct.QuanLyTiVi)
-                .Where(ct => ct.NgayCanDong.Year == nam && ct.NgayCanDong.Month <= thangLoc)
-                .Where(ct => ct.SoTienDaDong < (ct.TongTienDong + ct.SoTienPhat))
-                .ToList();
-
-            // 1. Xóa sạch các cột bị thừa/thiếu từ giao diện Designer
-            dgvCanThuTien.Columns.Clear();
-            dgvCanThuTien.AutoGenerateColumns = true;
-
-            // 2. Đổ dữ liệu
-            dgvCanThuTien.DataSource = dsCanThu.Select(ct =>
+            try
             {
-                var ctHoaDon = ct.TraGop.HoaDon.HoaDonChiTiets.FirstOrDefault();
-                var tivi = ctHoaDon?.QuanLyTiVi;
-                var maTivi = ctHoaDon?.MaTiVi;
+                // 1. Lấy danh sách chi tiết trả góp theo năm
+                var queryChiTietTraGop = db.ChiTietTraGops.Where(ct => ct.NgayCanDong.Year == nam);
 
-                // Tránh lỗi văng app nếu hóa đơn không có mã tivi
-                var thongTinNhap = string.IsNullOrEmpty(maTivi) ? null : db.ChiTietPhieuNhaps
-                                     .Include(p => p.PhieuNhap)
-                                     .Where(pn => pn.MaTiVi == maTivi)
-                                     .OrderByDescending(pn => pn.MaCTPN)
-                                     .FirstOrDefault();
-
-                return new
+                // Lọc thêm theo tháng nếu người dùng chọn tháng cụ thể (> 0)
+                if (thang > 0)
                 {
-                    TenTiVi = tivi?.TenTiVi ?? "N/A",
-                    HangSanXuat = tivi?.HangSanXuat ?? "N/A",
-                    NgayNhapHang = thongTinNhap?.PhieuNhap?.NgayNhap.ToString("dd/MM/yyyy") ?? "N/A",
-                    DonGiaNhap = thongTinNhap?.DonGiaNhap.ToString("N0") ?? "0",
-                    MaHoaDon = ct.TraGop.MaHoaDon,
-                    KyThu = "Kỳ " + ct.KyThu,
-                    NgayCanDong = ct.NgayCanDong.ToString("dd/MM/yyyy"),
-                    TongTien = (ct.TongTienDong + ct.SoTienPhat).ToString("N0"),
-                    ConThieu = ((ct.TongTienDong + ct.SoTienPhat) - ct.SoTienDaDong).ToString("N0"),
-                    TrangThai = ct.NgayCanDong < DateTime.Now.Date ? "QUÁ HẠN" : "Chờ thu"
-                };
-            }).ToList();
+                    queryChiTietTraGop = queryChiTietTraGop.Where(ct => ct.NgayCanDong.Month == thang);
+                }
 
-            // 3. Đổi tên Header cho chuẩn tiếng Việt
-            dgvCanThuTien.Columns["TenTiVi"].HeaderText = "Tên TiVi";
-            dgvCanThuTien.Columns["HangSanXuat"].HeaderText = "Hãng Sản Xuất";
-            dgvCanThuTien.Columns["NgayNhapHang"].HeaderText = "Ngày Nhập Hàng";
-            dgvCanThuTien.Columns["DonGiaNhap"].HeaderText = "Đơn Giá Nhập";
-            dgvCanThuTien.Columns["MaHoaDon"].HeaderText = "Mã Hóa Đơn";
-            dgvCanThuTien.Columns["KyThu"].HeaderText = "Kỳ Thu";
-            dgvCanThuTien.Columns["NgayCanDong"].HeaderText = "Ngày Cần Đóng";
-            dgvCanThuTien.Columns["TongTien"].HeaderText = "Tổng Tiền";
-            dgvCanThuTien.Columns["ConThieu"].HeaderText = "Còn Thiếu";
-            dgvCanThuTien.Columns["TrangThai"].HeaderText = "Trạng Thái";
+                // 2. Chuyển đổi dữ liệu và tính toán trạng thái
+                var dsCanThuTien = queryChiTietTraGop.ToList().Select(ct => new
+                {
+                    MaTraGop = ct.MaTraGop,
+                    NgayCanDong = ct.NgayCanDong.ToString("dd/MM/yyyy"), // Format lại ngày cho đẹp
+                    TongTienCanDong = ct.TongTienDong + ct.SoTienPhat,
+                    SoTienDaDong = ct.SoTienDaDong,
+                    TienConNo = (ct.TongTienDong + ct.SoTienPhat) - ct.SoTienDaDong,
 
-            // Tùy chỉnh nhẹ lại độ rộng cột nếu muốn
-            dgvCanThuTien.Columns["TenTiVi"].Width = 150;
-            dgvCanThuTien.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                    // XÁC ĐỊNH TRẠNG THÁI
+                    TrangThai = ((ct.TongTienDong + ct.SoTienPhat) - ct.SoTienDaDong > 0 && ct.NgayCanDong.Date < DateTime.Now.Date)
+                                ? "QUÁ HẠN"
+                                : (((ct.TongTienDong + ct.SoTienPhat) - ct.SoTienDaDong <= 0) ? "ĐÃ ĐÓNG" : "CHƯA ĐÓNG")
+                }).ToList();
+
+                // 3. FIX LỖI HIỂN THỊ LÊN DATAGRIDVIEW
+                dgvCanThuTien.DataSource = null;           // Xóa binding cũ
+                dgvCanThuTien.Columns.Clear();             // XÓA các cột sai ngoài Design (Tên TiVi, Ngày Nhập...)
+                dgvCanThuTien.AutoGenerateColumns = true;  // BẬT tự động tạo cột theo dữ liệu mới
+
+                dgvCanThuTien.DataSource = dsCanThuTien;   // Đổ dữ liệu mới vào
+
+                // 4. (Tùy chọn) Đổi lại tên Header cho hiển thị đẹp mắt (Tiếng Việt)
+                if (dgvCanThuTien.Columns.Count > 0)
+                {
+                    dgvCanThuTien.Columns["MaTraGop"].HeaderText = "Mã Trả Góp";
+                    dgvCanThuTien.Columns["NgayCanDong"].HeaderText = "Hạn Đóng";
+                    dgvCanThuTien.Columns["TongTienCanDong"].HeaderText = "Tổng Cần Đóng (VNĐ)";
+                    dgvCanThuTien.Columns["SoTienDaDong"].HeaderText = "Đã Đóng (VNĐ)";
+                    dgvCanThuTien.Columns["TienConNo"].HeaderText = "Còn Nợ (VNĐ)";
+                    dgvCanThuTien.Columns["TrangThai"].HeaderText = "Trạng Thái";
+
+                    // Format số tiền có dấu phẩy
+                    dgvCanThuTien.Columns["TongTienCanDong"].DefaultCellStyle.Format = "N0";
+                    dgvCanThuTien.Columns["SoTienDaDong"].DefaultCellStyle.Format = "N0";
+                    dgvCanThuTien.Columns["TienConNo"].DefaultCellStyle.Format = "N0";
+
+                    // Chỉnh cột cho dàn đều ra
+                    dgvCanThuTien.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi tải danh sách cần thu tiền: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         private void btnXemBaoCao_Click(object sender, EventArgs e)
         {

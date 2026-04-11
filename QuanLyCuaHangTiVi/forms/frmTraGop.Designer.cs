@@ -29,10 +29,16 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmTraGop));
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
-            btnXemLichTrinh = new Button();
+            label8 = new Label();
+            txtSoTienNop = new TextBox();
+            label9 = new Label();
+            txtNguoiNop = new TextBox();
+            label7 = new Label();
+            dtpNgayNop = new DateTimePicker();
+            btnThuTien = new Button();
             cboMaHoaDon = new ComboBox();
             txtKyHanTra = new TextBox();
             label4 = new Label();
@@ -48,25 +54,35 @@
             label5 = new Label();
             label3 = new Label();
             label2 = new Label();
-            txtMaTraGop = new TextBox();
+            txtID = new TextBox();
             label1 = new Label();
             btnThem = new Button();
             groupBox2 = new GroupBox();
             dgvTraGop = new DataGridView();
-            ColMaTraGop = new DataGridViewTextBoxColumn();
+            ColID = new DataGridViewTextBoxColumn();
             ColMaHoaDon = new DataGridViewTextBoxColumn();
             ColLaiSuat = new DataGridViewTextBoxColumn();
             ColKyHanTra = new DataGridViewTextBoxColumn();
             ColSoTienTraTruoc = new DataGridViewTextBoxColumn();
             ColSoTienConNo = new DataGridViewTextBoxColumn();
+            groupBox3 = new GroupBox();
+            dgvChiTiet = new DataGridView();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvTraGop).BeginInit();
+            groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvChiTiet).BeginInit();
             SuspendLayout();
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(btnXemLichTrinh);
+            groupBox1.Controls.Add(label8);
+            groupBox1.Controls.Add(txtSoTienNop);
+            groupBox1.Controls.Add(label9);
+            groupBox1.Controls.Add(txtNguoiNop);
+            groupBox1.Controls.Add(label7);
+            groupBox1.Controls.Add(dtpNgayNop);
+            groupBox1.Controls.Add(btnThuTien);
             groupBox1.Controls.Add(cboMaHoaDon);
             groupBox1.Controls.Add(txtKyHanTra);
             groupBox1.Controls.Add(label4);
@@ -82,32 +98,84 @@
             groupBox1.Controls.Add(label5);
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(label2);
-            groupBox1.Controls.Add(txtMaTraGop);
+            groupBox1.Controls.Add(txtID);
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(btnThem);
             groupBox1.Dock = DockStyle.Left;
             groupBox1.Location = new Point(0, 0);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(577, 502);
+            groupBox1.Size = new Size(350, 670);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Thông Tin Trả Góp";
             // 
-            // btnXemLichTrinh
+            // label8
             // 
-            btnXemLichTrinh.Location = new Point(198, 416);
-            btnXemLichTrinh.Name = "btnXemLichTrinh";
-            btnXemLichTrinh.Size = new Size(208, 65);
-            btnXemLichTrinh.TabIndex = 45;
-            btnXemLichTrinh.Text = "Xem Lịch Trình Trả góp";
-            btnXemLichTrinh.UseVisualStyleBackColor = true;
-            btnXemLichTrinh.Click += btnXemLichTrinh_Click;
+            label8.AutoSize = true;
+            label8.Location = new Point(23, 245);
+            label8.Name = "label8";
+            label8.Size = new Size(110, 25);
+            label8.TabIndex = 66;
+            label8.Text = "Số Tiền Nộp";
+            // 
+            // txtSoTienNop
+            // 
+            txtSoTienNop.Location = new Point(152, 249);
+            txtSoTienNop.Name = "txtSoTienNop";
+            txtSoTienNop.Size = new Size(181, 31);
+            txtSoTienNop.TabIndex = 65;
+            txtSoTienNop.TextChanged += txtSoTienNop_TextChanged;
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new Point(49, 286);
+            label9.Name = "label9";
+            label9.Size = new Size(102, 25);
+            label9.TabIndex = 64;
+            label9.Text = "Người Nộp";
+            // 
+            // txtNguoiNop
+            // 
+            txtNguoiNop.Location = new Point(155, 286);
+            txtNguoiNop.Name = "txtNguoiNop";
+            txtNguoiNop.Size = new Size(181, 31);
+            txtNguoiNop.TabIndex = 63;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(25, 327);
+            label7.Name = "label7";
+            label7.Size = new Size(94, 25);
+            label7.TabIndex = 62;
+            label7.Text = "Ngày Nộp";
+            // 
+            // dtpNgayNop
+            // 
+            dtpNgayNop.Location = new Point(152, 319);
+            dtpNgayNop.Name = "dtpNgayNop";
+            dtpNgayNop.Size = new Size(184, 31);
+            dtpNgayNop.TabIndex = 61;
+            // 
+            // btnThuTien
+            // 
+            btnThuTien.BackColor = Color.Cyan;
+            btnThuTien.Image = (Image)resources.GetObject("btnThuTien.Image");
+            btnThuTien.ImageAlign = ContentAlignment.MiddleLeft;
+            btnThuTien.Location = new Point(25, 372);
+            btnThuTien.Name = "btnThuTien";
+            btnThuTien.Size = new Size(196, 60);
+            btnThuTien.TabIndex = 60;
+            btnThuTien.Text = "Thu Tiền Kỳ Này";
+            btnThuTien.UseVisualStyleBackColor = false;
+            btnThuTien.Click += btnThuTien_Click;
             // 
             // cboMaHoaDon
             // 
             cboMaHoaDon.DropDownStyle = ComboBoxStyle.DropDownList;
             cboMaHoaDon.FormattingEnabled = true;
-            cboMaHoaDon.Location = new Point(155, 105);
+            cboMaHoaDon.Location = new Point(155, 65);
             cboMaHoaDon.Name = "cboMaHoaDon";
             cboMaHoaDon.Size = new Size(182, 33);
             cboMaHoaDon.TabIndex = 44;
@@ -115,7 +183,7 @@
             // 
             // txtKyHanTra
             // 
-            txtKyHanTra.Location = new Point(155, 213);
+            txtKyHanTra.Location = new Point(155, 141);
             txtKyHanTra.Name = "txtKyHanTra";
             txtKyHanTra.Size = new Size(182, 31);
             txtKyHanTra.TabIndex = 43;
@@ -123,7 +191,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(7, 214);
+            label4.Location = new Point(7, 134);
             label4.Name = "label4";
             label4.Size = new Size(94, 25);
             label4.TabIndex = 42;
@@ -131,7 +199,7 @@
             // 
             // txtLaiSuat
             // 
-            txtLaiSuat.Location = new Point(155, 160);
+            txtLaiSuat.Location = new Point(155, 104);
             txtLaiSuat.Name = "txtLaiSuat";
             txtLaiSuat.Size = new Size(182, 31);
             txtLaiSuat.TabIndex = 41;
@@ -142,7 +210,7 @@
             btnThoat.BackColor = Color.FromArgb(128, 255, 128);
             btnThoat.Image = (Image)resources.GetObject("btnThoat.Image");
             btnThoat.ImageAlign = ContentAlignment.MiddleLeft;
-            btnThoat.Location = new Point(408, 315);
+            btnThoat.Location = new Point(152, 543);
             btnThoat.Name = "btnThoat";
             btnThoat.Size = new Size(120, 57);
             btnThoat.TabIndex = 39;
@@ -155,7 +223,7 @@
             btnHuyBo.BackColor = Color.FromArgb(255, 192, 128);
             btnHuyBo.Image = (Image)resources.GetObject("btnHuyBo.Image");
             btnHuyBo.ImageAlign = ContentAlignment.MiddleLeft;
-            btnHuyBo.Location = new Point(408, 262);
+            btnHuyBo.Location = new Point(152, 490);
             btnHuyBo.Name = "btnHuyBo";
             btnHuyBo.Size = new Size(120, 57);
             btnHuyBo.TabIndex = 38;
@@ -168,7 +236,7 @@
             btnLuu.BackColor = Color.Fuchsia;
             btnLuu.Image = (Image)resources.GetObject("btnLuu.Image");
             btnLuu.ImageAlign = ContentAlignment.MiddleLeft;
-            btnLuu.Location = new Point(408, 209);
+            btnLuu.Location = new Point(152, 437);
             btnLuu.Name = "btnLuu";
             btnLuu.Size = new Size(120, 57);
             btnLuu.TabIndex = 37;
@@ -181,7 +249,7 @@
             btnSua.BackColor = Color.Yellow;
             btnSua.Image = (Image)resources.GetObject("btnSua.Image");
             btnSua.ImageAlign = ContentAlignment.MiddleLeft;
-            btnSua.Location = new Point(408, 156);
+            btnSua.Location = new Point(29, 543);
             btnSua.Name = "btnSua";
             btnSua.Size = new Size(120, 57);
             btnSua.TabIndex = 36;
@@ -194,7 +262,7 @@
             btnXoa.BackColor = Color.Red;
             btnXoa.Image = (Image)resources.GetObject("btnXoa.Image");
             btnXoa.ImageAlign = ContentAlignment.MiddleLeft;
-            btnXoa.Location = new Point(408, 103);
+            btnXoa.Location = new Point(29, 490);
             btnXoa.Name = "btnXoa";
             btnXoa.Size = new Size(120, 57);
             btnXoa.TabIndex = 35;
@@ -204,7 +272,7 @@
             // 
             // txtSoTienConNo
             // 
-            txtSoTienConNo.Location = new Point(155, 319);
+            txtSoTienConNo.Location = new Point(155, 215);
             txtSoTienConNo.Name = "txtSoTienConNo";
             txtSoTienConNo.ReadOnly = true;
             txtSoTienConNo.Size = new Size(182, 31);
@@ -212,7 +280,7 @@
             // 
             // txtSoTienTraTruoc
             // 
-            txtSoTienTraTruoc.Location = new Point(155, 266);
+            txtSoTienTraTruoc.Location = new Point(155, 178);
             txtSoTienTraTruoc.Name = "txtSoTienTraTruoc";
             txtSoTienTraTruoc.Size = new Size(182, 31);
             txtSoTienTraTruoc.TabIndex = 32;
@@ -221,7 +289,7 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(7, 320);
+            label6.Location = new Point(7, 208);
             label6.Name = "label6";
             label6.Size = new Size(136, 25);
             label6.TabIndex = 30;
@@ -230,7 +298,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(7, 267);
+            label5.Location = new Point(7, 171);
             label5.Name = "label5";
             label5.Size = new Size(145, 25);
             label5.TabIndex = 29;
@@ -239,7 +307,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(7, 161);
+            label3.Location = new Point(7, 99);
             label3.Name = "label3";
             label3.Size = new Size(73, 25);
             label3.TabIndex = 27;
@@ -248,35 +316,35 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(7, 108);
+            label2.Location = new Point(7, 60);
             label2.Name = "label2";
             label2.Size = new Size(147, 25);
             label2.TabIndex = 26;
             label2.Text = "Khách hàng / Tivi";
             // 
-            // txtMaTraGop
+            // txtID
             // 
-            txtMaTraGop.Location = new Point(155, 52);
-            txtMaTraGop.Name = "txtMaTraGop";
-            txtMaTraGop.ReadOnly = true;
-            txtMaTraGop.Size = new Size(182, 31);
-            txtMaTraGop.TabIndex = 25;
+            txtID.Location = new Point(155, 27);
+            txtID.Name = "txtID";
+            txtID.ReadOnly = true;
+            txtID.Size = new Size(182, 31);
+            txtID.TabIndex = 25;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(7, 55);
+            label1.Location = new Point(25, 36);
             label1.Name = "label1";
-            label1.Size = new Size(103, 25);
+            label1.Size = new Size(30, 25);
             label1.TabIndex = 24;
-            label1.Text = "Mã Trả Góp";
+            label1.Text = "ID";
             // 
             // btnThem
             // 
             btnThem.BackColor = Color.FromArgb(128, 255, 255);
             btnThem.Image = (Image)resources.GetObject("btnThem.Image");
             btnThem.ImageAlign = ContentAlignment.MiddleLeft;
-            btnThem.Location = new Point(408, 50);
+            btnThem.Location = new Point(29, 437);
             btnThem.Name = "btnThem";
             btnThem.Size = new Size(120, 57);
             btnThem.TabIndex = 23;
@@ -287,10 +355,10 @@
             // groupBox2
             // 
             groupBox2.Controls.Add(dgvTraGop);
-            groupBox2.Dock = DockStyle.Fill;
-            groupBox2.Location = new Point(577, 0);
+            groupBox2.Dock = DockStyle.Top;
+            groupBox2.Location = new Point(350, 0);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(1047, 502);
+            groupBox2.Size = new Size(1274, 319);
             groupBox2.TabIndex = 2;
             groupBox2.TabStop = false;
             groupBox2.Text = "Danh Sách Trả Góp";
@@ -302,22 +370,23 @@
             dgvTraGop.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvTraGop.BackgroundColor = Color.Silver;
             dgvTraGop.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvTraGop.Columns.AddRange(new DataGridViewColumn[] { ColMaTraGop, ColMaHoaDon, ColLaiSuat, ColKyHanTra, ColSoTienTraTruoc, ColSoTienConNo });
+            dgvTraGop.Columns.AddRange(new DataGridViewColumn[] { ColID, ColMaHoaDon, ColLaiSuat, ColKyHanTra, ColSoTienTraTruoc, ColSoTienConNo });
             dgvTraGop.Dock = DockStyle.Fill;
             dgvTraGop.Location = new Point(3, 27);
             dgvTraGop.MultiSelect = false;
             dgvTraGop.Name = "dgvTraGop";
             dgvTraGop.RowHeadersWidth = 62;
             dgvTraGop.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvTraGop.Size = new Size(1041, 472);
+            dgvTraGop.Size = new Size(1268, 289);
             dgvTraGop.TabIndex = 3;
+            dgvTraGop.SelectionChanged += dgvTraGop_SelectionChanged;
             // 
-            // ColMaTraGop
+            // ColID
             // 
-            ColMaTraGop.DataPropertyName = "MaTraGop";
-            ColMaTraGop.HeaderText = "Mã Trả Góp";
-            ColMaTraGop.MinimumWidth = 8;
-            ColMaTraGop.Name = "ColMaTraGop";
+            ColID.DataPropertyName = "ID";
+            ColID.HeaderText = "ID";
+            ColID.MinimumWidth = 8;
+            ColID.Name = "ColID";
             // 
             // ColMaHoaDon
             // 
@@ -343,9 +412,9 @@
             // ColSoTienTraTruoc
             // 
             ColSoTienTraTruoc.DataPropertyName = "SoTienTraTruoc";
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle3.Format = "N0";
-            ColSoTienTraTruoc.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.Format = "N0";
+            ColSoTienTraTruoc.DefaultCellStyle = dataGridViewCellStyle1;
             ColSoTienTraTruoc.HeaderText = "Số Tiền Trả Trước";
             ColSoTienTraTruoc.MinimumWidth = 8;
             ColSoTienTraTruoc.Name = "ColSoTienTraTruoc";
@@ -353,18 +422,47 @@
             // ColSoTienConNo
             // 
             ColSoTienConNo.DataPropertyName = "SoTienConNo";
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle4.Format = "N0";
-            ColSoTienConNo.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle2.Format = "N0";
+            ColSoTienConNo.DefaultCellStyle = dataGridViewCellStyle2;
             ColSoTienConNo.HeaderText = "Số Tiền Còn Nợ";
             ColSoTienConNo.MinimumWidth = 8;
             ColSoTienConNo.Name = "ColSoTienConNo";
+            // 
+            // groupBox3
+            // 
+            groupBox3.Controls.Add(dgvChiTiet);
+            groupBox3.Dock = DockStyle.Bottom;
+            groupBox3.Location = new Point(350, 295);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new Size(1274, 375);
+            groupBox3.TabIndex = 5;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "Lịch Trình Trả Góp";
+            // 
+            // dgvChiTiet
+            // 
+            dgvChiTiet.AllowUserToAddRows = false;
+            dgvChiTiet.AllowUserToDeleteRows = false;
+            dgvChiTiet.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvChiTiet.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvChiTiet.Dock = DockStyle.Fill;
+            dgvChiTiet.Location = new Point(3, 27);
+            dgvChiTiet.MultiSelect = false;
+            dgvChiTiet.Name = "dgvChiTiet";
+            dgvChiTiet.ReadOnly = true;
+            dgvChiTiet.RowHeadersWidth = 62;
+            dgvChiTiet.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvChiTiet.Size = new Size(1268, 345);
+            dgvChiTiet.TabIndex = 3;
+            dgvChiTiet.CellFormatting += dgvChiTiet_CellFormatting;
             // 
             // frmTraGop
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1624, 502);
+            ClientSize = new Size(1624, 670);
+            Controls.Add(groupBox3);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Name = "frmTraGop";
@@ -374,6 +472,8 @@
             groupBox1.PerformLayout();
             groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvTraGop).EndInit();
+            groupBox3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvChiTiet).EndInit();
             ResumeLayout(false);
         }
 
@@ -392,20 +492,28 @@
         private Label label5;
         private Label label3;
         private Label label2;
-        private TextBox txtMaTraGop;
-        private Label label1;
         private Button btnThem;
         private GroupBox groupBox2;
         private DataGridView dgvTraGop;
         private TextBox txtKyHanTra;
         private Label label4;
-        private DataGridViewTextBoxColumn ColMaTraGop;
+        private ComboBox cboMaHoaDon;
+        private GroupBox groupBox3;
+        private DataGridView dgvChiTiet;
+        private Label label8;
+        private TextBox txtSoTienNop;
+        private Label label9;
+        private TextBox txtNguoiNop;
+        private Label label7;
+        private DateTimePicker dtpNgayNop;
+        private Button btnThuTien;
+        private DataGridViewTextBoxColumn ColID;
         private DataGridViewTextBoxColumn ColMaHoaDon;
         private DataGridViewTextBoxColumn ColLaiSuat;
         private DataGridViewTextBoxColumn ColKyHanTra;
         private DataGridViewTextBoxColumn ColSoTienTraTruoc;
         private DataGridViewTextBoxColumn ColSoTienConNo;
-        private ComboBox cboMaHoaDon;
-        private Button btnXemLichTrinh;
+        private TextBox txtID;
+        private Label label1;
     }
 }

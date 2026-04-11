@@ -38,6 +38,7 @@
             btnThoat = new Button();
             dgvDanhSachHD = new DataGridView();
             colID = new DataGridViewTextBoxColumn();
+            colHinhThuc = new DataGridViewTextBoxColumn();
             TenKhachHang = new DataGridViewTextBoxColumn();
             NgayLap = new DataGridViewTextBoxColumn();
             TongTien = new DataGridViewTextBoxColumn();
@@ -133,7 +134,7 @@
             dgvDanhSachHD.AllowUserToDeleteRows = false;
             dgvDanhSachHD.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvDanhSachHD.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvDanhSachHD.Columns.AddRange(new DataGridViewColumn[] { colID, TenKhachHang, NgayLap, TongTien, HoTenNhanVien, colXemChiTiet });
+            dgvDanhSachHD.Columns.AddRange(new DataGridViewColumn[] { colID, colHinhThuc, TenKhachHang, NgayLap, TongTien, HoTenNhanVien, colXemChiTiet });
             dgvDanhSachHD.Dock = DockStyle.Fill;
             dgvDanhSachHD.Location = new Point(0, 126);
             dgvDanhSachHD.MultiSelect = false;
@@ -152,6 +153,14 @@
             colID.MinimumWidth = 8;
             colID.Name = "colID";
             colID.ReadOnly = true;
+            // 
+            // colHinhThuc
+            // 
+            colHinhThuc.DataPropertyName = "HinhThucThanhToan";
+            colHinhThuc.HeaderText = "Hình thức Thanh Toán";
+            colHinhThuc.MinimumWidth = 8;
+            colHinhThuc.Name = "colHinhThuc";
+            colHinhThuc.ReadOnly = true;
             // 
             // TenKhachHang
             // 
@@ -223,6 +232,7 @@
         private Button btnLapHoaDon;
         private Button btnXuatHoaDon;
         private DataGridViewTextBoxColumn colID;
+        private DataGridViewTextBoxColumn colHinhThuc;
         private DataGridViewTextBoxColumn TenKhachHang;
         private DataGridViewTextBoxColumn NgayLap;
         private DataGridViewTextBoxColumn TongTien;
