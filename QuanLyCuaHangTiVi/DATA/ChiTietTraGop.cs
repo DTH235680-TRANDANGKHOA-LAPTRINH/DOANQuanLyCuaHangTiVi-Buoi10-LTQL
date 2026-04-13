@@ -18,7 +18,7 @@ namespace QuanLyCuaHangTiVi.DATA
         public int TraGopID { get; set; } // SỬA: Đổi MaTraGop thành TraGopID
 
         [ForeignKey("TraGopID")]
-      //  public virtual TraGop TraGop { get; set; } = null!;
+       public virtual TraGop TraGop { get; set; } = null!;
 
         public int MaTraGop { get; set; }
         public int KyThu { get; set; }

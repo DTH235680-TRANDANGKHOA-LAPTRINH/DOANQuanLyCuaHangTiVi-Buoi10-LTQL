@@ -16,9 +16,18 @@ namespace QuanLyCuaHangTiVi.forms
     {
 
         AppDbContext db = new AppDbContext();
+        // 1. Tạo biến để hứng ID từ form Trả Góp ném sang
+        private int _traGopID;
+        public FrmBaoCao(int idTuFormTraGop)
+        {
+            InitializeComponent();
+            // Cất ID nhận được vào biến toàn cục để dùng
+            _traGopID = idTuFormTraGop;
+        }
         public FrmBaoCao()
         {
             InitializeComponent();
+            _traGopID = 0; // Gán mặc định bằng 0
         }
 
         private void FrmBaoCao_Load(object sender, EventArgs e)
@@ -74,8 +83,10 @@ namespace QuanLyCuaHangTiVi.forms
                 decimal tongDoanhThu = thuBanDut + thuTraGopDaDong;
                 txtTongDoanhThu.Text = tongDoanhThu.ToString("N0") + " VNĐ";
 
+                // ==========================================
                 // 2. TÍNH CHI PHÍ
-                // 2.1 Giá vốn hàng bán (Lấy từ bảng ChiTietPhieuNhap)
+                // ==========================================
+                // 2.1 Giá vốn hàng bán
                 decimal tongGiaVon = 0;
                 foreach (var ct in dsHoaDon)
                 {
@@ -87,25 +98,22 @@ namespace QuanLyCuaHangTiVi.forms
                     tongGiaVon += (decimal)ct.SoLuongBan * giaNhapHienTai;
                 }
 
-                // 2.2 Tiền lương (Tính theo số tháng thực tế có hoạt động)
+                // 2.2 Tiền lương 
                 decimal luongThang = db.NhanViens.Sum(nv => (decimal?)nv.Luong) ?? 0;
                 decimal tongLuong = 0;
 
                 if (thang == 0) // Cả năm
                 {
-                    // Lấy các tháng có phát sinh hóa đơn bán hàng
                     var cacThangBanHang = db.HoaDonChiTiets
                                             .Where(ct => ct.HoaDon.NgayLap.Year == nam)
                                             .Select(ct => ct.HoaDon.NgayLap.Month)
                                             .ToList();
 
-                    // Lấy các tháng có lưu chi phí vận hành
                     var cacThangCoChiPhi = db.ChiPhiVanHanhs
                                              .Where(cp => cp.Nam == nam)
                                              .Select(cp => cp.Thang)
                                              .ToList();
 
-                    // Gộp lại và đếm số tháng duy nhất có hoạt động
                     int soThangHoatDong = cacThangBanHang.Concat(cacThangCoChiPhi).Distinct().Count();
                     if (soThangHoatDong == 0) soThangHoatDong = 1;
 
@@ -116,7 +124,7 @@ namespace QuanLyCuaHangTiVi.forms
                     tongLuong = luongThang;
                 }
 
-                // 2.3 Vận hành (Fix lỗi LINQ bằng AsEnumerable)
+                // 2.3 Vận hành
                 var queryVanHanh = db.ChiPhiVanHanhs.Where(cp => cp.Nam == nam);
                 if (thang > 0) queryVanHanh = queryVanHanh.Where(cp => cp.Thang == thang);
 
@@ -126,7 +134,9 @@ namespace QuanLyCuaHangTiVi.forms
                 decimal tongChiPhi = tongGiaVon + tongLuong + tongVanHanh;
                 txtTongChiPhi.Text = tongChiPhi.ToString("N0") + " VNĐ";
 
+                // ==========================================
                 // 3. TÍNH LỢI NHUẬN
+                // ==========================================
                 decimal loiNhuan = tongDoanhThu - tongChiPhi;
                 txtLoiNhuan.Text = loiNhuan.ToString("N0") + " VNĐ";
                 txtLoiNhuan.ForeColor = (loiNhuan >= 0) ? Color.Green : Color.Red;
@@ -138,25 +148,41 @@ namespace QuanLyCuaHangTiVi.forms
                 MessageBox.Show("Lỗi: " + ex.Message);
             }
         }
-
         private void LoadDanhSachTraGop(int thang, int nam)
         {
             try
             {
-                // 1. Lấy danh sách chi tiết trả góp theo năm
-                var queryChiTietTraGop = db.ChiTietTraGops.Where(ct => ct.NgayCanDong.Year == nam);
+                // 1. Tạo Query gốc và dùng Include để JOIN các bảng lấy Tên Khách Hàng
+                var queryChiTietTraGop = db.ChiTietTraGops
+                    .Include(ct => ct.TraGop)
+                        .ThenInclude(tg => tg.HoaDon)
+                            .ThenInclude(hd => hd.KhachHang)
+                    .AsQueryable();
 
-                // Lọc thêm theo tháng nếu người dùng chọn tháng cụ thể (> 0)
-                if (thang > 0)
+                // LỌC THÔNG MINH: Nếu form được gọi từ nút "Xem Báo Cáo" mang theo ID (> 0)
+                if (_traGopID > 0)
                 {
-                    queryChiTietTraGop = queryChiTietTraGop.Where(ct => ct.NgayCanDong.Month == thang);
+                    queryChiTietTraGop = queryChiTietTraGop.Where(ct => ct.TraGopID == _traGopID);
+                }
+                else
+                {
+                    // Nếu mở form bình thường thì mới lọc theo năm/tháng
+                    queryChiTietTraGop = queryChiTietTraGop.Where(ct => ct.NgayCanDong.Year == nam);
+                    if (thang > 0)
+                    {
+                        queryChiTietTraGop = queryChiTietTraGop.Where(ct => ct.NgayCanDong.Month == thang);
+                    }
                 }
 
-                // 2. Chuyển đổi dữ liệu và tính toán trạng thái
+                // 2. Chuyển đổi dữ liệu, ĐỔI MÃ TRẢ GÓP THÀNH ID VÀ THÊM TÊN KHÁCH HÀNG
                 var dsCanThuTien = queryChiTietTraGop.ToList().Select(ct => new
                 {
-                    MaTraGop = ct.MaTraGop,
-                    NgayCanDong = ct.NgayCanDong.ToString("dd/MM/yyyy"), // Format lại ngày cho đẹp
+                    ID = ct.TraGopID,
+
+                    // Lấy tên khách hàng từ bảng KhachHang (Thêm dấu ? để tránh lỗi nếu dữ liệu bị rỗng)
+                    TenKhachHang = ct.TraGop?.HoaDon?.KhachHang?.TenKhachHang ?? "Không xác định",
+
+                    NgayCanDong = ct.NgayCanDong.ToString("dd/MM/yyyy"),
                     TongTienCanDong = ct.TongTienDong + ct.SoTienPhat,
                     SoTienDaDong = ct.SoTienDaDong,
                     TienConNo = (ct.TongTienDong + ct.SoTienPhat) - ct.SoTienDaDong,
@@ -168,16 +194,17 @@ namespace QuanLyCuaHangTiVi.forms
                 }).ToList();
 
                 // 3. FIX LỖI HIỂN THỊ LÊN DATAGRIDVIEW
-                dgvCanThuTien.DataSource = null;           // Xóa binding cũ
-                dgvCanThuTien.Columns.Clear();             // XÓA các cột sai ngoài Design (Tên TiVi, Ngày Nhập...)
-                dgvCanThuTien.AutoGenerateColumns = true;  // BẬT tự động tạo cột theo dữ liệu mới
+                dgvCanThuTien.DataSource = null;
+                dgvCanThuTien.Columns.Clear();
+                dgvCanThuTien.AutoGenerateColumns = true;
 
-                dgvCanThuTien.DataSource = dsCanThuTien;   // Đổ dữ liệu mới vào
+                dgvCanThuTien.DataSource = dsCanThuTien;
 
-                // 4. (Tùy chọn) Đổi lại tên Header cho hiển thị đẹp mắt (Tiếng Việt)
+                // 4. Đổi lại tên Header cho hiển thị đẹp mắt
                 if (dgvCanThuTien.Columns.Count > 0)
                 {
-                    dgvCanThuTien.Columns["MaTraGop"].HeaderText = "Mã Trả Góp";
+                    dgvCanThuTien.Columns["ID"].HeaderText = "ID Trả Góp";
+                    dgvCanThuTien.Columns["TenKhachHang"].HeaderText = "Tên Khách Hàng"; // TIÊU ĐỀ CỘT MỚI THÊM
                     dgvCanThuTien.Columns["NgayCanDong"].HeaderText = "Hạn Đóng";
                     dgvCanThuTien.Columns["TongTienCanDong"].HeaderText = "Tổng Cần Đóng (VNĐ)";
                     dgvCanThuTien.Columns["SoTienDaDong"].HeaderText = "Đã Đóng (VNĐ)";
@@ -200,6 +227,7 @@ namespace QuanLyCuaHangTiVi.forms
         }
         private void btnXemBaoCao_Click(object sender, EventArgs e)
         {
+            _traGopID = 0;
             LoadBaoCao();
         }
 
