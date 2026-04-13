@@ -174,13 +174,16 @@ namespace QuanLyCuaHangTiVi.forms
                     }
                 }
 
-                // 2. Chuyển đổi dữ liệu, ĐỔI MÃ TRẢ GÓP THÀNH ID VÀ THÊM TÊN KHÁCH HÀNG
+                // 2. Chuyển đổi dữ liệu, ĐỔI MÃ TRẢ GÓP THÀNH ID VÀ THÊM TÊN, SĐT KHÁCH HÀNG
                 var dsCanThuTien = queryChiTietTraGop.ToList().Select(ct => new
                 {
                     ID = ct.TraGopID,
 
-                    // Lấy tên khách hàng từ bảng KhachHang (Thêm dấu ? để tránh lỗi nếu dữ liệu bị rỗng)
+                    // Lấy tên khách hàng từ bảng KhachHang
                     TenKhachHang = ct.TraGop?.HoaDon?.KhachHang?.TenKhachHang ?? "Không xác định",
+
+                    // Lấy số điện thoại từ bảng KhachHang (THÊM MỚI Ở ĐÂY)
+                    SoDienThoai = ct.TraGop?.HoaDon?.KhachHang?.SoDienThoai ?? "Trống",
 
                     NgayCanDong = ct.NgayCanDong.ToString("dd/MM/yyyy"),
                     TongTienCanDong = ct.TongTienDong + ct.SoTienPhat,
@@ -204,7 +207,8 @@ namespace QuanLyCuaHangTiVi.forms
                 if (dgvCanThuTien.Columns.Count > 0)
                 {
                     dgvCanThuTien.Columns["ID"].HeaderText = "ID Trả Góp";
-                    dgvCanThuTien.Columns["TenKhachHang"].HeaderText = "Tên Khách Hàng"; // TIÊU ĐỀ CỘT MỚI THÊM
+                    dgvCanThuTien.Columns["TenKhachHang"].HeaderText = "Tên Khách Hàng";
+                    dgvCanThuTien.Columns["SoDienThoai"].HeaderText = "Số Điện Thoại"; // CỘT SĐT MỚI THÊM
                     dgvCanThuTien.Columns["NgayCanDong"].HeaderText = "Hạn Đóng";
                     dgvCanThuTien.Columns["TongTienCanDong"].HeaderText = "Tổng Cần Đóng (VNĐ)";
                     dgvCanThuTien.Columns["SoTienDaDong"].HeaderText = "Đã Đóng (VNĐ)";
