@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace QuanLyCuaHangTiVi.forms
 {
@@ -56,12 +57,16 @@ namespace QuanLyCuaHangTiVi.forms
         // ==========================================================
         private void LoadDuLieuHoaDon()
         {
-            var danhSachHoaDon = db.HoaDons.Select(hd => new
-            {
-                ID = hd.ID,
-                ThongTinHienThi = hd.KhachHang.TenKhachHang + " - Mua: " +
-                                  (hd.HoaDonChiTiets.Any() ? hd.HoaDonChiTiets.FirstOrDefault().QuanLyTiVi.TenTiVi : "Không rõ")
-            }).ToList();
+            // Lọc ra các hóa đơn mua theo hình thức Trả góp 
+            // (Lưu ý: Chữ "Trả góp" phải khớp với dữ liệu bạn lưu trong DB ở frmChiTietHoaDon)
+            var danhSachHoaDon = db.HoaDons
+                .Where(hd => hd.HinhThucThanhToan.Contains("Trả góp"))
+                .Select(hd => new
+                {
+                    ID = hd.ID,
+                    ThongTinHienThi = "HĐ " + hd.ID.ToString() + " | " + hd.KhachHang.TenKhachHang + " - Mua: " +
+                                      (hd.HoaDonChiTiets.Any() ? hd.HoaDonChiTiets.FirstOrDefault().QuanLyTiVi.TenTiVi : "Không rõ")
+                }).ToList();
 
             cboMaHoaDon.DataSource = danhSachHoaDon;
             cboMaHoaDon.DisplayMember = "ThongTinHienThi";
@@ -70,7 +75,14 @@ namespace QuanLyCuaHangTiVi.forms
 
         private void LoadDanhSachTraGop()
         {
-            var danhSachTraGop = db.TraGops.ToList();
+            var danhSachTraGop = db.TraGops
+                .Include(t => t.HoaDon)
+                    .ThenInclude(h => h.KhachHang)   // Lấy thông tin Khách Hàng
+                .Include(t => t.HoaDon)
+                    .ThenInclude(h => h.HoaDonChiTiets)
+                        .ThenInclude(ct => ct.QuanLyTiVi) // Lấy thông tin TiVi
+                .ToList();
+
             BindingSource bindingSource = new BindingSource();
             bindingSource.DataSource = danhSachTraGop;
             dgvTraGop.DataSource = bindingSource;
@@ -78,8 +90,15 @@ namespace QuanLyCuaHangTiVi.forms
             if (dgvTraGop.Columns["HoaDon"] != null) dgvTraGop.Columns["HoaDon"].Visible = false;
             if (dgvTraGop.Columns["ChiTietTraGops"] != null) dgvTraGop.Columns["ChiTietTraGops"].Visible = false;
 
+            // Đổi tiêu đề cột Mã Hóa Đơn cho đẹp
+            if (dgvTraGop.Columns["MaHoaDon"] != null)
+            {
+                dgvTraGop.Columns["MaHoaDon"].HeaderText = "Khách Hàng / TiVi";
+                dgvTraGop.Columns["MaHoaDon"].Width = 200; // Nới rộng cột để chứa tên
+            }
+
             // Xóa binding cũ
-            txtID.DataBindings.Clear(); // ID thay thế cho MaTraGop
+            txtID.DataBindings.Clear();
             cboMaHoaDon.DataBindings.Clear();
             txtLaiSuat.DataBindings.Clear();
             txtKyHanTra.DataBindings.Clear();
@@ -105,8 +124,10 @@ namespace QuanLyCuaHangTiVi.forms
 
             dgvTraGop.SelectionChanged += dgvTraGop_SelectionChanged;
             dgvChiTiet.CellFormatting += dgvChiTiet_CellFormatting;
-        }
 
+            // THÊM DÒNG NÀY ĐỂ RÁP TÊN KHÁCH HÀNG VÀO LƯỚI
+            dgvTraGop.CellFormatting += dgvTraGop_CellFormatting;
+        }
         private void btnThoat_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -119,28 +140,53 @@ namespace QuanLyCuaHangTiVi.forms
             LoadDuLieuHoaDon();
             LoadDanhSachTraGop();
 
-            
+
         }
         private void LoadChiTietTraGop(int traGopID)
         {
-            var ds = db.ChiTietTraGops.Where(ct => ct.TraGopID == traGopID).OrderBy(ct => ct.KyThu).ToList();
-            dgvChiTiet.DataSource = ds;
+            var dsGoc = db.ChiTietTraGops.Where(ct => ct.TraGopID == traGopID).OrderBy(ct => ct.KyThu).ToList();
 
-            if (dgvChiTiet.Columns["TraGop"] != null) dgvChiTiet.Columns["TraGop"].Visible = false;
-            if (dgvChiTiet.Columns["TraGopID"] != null) dgvChiTiet.Columns["TraGopID"].Visible = false;
+            var dsHienThi = dsGoc.Select(ct => new
+            {
+                ID = ct.ID,
+                TraGopID = ct.TraGopID,
+                KyThu = ct.KyThu,
+                NgayCanDong = ct.NgayCanDong,
+                TongTienDong = ct.TongTienDong,
+                SoTienDaDong = ct.SoTienDaDong,
+                NgayThucDong = ct.NgayThucDong,
+                NguoiNopTien = ct.NguoiNopTien,
+                SoTienPhat = ct.SoTienPhat,
+                TinhTrang = (ct.SoTienDaDong >= (ct.TongTienDong + ct.SoTienPhat)) ? "Đã đóng đủ" :
+                            (DateTime.Now.Date > ct.NgayCanDong.Date && ct.SoTienDaDong == 0) ? "Trễ hạn" :
+                            (DateTime.Now.Date > ct.NgayCanDong.Date && ct.SoTienDaDong > 0) ? "Đóng thiếu (Trễ)" :
+                            (ct.SoTienDaDong > 0) ? "Đóng thiếu" : "Chưa đóng"
+            }).ToList();
+
+            // 1. ÉP DATAGRIDVIEW TỰ ĐỘNG TẠO CỘT THEO DANH SÁCH TRÊN
+            dgvChiTiet.AutoGenerateColumns = true;
+            dgvChiTiet.DataSource = dsHienThi;
+
+            // 2. KIỂM TRA TỒN TẠI TRƯỚC KHI ẨN CỘT
             if (dgvChiTiet.Columns["ID"] != null) dgvChiTiet.Columns["ID"].Visible = false;
+            if (dgvChiTiet.Columns["TraGopID"] != null) dgvChiTiet.Columns["TraGopID"].Visible = false;
 
-            dgvChiTiet.Columns["KyThu"].HeaderText = "Kỳ";
-            dgvChiTiet.Columns["NgayCanDong"].HeaderText = "Hạn Chót";
-            dgvChiTiet.Columns["TongTienDong"].HeaderText = "Cần Thu";
-            dgvChiTiet.Columns["SoTienPhat"].HeaderText = "Tiền Phạt";
-            dgvChiTiet.Columns["SoTienDaDong"].HeaderText = "Đã Đóng";
-            dgvChiTiet.Columns["TrangThai"].HeaderText = "Tình Trạng";
+            // 3. KIỂM TRA TỒN TẠI TRƯỚC KHI ĐỔI TÊN HEADER
+            if (dgvChiTiet.Columns["KyThu"] != null) dgvChiTiet.Columns["KyThu"].HeaderText = "Kỳ";
+            if (dgvChiTiet.Columns["NgayCanDong"] != null) dgvChiTiet.Columns["NgayCanDong"].HeaderText = "Hạn Chót";
+            if (dgvChiTiet.Columns["TongTienDong"] != null) dgvChiTiet.Columns["TongTienDong"].HeaderText = "Cần Thu";
+            if (dgvChiTiet.Columns["SoTienDaDong"] != null) dgvChiTiet.Columns["SoTienDaDong"].HeaderText = "Đã Đóng";
+            if (dgvChiTiet.Columns["NgayThucDong"] != null) dgvChiTiet.Columns["NgayThucDong"].HeaderText = "Ngày Đóng";
+            if (dgvChiTiet.Columns["NguoiNopTien"] != null) dgvChiTiet.Columns["NguoiNopTien"].HeaderText = "Người Nộp";
+            if (dgvChiTiet.Columns["SoTienPhat"] != null) dgvChiTiet.Columns["SoTienPhat"].HeaderText = "Tiền Phạt";
+            if (dgvChiTiet.Columns["TinhTrang"] != null) dgvChiTiet.Columns["TinhTrang"].HeaderText = "Tình Trạng";
 
-            dgvChiTiet.Columns["TongTienDong"].DefaultCellStyle.Format = "N0";
-            dgvChiTiet.Columns["SoTienDaDong"].DefaultCellStyle.Format = "N0";
-            dgvChiTiet.Columns["SoTienPhat"].DefaultCellStyle.Format = "N0";
-            dgvChiTiet.Columns["NgayCanDong"].DefaultCellStyle.Format = "dd/MM/yyyy";
+            // 4. KIỂM TRA TỒN TẠI TRƯỚC KHI FORMAT
+            if (dgvChiTiet.Columns["TongTienDong"] != null) dgvChiTiet.Columns["TongTienDong"].DefaultCellStyle.Format = "N0";
+            if (dgvChiTiet.Columns["SoTienDaDong"] != null) dgvChiTiet.Columns["SoTienDaDong"].DefaultCellStyle.Format = "N0";
+            if (dgvChiTiet.Columns["SoTienPhat"] != null) dgvChiTiet.Columns["SoTienPhat"].DefaultCellStyle.Format = "N0";
+            if (dgvChiTiet.Columns["NgayCanDong"] != null) dgvChiTiet.Columns["NgayCanDong"].DefaultCellStyle.Format = "dd/MM/yyyy";
+            if (dgvChiTiet.Columns["NgayThucDong"] != null) dgvChiTiet.Columns["NgayThucDong"].DefaultCellStyle.Format = "dd/MM/yyyy";
         }
         private void TinhSoTienNo()
         {
@@ -149,10 +195,11 @@ namespace QuanLyCuaHangTiVi.forms
                 if (cboMaHoaDon.SelectedValue == null) return;
                 int maHD = (int)cboMaHoaDon.SelectedValue;
 
+                // Đã sửa: Thêm phần trừ đi Khuyến Mãi (KhuyenMai ?? 0) để khớp tuyệt đối với frmHoaDon
                 var hoaDon = db.HoaDons.Select(hd => new
                 {
                     hd.ID,
-                    TongTien = hd.HoaDonChiTiets.Sum(ct => ct.SoLuongBan * ct.DonGiaBan)
+                    TongTien = hd.HoaDonChiTiets.Sum(ct => (ct.SoLuongBan * ct.DonGiaBan) - (ct.KhuyenMai ?? 0))
                 }).FirstOrDefault(hd => hd.ID == maHD);
 
                 if (hoaDon == null) return;
@@ -161,9 +208,11 @@ namespace QuanLyCuaHangTiVi.forms
                 decimal.TryParse(txtSoTienTraTruoc.Text, out decimal traTruoc);
                 decimal.TryParse(txtLaiSuat.Text, out decimal laiSuat);
 
+                // Tính nợ gốc
                 decimal noGoc = tongTien - traTruoc;
                 if (noGoc < 0) noGoc = 0;
 
+                // Tính lãi dựa trên phần nợ gốc còn lại
                 decimal tienLai = noGoc * (laiSuat / 100);
                 decimal tongNo = noGoc + tienLai;
 
@@ -171,7 +220,7 @@ namespace QuanLyCuaHangTiVi.forms
             }
             catch { }
         }
-        
+
         private void btnThem_Click(object sender, EventArgs e)
         {
             isThem = true;
@@ -234,102 +283,131 @@ namespace QuanLyCuaHangTiVi.forms
 
         private void btnLuu_Click(object sender, EventArgs e)
         {
+
+
             if (cboMaHoaDon.SelectedValue == null || !decimal.TryParse(txtLaiSuat.Text, out decimal laiSuat) ||
-         !decimal.TryParse(txtSoTienTraTruoc.Text, out decimal soTienTruoc) || !int.TryParse(txtKyHanTra.Text, out int kyHan))
+                !decimal.TryParse(txtSoTienTraTruoc.Text, out decimal soTienTruoc) || !int.TryParse(txtKyHanTra.Text, out int kyHan))
             {
-                MessageBox.Show("Vui lòng nhập đầy đủ và đúng định dạng!");
+                MessageBox.Show("Vui lòng nhập đầy đủ và đúng định dạng các thông tin số!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            try
+            if (kyHan <= 0)
             {
-                int maHD = (int)cboMaHoaDon.SelectedValue;
-                decimal soTienNo = decimal.Parse(txtSoTienConNo.Text);
-                decimal tongMoiThang = soTienNo / kyHan;
-                DateTime ngayBatDau = DateTime.Now;
+                MessageBox.Show("Kỳ hạn trả phải lớn hơn 0!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-                int savedTraGopID = -1; // TẠO BIẾN NÀY ĐỂ NHỚ ID VỪA LƯU
-
-                if (isThem)
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
                 {
-                    TraGop tgMoi = new TraGop
-                    {
-                        MaHoaDon = maHD,
-                        LaiSuat = laiSuat,
-                        KyHanTra = kyHan,
-                        SoTienTraTruoc = soTienTruoc,
-                        SoTienConNo = soTienNo
-                    };
+                    int maHD = (int)cboMaHoaDon.SelectedValue;
+                    decimal soTienNo = decimal.Parse(txtSoTienConNo.Text);
 
-                    db.TraGops.Add(tgMoi);
-                    db.SaveChanges(); // Lưu để lấy ID tự sinh
+                    // [FIX LỖI CHIA TIỀN]: Chia đều các tháng, gánh số lẻ vào tháng cuối
+                    decimal tongMoiThang = Math.Round(soTienNo / kyHan, 0);
+                    decimal tienThangCuoi = soTienNo - (tongMoiThang * (kyHan - 1));
 
-                    for (int i = 1; i <= kyHan; i++)
+                    DateTime ngayBatDau = DateTime.Now;
+                    int savedTraGopID = -1;
+
+                    if (isThem)
                     {
-                        db.ChiTietTraGops.Add(new ChiTietTraGop
+                        if (db.TraGops.Any(tg => tg.MaHoaDon == maHD))
                         {
-                            TraGopID = tgMoi.ID,
-                            KyThu = i,
-                            NgayCanDong = ngayBatDau.AddMonths(i),
-                            TongTienDong = Math.Round(tongMoiThang, 0)
-                        });
-                    }
-                    db.SaveChanges();
-                    savedTraGopID = tgMoi.ID; // Bắt lấy ID vừa sinh ra
-                }
-                else
-                {
-                    int idSua = int.Parse(txtID.Text);
-                    var tgSua = db.TraGops.Find(idSua);
-                    if (tgSua != null)
-                    {
-                        tgSua.MaHoaDon = maHD;
-                        tgSua.LaiSuat = laiSuat;
-                        tgSua.KyHanTra = kyHan;
-                        tgSua.SoTienTraTruoc = soTienTruoc;
-                        tgSua.SoTienConNo = soTienNo;
+                            MessageBox.Show("Hóa đơn này đã có hợp đồng trả góp. Vui lòng chọn hóa đơn khác!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
 
-                        // Xóa lịch cũ, tạo lịch mới
-                        var chiTietCu = db.ChiTietTraGops.Where(ct => ct.TraGopID == idSua);
-                        db.ChiTietTraGops.RemoveRange(chiTietCu);
+                        TraGop tgMoi = new TraGop
+                        {
+                            MaHoaDon = maHD,
+                            LaiSuat = laiSuat,
+                            KyHanTra = kyHan,
+                            SoTienTraTruoc = soTienTruoc,
+                            SoTienConNo = soTienNo
+                        };
+
+                        db.TraGops.Add(tgMoi);
+                        db.SaveChanges();
 
                         for (int i = 1; i <= kyHan; i++)
                         {
                             db.ChiTietTraGops.Add(new ChiTietTraGop
                             {
-                                TraGopID = tgSua.ID,
+                                TraGopID = tgMoi.ID,
                                 KyThu = i,
                                 NgayCanDong = ngayBatDau.AddMonths(i),
-                                TongTienDong = Math.Round(tongMoiThang, 0)
+                                // Nếu là tháng cuối cùng thì nhận số tiền gánh dư, ngược lại lấy tiền đều
+                                TongTienDong = (i == kyHan) ? tienThangCuoi : tongMoiThang,
+                                SoTienDaDong = 0,
+                                SoTienPhat = 0
                             });
                         }
+                        db.SaveChanges();
+                        savedTraGopID = tgMoi.ID;
                     }
-                    db.SaveChanges();
-                    savedTraGopID = idSua; // Bắt lấy ID vừa sửa
-                }
-
-                MessageBox.Show("Lưu thành công!");
-
-                // FIX LỖI Ở ĐÂY: Không gọi frmTraGop_Load nữa
-                isThem = false;
-                BatTatChucNang(false);
-                LoadDanhSachTraGop(); // Cập nhật lại DataGridView cha
-
-                // VÀNG TÂM: Tự động cuộn và click vào dòng hợp đồng vừa tạo
-                foreach (DataGridViewRow row in dgvTraGop.Rows)
-                {
-                    if (row.DataBoundItem is TraGop tg && tg.ID == savedTraGopID)
+                    else
                     {
-                        row.Selected = true;
-                        dgvTraGop.CurrentCell = row.Cells[0]; // Ép kích hoạt SelectionChanged ngay lập tức
-                        break;
+                        int idSua = int.Parse(txtID.Text);
+                        var tgSua = db.TraGops.Find(idSua);
+                        if (tgSua != null)
+                        {
+                            tgSua.MaHoaDon = maHD;
+                            tgSua.LaiSuat = laiSuat;
+                            tgSua.KyHanTra = kyHan;
+                            tgSua.SoTienTraTruoc = soTienTruoc;
+                            tgSua.SoTienConNo = soTienNo;
+
+                            var chiTietCu = db.ChiTietTraGops.Where(ct => ct.TraGopID == idSua);
+                            db.ChiTietTraGops.RemoveRange(chiTietCu);
+                            db.SaveChanges();
+
+                            for (int i = 1; i <= kyHan; i++)
+                            {
+                                db.ChiTietTraGops.Add(new ChiTietTraGop
+                                {
+                                    TraGopID = tgSua.ID,
+                                    KyThu = i,
+                                    NgayCanDong = ngayBatDau.AddMonths(i),
+                                    // Nếu là tháng cuối cùng thì nhận số tiền gánh dư, ngược lại lấy tiền đều
+                                    TongTienDong = (i == kyHan) ? tienThangCuoi : tongMoiThang,
+                                    SoTienDaDong = 0,
+                                    SoTienPhat = 0
+                                });
+                            }
+                            db.SaveChanges();
+                            savedTraGopID = idSua;
+                        }
+                    }
+
+                    transaction.Commit();
+                    MessageBox.Show("Lưu hợp đồng trả góp thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    isThem = false;
+                    BatTatChucNang(false);
+                    LoadDanhSachTraGop();
+
+                    foreach (DataGridViewRow row in dgvTraGop.Rows)
+                    {
+                        if (row.DataBoundItem is TraGop tg && tg.ID == savedTraGopID)
+                        {
+                            row.Selected = true;
+                            dgvTraGop.CurrentCell = row.Cells[0];
+                            break;
+                        }
                     }
                 }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    MessageBox.Show("Lỗi khi lưu dữ liệu: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi: " + ex.Message);
-            }
+        
+
+
         }
 
         private void btnHuyBo_Click(object sender, EventArgs e)
@@ -367,20 +445,28 @@ namespace QuanLyCuaHangTiVi.forms
 
         private void dgvChiTiet_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (dgvChiTiet.Rows[e.RowIndex].DataBoundItem is ChiTietTraGop row)
+            if (e.RowIndex < 0 || dgvChiTiet.Columns["TongTienDong"] == null) return;
+            if (e.RowIndex >= 0)
             {
-                decimal tienCanThu = row.TongTienDong + row.SoTienPhat;
+                // Lấy giá trị trực tiếp từ các ô trên lưới
+                decimal tongTienDong = Convert.ToDecimal(dgvChiTiet.Rows[e.RowIndex].Cells["TongTienDong"].Value ?? 0);
+                decimal soTienPhat = Convert.ToDecimal(dgvChiTiet.Rows[e.RowIndex].Cells["SoTienPhat"].Value ?? 0);
+                decimal soTienDaDong = Convert.ToDecimal(dgvChiTiet.Rows[e.RowIndex].Cells["SoTienDaDong"].Value ?? 0);
+                DateTime ngayCanDong = Convert.ToDateTime(dgvChiTiet.Rows[e.RowIndex].Cells["NgayCanDong"].Value);
 
-                if (row.SoTienDaDong >= tienCanThu)
+                decimal tienCanThu = tongTienDong + soTienPhat;
+
+                // Xử lý tô màu
+                if (soTienDaDong >= tienCanThu && tienCanThu > 0)
                 {
                     e.CellStyle.BackColor = Color.LightGreen;
                 }
-                else if (DateTime.Now.Date >= row.NgayCanDong.Date)
+                else if (DateTime.Now.Date > ngayCanDong.Date && soTienDaDong < tienCanThu)
                 {
                     e.CellStyle.BackColor = Color.LightCoral;
                     e.CellStyle.ForeColor = Color.White;
                 }
-                else if (row.SoTienDaDong > 0 && row.SoTienDaDong < tienCanThu)
+                else if (soTienDaDong > 0 && soTienDaDong < tienCanThu)
                 {
                     e.CellStyle.BackColor = Color.LightYellow;
                 }
@@ -401,25 +487,43 @@ namespace QuanLyCuaHangTiVi.forms
 
         private void btnThuTien_Click(object sender, EventArgs e)
         {
+       
+            // 1. Kiểm tra đầu vào số tiền
             if (!decimal.TryParse(txtSoTienNop.Text.Replace(",", ""), out decimal soTienKhachDua) || soTienKhachDua <= 0)
             {
-                MessageBox.Show("Vui lòng nhập số tiền hợp lệ!"); return;
+                MessageBox.Show("Vui lòng nhập số tiền hợp lệ!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
 
-            if (dgvChiTiet.CurrentRow == null || dgvChiTiet.CurrentRow.DataBoundItem == null)
+            // 2. Kiểm tra xem đã chọn kỳ trả góp trên lưới chưa
+            if (dgvChiTiet.CurrentRow == null)
             {
-                MessageBox.Show("Vui lòng chọn Kỳ muốn nộp trên lưới chi tiết!"); return;
+                MessageBox.Show("Vui lòng chọn Kỳ muốn nộp trên lưới chi tiết!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
 
             if (string.IsNullOrEmpty(txtID.Text)) return;
             int currentTraGopID = int.Parse(txtID.Text);
 
-            var kyDangChon = dgvChiTiet.CurrentRow.DataBoundItem as ChiTietTraGop;
+            // [BẢN VÁ LỖI]: Lấy ID trực tiếp từ Cell ẩn trên DataGridView thay vì ép kiểu DataBoundItem
+            int idChiTiet = Convert.ToInt32(dgvChiTiet.CurrentRow.Cells["ID"].Value);
+
+            // Lấy thông tin Kỳ đang chọn từ cơ sở dữ liệu
+            var kyDangChon = db.ChiTietTraGops.Find(idChiTiet);
+            if (kyDangChon == null)
+            {
+                MessageBox.Show("Lỗi dữ liệu: Không tìm thấy thông tin kỳ này trong Database!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             DateTime ngayKhachNop = dtpNgayNop.Value.Date;
             string nguoiNop = string.IsNullOrWhiteSpace(txtNguoiNop.Text) ? "Chủ hợp đồng" : txtNguoiNop.Text;
             decimal soTienDu = soTienKhachDua;
 
-            // 1. Rót tiền vào kỳ đang chọn
+            // =========================================================
+            // BƯỚC 1: RÓT TIỀN VÀO KỲ ĐANG CHỌN
+            // =========================================================
+            // Tính tiền phạt trễ hạn (nếu đóng trễ và chưa đóng đủ)
             if (ngayKhachNop > kyDangChon.NgayCanDong.Date && kyDangChon.SoTienDaDong < (kyDangChon.TongTienDong + kyDangChon.SoTienPhat))
             {
                 kyDangChon.SoTienPhat = (ngayKhachNop - kyDangChon.NgayCanDong.Date).Days * 10000;
@@ -435,16 +539,25 @@ namespace QuanLyCuaHangTiVi.forms
                 soTienDu -= tienDapVao;
             }
 
-            // 2. Nếu dư, quét các kỳ tiếp theo
+            // =========================================================
+            // BƯỚC 2: NẾU DƯ TIỀN, QUÉT VÀ RÓT VÀO CÁC KỲ TIẾP THEO
+            // =========================================================
             if (soTienDu > 0)
             {
-                var cacKyKhac = db.ChiTietTraGops.Where(ct => ct.TraGopID == currentTraGopID && ct.KyThu != kyDangChon.KyThu).OrderBy(ct => ct.KyThu).ToList();
+                var cacKyKhac = db.ChiTietTraGops
+                                  .Where(ct => ct.TraGopID == currentTraGopID && ct.KyThu != kyDangChon.KyThu)
+                                  .OrderBy(ct => ct.KyThu)
+                                  .ToList();
+
                 foreach (var kyGop in cacKyKhac)
                 {
                     if (soTienDu <= 0) break;
 
+                    // Tính phạt trễ hạn cho các kỳ khác (nếu hạn chót của nó cũng đã qua)
                     if (ngayKhachNop > kyGop.NgayCanDong.Date && kyGop.SoTienDaDong < (kyGop.TongTienDong + kyGop.SoTienPhat))
+                    {
                         kyGop.SoTienPhat = (ngayKhachNop - kyGop.NgayCanDong.Date).Days * 10000;
+                    }
 
                     decimal canThuKyKhac = (kyGop.TongTienDong + kyGop.SoTienPhat) - kyGop.SoTienDaDong;
                     if (canThuKyKhac <= 0) continue;
@@ -457,26 +570,72 @@ namespace QuanLyCuaHangTiVi.forms
                 }
             }
 
-            // 3. Nếu vẫn dư, dồn vào kỳ cuối
+            // =========================================================
+            // BƯỚC 3: NẾU VẪN CÒN DƯ, DỒN HẾT VÀO KỲ CUỐI CÙNG
+            // =========================================================
             if (soTienDu > 0)
             {
-                var kyCuoi = db.ChiTietTraGops.Where(ct => ct.TraGopID == currentTraGopID).OrderByDescending(ct => ct.KyThu).FirstOrDefault();
+                var kyCuoi = db.ChiTietTraGops
+                               .Where(ct => ct.TraGopID == currentTraGopID)
+                               .OrderByDescending(ct => ct.KyThu)
+                               .FirstOrDefault();
+
                 if (kyCuoi != null)
                 {
                     kyCuoi.SoTienDaDong += soTienDu;
                     kyCuoi.NgayThucDong = ngayKhachNop;
                     kyCuoi.NguoiNopTien = nguoiNop;
                 }
-                MessageBox.Show($"Khách thanh toán dư {soTienDu:N0} VNĐ. Tiền thừa được cộng dồn vào kỳ cuối!");
+                MessageBox.Show($"Khách thanh toán dư {soTienDu:N0} VNĐ. Tiền thừa đã được tự động cộng dồn vào kỳ cuối!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
-            db.SaveChanges();
-            MessageBox.Show("Thu tiền thành công!");
+            // =========================================================
+            // BƯỚC 4: LƯU DB VÀ LÀM MỚI GIAO DIỆN
+            // =========================================================
+            try
+            {
+                db.SaveChanges();
+                MessageBox.Show("Thu tiền thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            // Tải lại lưới chi tiết để cập nhật màu sắc và số liệu
-            LoadChiTietTraGop(currentTraGopID);
-            txtSoTienNop.Clear();
-            txtNguoiNop.Clear();
+                // Tải lại lưới chi tiết để cập nhật ngay lập tức màu sắc (xanh, đỏ, vàng) và số liệu
+                LoadChiTietTraGop(currentTraGopID);
+
+                // Reset ô nhập liệu
+                txtSoTienNop.Clear();
+                txtNguoiNop.Clear();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Có lỗi xảy ra khi lưu vào cơ sở dữ liệu: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        
         }
+
+        private void dgvTraGop_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+      
+            // Kiểm tra nếu đang render cột MaHoaDon (mà ta đã đổi tiêu đề là Khách Hàng / TiVi)
+            if (dgvTraGop.Columns[e.ColumnIndex].Name == "MaHoaDon" && e.RowIndex >= 0)
+            {
+                if (dgvTraGop.Rows[e.RowIndex].DataBoundItem is TraGop tg && tg.HoaDon != null && tg.HoaDon.KhachHang != null)
+                {
+                    // Lấy tên khách hàng
+                    string tenKhach = tg.HoaDon.KhachHang.TenKhachHang;
+
+                    // Lấy tên tivi (nếu có)
+                    string tenTiVi = "Không rõ";
+                    if (tg.HoaDon.HoaDonChiTiets != null && tg.HoaDon.HoaDonChiTiets.Any())
+                    {
+                        var tivi = tg.HoaDon.HoaDonChiTiets.FirstOrDefault().QuanLyTiVi;
+                        if (tivi != null) tenTiVi = tivi.TenTiVi;
+                    }
+
+                    // Ghi đè giá trị hiển thị trên lưới thành Chuỗi Tên thay vì số Mã Hóa Đơn
+                    e.Value = tenKhach + " - " + tenTiVi;
+                    e.FormattingApplied = true;
+                }
+            }
+        }
+    
     }
 }

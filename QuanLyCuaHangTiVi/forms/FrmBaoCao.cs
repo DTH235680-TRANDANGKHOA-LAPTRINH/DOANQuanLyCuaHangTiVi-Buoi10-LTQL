@@ -206,12 +206,14 @@ namespace QuanLyCuaHangTiVi.forms
         private void btnChiTietDoanhThu_Click(object sender, EventArgs e)
         {
             frmThongKeDoanhThu frmDT = new frmThongKeDoanhThu();
+            frmDT.WindowState = FormWindowState.Maximized;
             frmDT.ShowDialog();
         }
 
         private void btnChiTietChiPhi_Click(object sender, EventArgs e)
         {
             frmThongkeChiPhi frmCP = new frmThongkeChiPhi();
+            frmCP.WindowState = FormWindowState.Maximized;
             frmCP.ShowDialog();
         }
         private void dgvCanThuTien_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)

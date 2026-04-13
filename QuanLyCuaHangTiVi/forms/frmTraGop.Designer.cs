@@ -32,18 +32,18 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
-            label8 = new Label();
-            txtSoTienNop = new TextBox();
-            label9 = new Label();
-            txtNguoiNop = new TextBox();
-            label7 = new Label();
             dtpNgayNop = new DateTimePicker();
-            btnThuTien = new Button();
+            txtNguoiNop = new TextBox();
             cboMaHoaDon = new ComboBox();
+            label8 = new Label();
             txtKyHanTra = new TextBox();
+            label9 = new Label();
             label4 = new Label();
+            btnThuTien = new Button();
             txtLaiSuat = new TextBox();
+            label7 = new Label();
             btnThoat = new Button();
+            txtSoTienNop = new TextBox();
             btnHuyBo = new Button();
             btnLuu = new Button();
             btnSua = new Button();
@@ -76,18 +76,18 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(label8);
-            groupBox1.Controls.Add(txtSoTienNop);
-            groupBox1.Controls.Add(label9);
-            groupBox1.Controls.Add(txtNguoiNop);
-            groupBox1.Controls.Add(label7);
             groupBox1.Controls.Add(dtpNgayNop);
-            groupBox1.Controls.Add(btnThuTien);
+            groupBox1.Controls.Add(txtNguoiNop);
             groupBox1.Controls.Add(cboMaHoaDon);
+            groupBox1.Controls.Add(label8);
             groupBox1.Controls.Add(txtKyHanTra);
+            groupBox1.Controls.Add(label9);
             groupBox1.Controls.Add(label4);
+            groupBox1.Controls.Add(btnThuTien);
             groupBox1.Controls.Add(txtLaiSuat);
+            groupBox1.Controls.Add(label7);
             groupBox1.Controls.Add(btnThoat);
+            groupBox1.Controls.Add(txtSoTienNop);
             groupBox1.Controls.Add(btnHuyBo);
             groupBox1.Controls.Add(btnLuu);
             groupBox1.Controls.Add(btnSua);
@@ -101,69 +101,78 @@
             groupBox1.Controls.Add(txtID);
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(btnThem);
-            groupBox1.Dock = DockStyle.Left;
+            groupBox1.Dock = DockStyle.Top;
             groupBox1.Location = new Point(0, 0);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(350, 670);
+            groupBox1.Size = new Size(1624, 296);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Thông Tin Trả Góp";
             // 
+            // dtpNgayNop
+            // 
+            dtpNgayNop.Location = new Point(1039, 237);
+            dtpNgayNop.Name = "dtpNgayNop";
+            dtpNgayNop.Size = new Size(182, 31);
+            dtpNgayNop.TabIndex = 61;
+            // 
+            // txtNguoiNop
+            // 
+            txtNguoiNop.Location = new Point(1040, 170);
+            txtNguoiNop.Name = "txtNguoiNop";
+            txtNguoiNop.Size = new Size(181, 31);
+            txtNguoiNop.TabIndex = 63;
+            // 
+            // cboMaHoaDon
+            // 
+            cboMaHoaDon.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboMaHoaDon.FormattingEnabled = true;
+            cboMaHoaDon.Location = new Point(508, 28);
+            cboMaHoaDon.Name = "cboMaHoaDon";
+            cboMaHoaDon.Size = new Size(464, 33);
+            cboMaHoaDon.TabIndex = 44;
+            cboMaHoaDon.TextChanged += cboMaHoaDon_TextChanged;
+            // 
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(23, 245);
+            label8.Location = new Point(911, 92);
             label8.Name = "label8";
             label8.Size = new Size(110, 25);
             label8.TabIndex = 66;
             label8.Text = "Số Tiền Nộp";
             // 
-            // txtSoTienNop
+            // txtKyHanTra
             // 
-            txtSoTienNop.Location = new Point(152, 249);
-            txtSoTienNop.Name = "txtSoTienNop";
-            txtSoTienNop.Size = new Size(181, 31);
-            txtSoTienNop.TabIndex = 65;
-            txtSoTienNop.TextChanged += txtSoTienNop_TextChanged;
+            txtKyHanTra.Location = new Point(155, 67);
+            txtKyHanTra.Name = "txtKyHanTra";
+            txtKyHanTra.Size = new Size(181, 31);
+            txtKyHanTra.TabIndex = 43;
             // 
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(49, 286);
+            label9.Location = new Point(911, 172);
             label9.Name = "label9";
             label9.Size = new Size(102, 25);
             label9.TabIndex = 64;
             label9.Text = "Người Nộp";
             // 
-            // txtNguoiNop
+            // label4
             // 
-            txtNguoiNop.Location = new Point(155, 286);
-            txtNguoiNop.Name = "txtNguoiNop";
-            txtNguoiNop.Size = new Size(181, 31);
-            txtNguoiNop.TabIndex = 63;
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Location = new Point(25, 327);
-            label7.Name = "label7";
-            label7.Size = new Size(94, 25);
-            label7.TabIndex = 62;
-            label7.Text = "Ngày Nộp";
-            // 
-            // dtpNgayNop
-            // 
-            dtpNgayNop.Location = new Point(152, 319);
-            dtpNgayNop.Name = "dtpNgayNop";
-            dtpNgayNop.Size = new Size(184, 31);
-            dtpNgayNop.TabIndex = 61;
+            label4.AutoSize = true;
+            label4.Location = new Point(12, 67);
+            label4.Name = "label4";
+            label4.Size = new Size(94, 25);
+            label4.TabIndex = 42;
+            label4.Text = "Kỳ Hạn Trả";
             // 
             // btnThuTien
             // 
             btnThuTien.BackColor = Color.Cyan;
             btnThuTien.Image = (Image)resources.GetObject("btnThuTien.Image");
             btnThuTien.ImageAlign = ContentAlignment.MiddleLeft;
-            btnThuTien.Location = new Point(25, 372);
+            btnThuTien.Location = new Point(1244, 162);
             btnThuTien.Name = "btnThuTien";
             btnThuTien.Size = new Size(196, 60);
             btnThuTien.TabIndex = 60;
@@ -171,46 +180,29 @@
             btnThuTien.UseVisualStyleBackColor = false;
             btnThuTien.Click += btnThuTien_Click;
             // 
-            // cboMaHoaDon
-            // 
-            cboMaHoaDon.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboMaHoaDon.FormattingEnabled = true;
-            cboMaHoaDon.Location = new Point(155, 65);
-            cboMaHoaDon.Name = "cboMaHoaDon";
-            cboMaHoaDon.Size = new Size(182, 33);
-            cboMaHoaDon.TabIndex = 44;
-            cboMaHoaDon.TextChanged += cboMaHoaDon_TextChanged;
-            // 
-            // txtKyHanTra
-            // 
-            txtKyHanTra.Location = new Point(155, 141);
-            txtKyHanTra.Name = "txtKyHanTra";
-            txtKyHanTra.Size = new Size(182, 31);
-            txtKyHanTra.TabIndex = 43;
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new Point(7, 134);
-            label4.Name = "label4";
-            label4.Size = new Size(94, 25);
-            label4.TabIndex = 42;
-            label4.Text = "Kỳ Hạn Trả";
-            // 
             // txtLaiSuat
             // 
-            txtLaiSuat.Location = new Point(155, 104);
+            txtLaiSuat.Location = new Point(155, 103);
             txtLaiSuat.Name = "txtLaiSuat";
-            txtLaiSuat.Size = new Size(182, 31);
+            txtLaiSuat.Size = new Size(181, 31);
             txtLaiSuat.TabIndex = 41;
             txtLaiSuat.TextChanged += txtLaiSuat_TextChanged;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(904, 237);
+            label7.Name = "label7";
+            label7.Size = new Size(94, 25);
+            label7.TabIndex = 62;
+            label7.Text = "Ngày Nộp";
             // 
             // btnThoat
             // 
             btnThoat.BackColor = Color.FromArgb(128, 255, 128);
             btnThoat.Image = (Image)resources.GetObject("btnThoat.Image");
             btnThoat.ImageAlign = ContentAlignment.MiddleLeft;
-            btnThoat.Location = new Point(152, 543);
+            btnThoat.Location = new Point(663, 211);
             btnThoat.Name = "btnThoat";
             btnThoat.Size = new Size(120, 57);
             btnThoat.TabIndex = 39;
@@ -218,12 +210,20 @@
             btnThoat.UseVisualStyleBackColor = false;
             btnThoat.Click += btnThoat_Click;
             // 
+            // txtSoTienNop
+            // 
+            txtSoTienNop.Location = new Point(1040, 96);
+            txtSoTienNop.Name = "txtSoTienNop";
+            txtSoTienNop.Size = new Size(181, 31);
+            txtSoTienNop.TabIndex = 65;
+            txtSoTienNop.TextChanged += txtSoTienNop_TextChanged;
+            // 
             // btnHuyBo
             // 
             btnHuyBo.BackColor = Color.FromArgb(255, 192, 128);
             btnHuyBo.Image = (Image)resources.GetObject("btnHuyBo.Image");
             btnHuyBo.ImageAlign = ContentAlignment.MiddleLeft;
-            btnHuyBo.Location = new Point(152, 490);
+            btnHuyBo.Location = new Point(508, 211);
             btnHuyBo.Name = "btnHuyBo";
             btnHuyBo.Size = new Size(120, 57);
             btnHuyBo.TabIndex = 38;
@@ -236,7 +236,7 @@
             btnLuu.BackColor = Color.Fuchsia;
             btnLuu.Image = (Image)resources.GetObject("btnLuu.Image");
             btnLuu.ImageAlign = ContentAlignment.MiddleLeft;
-            btnLuu.Location = new Point(152, 437);
+            btnLuu.Location = new Point(665, 77);
             btnLuu.Name = "btnLuu";
             btnLuu.Size = new Size(120, 57);
             btnLuu.TabIndex = 37;
@@ -249,7 +249,7 @@
             btnSua.BackColor = Color.Yellow;
             btnSua.Image = (Image)resources.GetObject("btnSua.Image");
             btnSua.ImageAlign = ContentAlignment.MiddleLeft;
-            btnSua.Location = new Point(29, 543);
+            btnSua.Location = new Point(508, 148);
             btnSua.Name = "btnSua";
             btnSua.Size = new Size(120, 57);
             btnSua.TabIndex = 36;
@@ -262,7 +262,7 @@
             btnXoa.BackColor = Color.Red;
             btnXoa.Image = (Image)resources.GetObject("btnXoa.Image");
             btnXoa.ImageAlign = ContentAlignment.MiddleLeft;
-            btnXoa.Location = new Point(29, 490);
+            btnXoa.Location = new Point(665, 144);
             btnXoa.Name = "btnXoa";
             btnXoa.Size = new Size(120, 57);
             btnXoa.TabIndex = 35;
@@ -272,24 +272,24 @@
             // 
             // txtSoTienConNo
             // 
-            txtSoTienConNo.Location = new Point(155, 215);
+            txtSoTienConNo.Location = new Point(155, 177);
             txtSoTienConNo.Name = "txtSoTienConNo";
             txtSoTienConNo.ReadOnly = true;
-            txtSoTienConNo.Size = new Size(182, 31);
+            txtSoTienConNo.Size = new Size(181, 31);
             txtSoTienConNo.TabIndex = 33;
             // 
             // txtSoTienTraTruoc
             // 
-            txtSoTienTraTruoc.Location = new Point(155, 178);
+            txtSoTienTraTruoc.Location = new Point(155, 140);
             txtSoTienTraTruoc.Name = "txtSoTienTraTruoc";
-            txtSoTienTraTruoc.Size = new Size(182, 31);
+            txtSoTienTraTruoc.Size = new Size(181, 31);
             txtSoTienTraTruoc.TabIndex = 32;
             txtSoTienTraTruoc.TextChanged += txtSoTienTraTruoc_TextChanged;
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(7, 208);
+            label6.Location = new Point(8, 180);
             label6.Name = "label6";
             label6.Size = new Size(136, 25);
             label6.TabIndex = 30;
@@ -298,7 +298,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(7, 171);
+            label5.Location = new Point(4, 146);
             label5.Name = "label5";
             label5.Size = new Size(145, 25);
             label5.TabIndex = 29;
@@ -307,7 +307,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(7, 99);
+            label3.Location = new Point(8, 109);
             label3.Name = "label3";
             label3.Size = new Size(73, 25);
             label3.TabIndex = 27;
@@ -316,7 +316,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(7, 60);
+            label2.Location = new Point(360, 34);
             label2.Name = "label2";
             label2.Size = new Size(147, 25);
             label2.TabIndex = 26;
@@ -324,16 +324,16 @@
             // 
             // txtID
             // 
-            txtID.Location = new Point(155, 27);
+            txtID.Location = new Point(155, 30);
             txtID.Name = "txtID";
             txtID.ReadOnly = true;
-            txtID.Size = new Size(182, 31);
+            txtID.Size = new Size(181, 31);
             txtID.TabIndex = 25;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(25, 36);
+            label1.Location = new Point(7, 36);
             label1.Name = "label1";
             label1.Size = new Size(30, 25);
             label1.TabIndex = 24;
@@ -344,7 +344,7 @@
             btnThem.BackColor = Color.FromArgb(128, 255, 255);
             btnThem.Image = (Image)resources.GetObject("btnThem.Image");
             btnThem.ImageAlign = ContentAlignment.MiddleLeft;
-            btnThem.Location = new Point(29, 437);
+            btnThem.Location = new Point(508, 77);
             btnThem.Name = "btnThem";
             btnThem.Size = new Size(120, 57);
             btnThem.TabIndex = 23;
@@ -355,10 +355,9 @@
             // groupBox2
             // 
             groupBox2.Controls.Add(dgvTraGop);
-            groupBox2.Dock = DockStyle.Top;
-            groupBox2.Location = new Point(350, 0);
+            groupBox2.Location = new Point(0, 296);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(1274, 319);
+            groupBox2.Size = new Size(1618, 408);
             groupBox2.TabIndex = 2;
             groupBox2.TabStop = false;
             groupBox2.Text = "Danh Sách Trả Góp";
@@ -377,8 +376,9 @@
             dgvTraGop.Name = "dgvTraGop";
             dgvTraGop.RowHeadersWidth = 62;
             dgvTraGop.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvTraGop.Size = new Size(1268, 289);
+            dgvTraGop.Size = new Size(1612, 378);
             dgvTraGop.TabIndex = 3;
+            dgvTraGop.CellFormatting += dgvTraGop_CellFormatting;
             dgvTraGop.SelectionChanged += dgvTraGop_SelectionChanged;
             // 
             // ColID
@@ -433,9 +433,9 @@
             // 
             groupBox3.Controls.Add(dgvChiTiet);
             groupBox3.Dock = DockStyle.Bottom;
-            groupBox3.Location = new Point(350, 295);
+            groupBox3.Location = new Point(0, 710);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(1274, 375);
+            groupBox3.Size = new Size(1624, 340);
             groupBox3.TabIndex = 5;
             groupBox3.TabStop = false;
             groupBox3.Text = "Lịch Trình Trả Góp";
@@ -453,7 +453,7 @@
             dgvChiTiet.ReadOnly = true;
             dgvChiTiet.RowHeadersWidth = 62;
             dgvChiTiet.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvChiTiet.Size = new Size(1268, 345);
+            dgvChiTiet.Size = new Size(1618, 310);
             dgvChiTiet.TabIndex = 3;
             dgvChiTiet.CellFormatting += dgvChiTiet_CellFormatting;
             // 
@@ -461,7 +461,7 @@
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1624, 670);
+            ClientSize = new Size(1624, 1050);
             Controls.Add(groupBox3);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);

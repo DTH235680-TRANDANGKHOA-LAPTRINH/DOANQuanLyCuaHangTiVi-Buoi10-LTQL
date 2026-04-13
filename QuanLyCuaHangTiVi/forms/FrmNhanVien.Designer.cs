@@ -69,7 +69,7 @@
             // 
             // panel1
             // 
-            panel1.BackColor = Color.White;
+            panel1.BackColor = Color.FromArgb(224, 224, 224);
             panel1.Controls.Add(label7);
             panel1.Controls.Add(dtpNgaySinh);
             panel1.Controls.Add(txtLuong);
@@ -101,7 +101,7 @@
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(287, 123);
+            label7.Location = new Point(131, 123);
             label7.Name = "label7";
             label7.Size = new Size(191, 25);
             label7.TabIndex = 24;
@@ -109,9 +109,9 @@
             // 
             // dtpNgaySinh
             // 
-            dtpNgaySinh.Location = new Point(502, 123);
+            dtpNgaySinh.Location = new Point(346, 123);
             dtpNgaySinh.Name = "dtpNgaySinh";
-            dtpNgaySinh.Size = new Size(300, 31);
+            dtpNgaySinh.Size = new Size(441, 31);
             dtpNgaySinh.TabIndex = 23;
             // 
             // txtLuong

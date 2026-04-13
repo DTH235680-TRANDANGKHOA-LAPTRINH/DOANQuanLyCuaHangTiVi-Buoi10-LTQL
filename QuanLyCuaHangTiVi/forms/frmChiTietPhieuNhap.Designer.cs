@@ -29,10 +29,13 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmChiTietPhieuNhap));
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             panel1 = new Panel();
+            txtMaPhieuNhap = new TextBox();
+            cboNguoiGiaoHang = new ComboBox();
+            label8 = new Label();
             txtThanhTien = new TextBox();
             label7 = new Label();
             txtDonGiaNhap = new TextBox();
@@ -41,7 +44,6 @@
             label3 = new Label();
             label2 = new Label();
             dtpNgayNhap = new DateTimePicker();
-            cboMaPhieuNhap = new ComboBox();
             btnThoat = new Button();
             btnHuyBo = new Button();
             btnLuu = new Button();
@@ -56,6 +58,7 @@
             dgvChiTietPhieuNhap = new DataGridView();
             MaCTPN = new DataGridViewTextBoxColumn();
             MaPhieuNhap = new DataGridViewTextBoxColumn();
+            ColNguoiGiaoHang = new DataGridViewTextBoxColumn();
             NgayNhap = new DataGridViewTextBoxColumn();
             MaTiVi = new DataGridViewTextBoxColumn();
             SoLuongNhap = new DataGridViewTextBoxColumn();
@@ -67,6 +70,9 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(txtMaPhieuNhap);
+            panel1.Controls.Add(cboNguoiGiaoHang);
+            panel1.Controls.Add(label8);
             panel1.Controls.Add(txtThanhTien);
             panel1.Controls.Add(label7);
             panel1.Controls.Add(txtDonGiaNhap);
@@ -75,7 +81,6 @@
             panel1.Controls.Add(label3);
             panel1.Controls.Add(label2);
             panel1.Controls.Add(dtpNgayNhap);
-            panel1.Controls.Add(cboMaPhieuNhap);
             panel1.Controls.Add(btnThoat);
             panel1.Controls.Add(btnHuyBo);
             panel1.Controls.Add(btnLuu);
@@ -93,11 +98,38 @@
             panel1.Size = new Size(1632, 233);
             panel1.TabIndex = 2;
             // 
+            // txtMaPhieuNhap
+            // 
+            txtMaPhieuNhap.Location = new Point(268, 73);
+            txtMaPhieuNhap.Name = "txtMaPhieuNhap";
+            txtMaPhieuNhap.ReadOnly = true;
+            txtMaPhieuNhap.Size = new Size(182, 31);
+            txtMaPhieuNhap.TabIndex = 29;
+            // 
+            // cboNguoiGiaoHang
+            // 
+            cboNguoiGiaoHang.FormattingEnabled = true;
+            cboNguoiGiaoHang.Items.AddRange(new object[] { "Quản Lý", "Nhân Viên ", "Chủ Quán" });
+            cboNguoiGiaoHang.Location = new Point(639, 76);
+            cboNguoiGiaoHang.Name = "cboNguoiGiaoHang";
+            cboNguoiGiaoHang.Size = new Size(182, 33);
+            cboNguoiGiaoHang.TabIndex = 28;
+            cboNguoiGiaoHang.SelectedIndexChanged += cboNguoiGiaoHang_SelectedIndexChanged;
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(456, 75);
+            label8.Name = "label8";
+            label8.Size = new Size(158, 25);
+            label8.TabIndex = 27;
+            label8.Text = "Người Nhập Hàng";
+            // 
             // txtThanhTien
             // 
-            txtThanhTien.Location = new Point(1401, 26);
+            txtThanhTien.Location = new Point(1339, 26);
             txtThanhTien.Name = "txtThanhTien";
-            txtThanhTien.Size = new Size(150, 31);
+            txtThanhTien.Size = new Size(212, 31);
             txtThanhTien.TabIndex = 26;
             // 
             // label7
@@ -111,16 +143,15 @@
             // 
             // txtDonGiaNhap
             // 
-            txtDonGiaNhap.Location = new Point(1076, 79);
+            txtDonGiaNhap.Location = new Point(1339, 76);
             txtDonGiaNhap.Name = "txtDonGiaNhap";
             txtDonGiaNhap.Size = new Size(150, 31);
             txtDonGiaNhap.TabIndex = 24;
-           
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(937, 82);
+            label6.Location = new Point(1216, 79);
             label6.Name = "label6";
             label6.Size = new Size(124, 25);
             label6.TabIndex = 23;
@@ -130,7 +161,7 @@
             // 
             cboMaTiVi.FormattingEnabled = true;
             cboMaTiVi.Items.AddRange(new object[] { "Quản Lý", "Nhân Viên ", "Chủ Quán" });
-            cboMaTiVi.Location = new Point(639, 78);
+            cboMaTiVi.Location = new Point(978, 72);
             cboMaTiVi.Name = "cboMaTiVi";
             cboMaTiVi.Size = new Size(182, 33);
             cboMaTiVi.TabIndex = 22;
@@ -138,7 +169,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(483, 82);
+            label3.Location = new Point(854, 76);
             label3.Name = "label3";
             label3.Size = new Size(73, 25);
             label3.TabIndex = 21;
@@ -157,24 +188,16 @@
             // 
             dtpNgayNhap.Location = new Point(639, 26);
             dtpNgayNhap.Name = "dtpNgayNhap";
-            dtpNgayNhap.Size = new Size(300, 31);
+            dtpNgayNhap.Size = new Size(182, 31);
             dtpNgayNhap.TabIndex = 19;
-            // 
-            // cboMaPhieuNhap
-            // 
-            cboMaPhieuNhap.FormattingEnabled = true;
-            cboMaPhieuNhap.Items.AddRange(new object[] { "Quản Lý", "Nhân Viên ", "Chủ Quán" });
-            cboMaPhieuNhap.Location = new Point(268, 78);
-            cboMaPhieuNhap.Name = "cboMaPhieuNhap";
-            cboMaPhieuNhap.Size = new Size(182, 33);
-            cboMaPhieuNhap.TabIndex = 18;
+            dtpNgayNhap.ValueChanged += dtpNgayNhap_ValueChanged;
             // 
             // btnThoat
             // 
             btnThoat.BackColor = Color.FromArgb(128, 255, 128);
             btnThoat.Image = (Image)resources.GetObject("btnThoat.Image");
             btnThoat.ImageAlign = ContentAlignment.MiddleLeft;
-            btnThoat.Location = new Point(990, 148);
+            btnThoat.Location = new Point(1002, 148);
             btnThoat.Name = "btnThoat";
             btnThoat.Size = new Size(127, 53);
             btnThoat.TabIndex = 17;
@@ -236,16 +259,15 @@
             // 
             // txtSoLuong
             // 
-            txtSoLuong.Location = new Point(1076, 26);
+            txtSoLuong.Location = new Point(979, 31);
             txtSoLuong.Name = "txtSoLuong";
-            txtSoLuong.Size = new Size(150, 31);
+            txtSoLuong.Size = new Size(181, 31);
             txtSoLuong.TabIndex = 11;
-         
             // 
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(113, 82);
+            label5.Location = new Point(66, 76);
             label5.Name = "label5";
             label5.Size = new Size(133, 25);
             label5.TabIndex = 6;
@@ -254,7 +276,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(972, 29);
+            label4.Location = new Point(854, 28);
             label4.Name = "label4";
             label4.Size = new Size(89, 25);
             label4.TabIndex = 5;
@@ -270,7 +292,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(57, 29);
+            label1.Location = new Point(66, 31);
             label1.Name = "label1";
             label1.Size = new Size(196, 25);
             label1.TabIndex = 1;
@@ -295,7 +317,7 @@
             dgvChiTietPhieuNhap.AllowUserToDeleteRows = false;
             dgvChiTietPhieuNhap.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvChiTietPhieuNhap.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvChiTietPhieuNhap.Columns.AddRange(new DataGridViewColumn[] { MaCTPN, MaPhieuNhap, NgayNhap, MaTiVi, SoLuongNhap, DonGiaNhap, ThanhTien });
+            dgvChiTietPhieuNhap.Columns.AddRange(new DataGridViewColumn[] { MaCTPN, MaPhieuNhap, ColNguoiGiaoHang, NgayNhap, MaTiVi, SoLuongNhap, DonGiaNhap, ThanhTien });
             dgvChiTietPhieuNhap.Dock = DockStyle.Fill;
             dgvChiTietPhieuNhap.Location = new Point(0, 233);
             dgvChiTietPhieuNhap.MultiSelect = false;
@@ -319,6 +341,13 @@
             MaPhieuNhap.MinimumWidth = 8;
             MaPhieuNhap.Name = "MaPhieuNhap";
             // 
+            // ColNguoiGiaoHang
+            // 
+            ColNguoiGiaoHang.DataPropertyName = "NguoiGiaoHang";
+            ColNguoiGiaoHang.HeaderText = "Người Giao Hàng";
+            ColNguoiGiaoHang.MinimumWidth = 8;
+            ColNguoiGiaoHang.Name = "ColNguoiGiaoHang";
+            // 
             // NgayNhap
             // 
             NgayNhap.DataPropertyName = "NgayNhap";
@@ -336,9 +365,9 @@
             // SoLuongNhap
             // 
             SoLuongNhap.DataPropertyName = "SoLuongNhap";
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle4.Format = "N0";
-            SoLuongNhap.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.Format = "N0";
+            SoLuongNhap.DefaultCellStyle = dataGridViewCellStyle1;
             SoLuongNhap.HeaderText = "Số Lượng";
             SoLuongNhap.MinimumWidth = 8;
             SoLuongNhap.Name = "SoLuongNhap";
@@ -346,9 +375,9 @@
             // DonGiaNhap
             // 
             DonGiaNhap.DataPropertyName = "DonGiaNhap";
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle5.Format = "N0";
-            DonGiaNhap.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle2.Format = "N0";
+            DonGiaNhap.DefaultCellStyle = dataGridViewCellStyle2;
             DonGiaNhap.HeaderText = "Đơn Gía Nhập";
             DonGiaNhap.MinimumWidth = 8;
             DonGiaNhap.Name = "DonGiaNhap";
@@ -356,10 +385,10 @@
             // ThanhTien
             // 
             ThanhTien.DataPropertyName = "ThanhTien";
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle6.Format = "N0";
-            dataGridViewCellStyle6.NullValue = "0";
-            ThanhTien.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle3.Format = "N0";
+            dataGridViewCellStyle3.NullValue = "0";
+            ThanhTien.DefaultCellStyle = dataGridViewCellStyle3;
             ThanhTien.HeaderText = "Thành Tiền";
             ThanhTien.MinimumWidth = 8;
             ThanhTien.Name = "ThanhTien";
@@ -383,7 +412,6 @@
         #endregion
 
         private Panel panel1;
-        private ComboBox cboMaPhieuNhap;
         private Button btnThoat;
         private Button btnHuyBo;
         private Button btnLuu;
@@ -404,8 +432,12 @@
         private Label label6;
         private TextBox txtThanhTien;
         private Label label7;
+        private Label label8;
+        private ComboBox cboNguoiGiaoHang;
+        private TextBox txtMaPhieuNhap;
         private DataGridViewTextBoxColumn MaCTPN;
         private DataGridViewTextBoxColumn MaPhieuNhap;
+        private DataGridViewTextBoxColumn ColNguoiGiaoHang;
         private DataGridViewTextBoxColumn NgayNhap;
         private DataGridViewTextBoxColumn MaTiVi;
         private DataGridViewTextBoxColumn SoLuongNhap;

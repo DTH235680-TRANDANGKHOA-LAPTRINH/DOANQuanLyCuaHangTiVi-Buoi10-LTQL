@@ -44,6 +44,14 @@ namespace QuanLyCuaHangTiVi.DATA
         {
             // Lấy Ngày Nhập từ bảng cha (PhieuNhap) sang
             get { return PhieuNhap != null ? PhieuNhap.NgayNhap : (DateTime?)null; }
+        } // <--- ĐÓNG NGOẶC CỦA NGÀY NHẬP Ở ĐÂY
+
+        [NotMapped]
+        public string NguoiGiaoHang
+        {
+            // Lấy Người Giao Hàng từ bảng cha (PhieuNhap) sang
+            get { return PhieuNhap != null ? PhieuNhap.NguoiGiaoHang : ""; }
         }
+
     }
 }

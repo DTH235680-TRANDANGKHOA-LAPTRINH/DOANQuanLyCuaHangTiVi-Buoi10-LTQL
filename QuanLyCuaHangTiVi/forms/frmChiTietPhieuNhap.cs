@@ -20,20 +20,25 @@ namespace QuanLyCuaHangTiVi.forms
         public frmChiTietPhieuNhap()
         {
             InitializeComponent();
-           
+
         }
         // --- HÀM BỔ TRỢ GIAO DIỆN ---
         private void BatTatChucNang(bool giaTri)
         {
             btnLuu.Enabled = giaTri;
             btnHuyBo.Enabled = giaTri;
-            cboMaPhieuNhap.Enabled = giaTri;
+
+            // Bật/tắt các ô mới
+            cboNguoiGiaoHang.Enabled = giaTri;
+            dtpNgayNhap.Enabled = giaTri;
+
             cboMaTiVi.Enabled = giaTri;
             txtSoLuong.Enabled = giaTri;
             txtDonGiaNhap.Enabled = giaTri;
 
             txtMaCTPN.Enabled = false;
             txtThanhTien.Enabled = false;
+            txtMaPhieuNhap.Enabled = false; // Luôn khóa vì nó tự sinh
 
             btnThem.Enabled = !giaTri;
             btnSua.Enabled = !giaTri;
@@ -43,9 +48,9 @@ namespace QuanLyCuaHangTiVi.forms
 
         private void LoadComboBox()
         {
-            cboMaPhieuNhap.DataSource = context.PhieuNhaps.ToList();
-            cboMaPhieuNhap.DisplayMember = "MaPhieuNhap";
-            cboMaPhieuNhap.ValueMember = "MaPhieuNhap";
+            // Lấy danh sách Người Giao Hàng từ bảng Phiếu Nhập (Distinct để không bị trùng tên)
+            var dsNguoiGiao = context.PhieuNhaps.Select(p => p.NguoiGiaoHang).Distinct().ToList();
+            cboNguoiGiaoHang.DataSource = dsNguoiGiao;
 
             cboMaTiVi.DataSource = context.QuanLyTiVis.ToList();
             cboMaTiVi.DisplayMember = "TenTiVi";
@@ -55,13 +60,20 @@ namespace QuanLyCuaHangTiVi.forms
         private void BindingDuLieu()
         {
             txtMaCTPN.DataBindings.Clear();
-            cboMaPhieuNhap.DataBindings.Clear();
+            txtMaPhieuNhap.DataBindings.Clear();
+            cboNguoiGiaoHang.DataBindings.Clear();
+            dtpNgayNhap.DataBindings.Clear();
             cboMaTiVi.DataBindings.Clear();
             txtSoLuong.DataBindings.Clear();
             txtDonGiaNhap.DataBindings.Clear();
 
             txtMaCTPN.DataBindings.Add("Text", bindingSource, "MaCTPN", true, DataSourceUpdateMode.Never);
-            cboMaPhieuNhap.DataBindings.Add("SelectedValue", bindingSource, "MaPhieuNhap", true, DataSourceUpdateMode.Never);
+
+            // Binding các ô mới
+            txtMaPhieuNhap.DataBindings.Add("Text", bindingSource, "MaPhieuNhap", true, DataSourceUpdateMode.Never);
+            cboNguoiGiaoHang.DataBindings.Add("Text", bindingSource, "NguoiGiaoHang", true, DataSourceUpdateMode.Never);
+            dtpNgayNhap.DataBindings.Add("Value", bindingSource, "NgayNhap", true, DataSourceUpdateMode.Never);
+
             cboMaTiVi.DataBindings.Add("SelectedValue", bindingSource, "MaTiVi", true, DataSourceUpdateMode.Never);
             txtSoLuong.DataBindings.Add("Text", bindingSource, "SoLuongNhap", true, DataSourceUpdateMode.Never);
             txtDonGiaNhap.DataBindings.Add("Text", bindingSource, "DonGiaNhap", true, DataSourceUpdateMode.Never);
@@ -117,21 +129,48 @@ namespace QuanLyCuaHangTiVi.forms
 
             BindingDuLieu();
         }
-       
-        
-       
-       
 
-        
+
+
+        private void TimMaPhieuNhapTuDong()
+        {
+            if (xuLyThem && cboNguoiGiaoHang.Text != "" && dtpNgayNhap.Value != null)
+            {
+                string nguoiGiao = cboNguoiGiaoHang.Text;
+                DateTime ngayChon = dtpNgayNhap.Value.Date;
+
+                // Tìm Phiếu Nhập khớp tên và khớp ngày
+                var phieu = context.PhieuNhaps.ToList().FirstOrDefault(p => p.NguoiGiaoHang == nguoiGiao && p.NgayNhap.Date == ngayChon);
+
+                if (phieu != null)
+                {
+                    txtMaPhieuNhap.Text = phieu.MaPhieuNhap; // Tự hiện mã
+                }
+                else
+                {
+                    txtMaPhieuNhap.Text = ""; // Không thấy thì để trống
+                }
+            }
+        }
+
+
         private void btnThem_Click(object sender, EventArgs e)
         {
+        
             xuLyThem = true;
             BatTatChucNang(true);
             txtMaCTPN.Clear();
             txtSoLuong.Text = "0";
             txtDonGiaNhap.Text = "0";
-            cboMaPhieuNhap.Focus();
+            txtMaPhieuNhap.Clear(); // Đảm bảo làm sạch mã phiếu
+
+            // Tránh lỗi null bằng cách tự động chọn mục đầu tiên (nếu có dữ liệu)
+            if (cboNguoiGiaoHang.Items.Count > 0) cboNguoiGiaoHang.SelectedIndex = 0;
+            if (cboMaTiVi.Items.Count > 0) cboMaTiVi.SelectedIndex = 0;
+
+            cboNguoiGiaoHang.Focus(); // Thay đổi Focus vào ô Người giao hàng
         }
+        
 
         private void btnSua_Click(object sender, EventArgs e)
         {
@@ -175,6 +214,13 @@ namespace QuanLyCuaHangTiVi.forms
 
         private void btnLuu_Click(object sender, EventArgs e)
         {
+            // Kiểm tra rỗng mã phiếu
+            if (string.IsNullOrWhiteSpace(txtMaPhieuNhap.Text))
+            {
+                MessageBox.Show("Không tìm thấy Mã Phiếu Nhập cho người giao hàng và ngày này!\nVui lòng lập Phiếu Nhập bên form kia trước.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             try
             {
                 int soLuong = string.IsNullOrWhiteSpace(txtSoLuong.Text) ? 0 : int.Parse(txtSoLuong.Text);
@@ -183,7 +229,9 @@ namespace QuanLyCuaHangTiVi.forms
                 if (xuLyThem)
                 {
                     ChiTietPhieuNhap ctpn = new ChiTietPhieuNhap();
-                    ctpn.MaPhieuNhap = cboMaPhieuNhap.SelectedValue.ToString();
+
+                    // THAY ĐỔI Ở ĐÂY: Dùng txtMaPhieuNhap thay vì cboMaPhieuNhap
+                    ctpn.MaPhieuNhap = txtMaPhieuNhap.Text;
                     ctpn.MaTiVi = cboMaTiVi.SelectedValue.ToString();
                     ctpn.SoLuongNhap = soLuong;
                     ctpn.DonGiaNhap = donGia;
@@ -202,11 +250,11 @@ namespace QuanLyCuaHangTiVi.forms
                         var tivi = context.QuanLyTiVis.Find(ctSua.MaTiVi);
                         if (tivi != null)
                         {
-                            // Cập nhật lại tồn kho: trừ số lượng cũ, cộng số lượng mới
                             tivi.SoLuongTon = tivi.SoLuongTon - ctSua.SoLuongNhap + soLuong;
                         }
 
-                        ctSua.MaPhieuNhap = cboMaPhieuNhap.SelectedValue.ToString();
+                        // THAY ĐỔI Ở ĐÂY CŨNG VẬY
+                        ctSua.MaPhieuNhap = txtMaPhieuNhap.Text;
                         ctSua.MaTiVi = cboMaTiVi.SelectedValue.ToString();
                         ctSua.SoLuongNhap = soLuong;
                         ctSua.DonGiaNhap = donGia;
@@ -221,6 +269,7 @@ namespace QuanLyCuaHangTiVi.forms
             {
                 MessageBox.Show("Lỗi Database: " + ex.Message);
             }
+        
         }
 
         private void dgvChiTietPhieuNhap_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -233,7 +282,16 @@ namespace QuanLyCuaHangTiVi.forms
                 }
             }
         }
-       
+
+        private void cboNguoiGiaoHang_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            TimMaPhieuNhapTuDong();
+        }
+
+        private void dtpNgayNhap_ValueChanged(object sender, EventArgs e)
+        {
+            TimMaPhieuNhapTuDong();
+        }
     }
 }
 

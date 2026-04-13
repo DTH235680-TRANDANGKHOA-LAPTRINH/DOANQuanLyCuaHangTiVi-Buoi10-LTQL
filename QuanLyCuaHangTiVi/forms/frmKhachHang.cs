@@ -332,7 +332,16 @@ namespace QuanLyCuaHangTiVi.forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi khi lưu: " + ex.Message);
+
+
+                // Lấy thông báo lỗi chi tiết nhất từ Entity Framework
+                string errorMessage = ex.Message;
+                if (ex.InnerException != null)
+                {
+                    errorMessage += "\n\nChi tiết lỗi từ CSDL (Inner Exception):\n" + ex.InnerException.Message;
+                }
+
+                MessageBox.Show(errorMessage, "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -346,5 +355,7 @@ namespace QuanLyCuaHangTiVi.forms
         {
             this.Close();
         }
+
+     
     }
 }

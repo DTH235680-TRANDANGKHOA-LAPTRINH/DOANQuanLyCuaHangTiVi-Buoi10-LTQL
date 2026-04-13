@@ -52,18 +52,23 @@ namespace QuanLyCuaHangTiVi.forms
 
                 var dsNhapHang = queryNhap.Select(ct => new
                 {
+                    ID = ct.MaCTPN,                    // Đảm bảo DataPropertyName của cột ID là: ID
+                    MaPhieuNhap = ct.MaPhieuNhap,
                     TenTiVi = ct.QuanLyTiVi.TenTiVi,
                     HangSanXuat = ct.QuanLyTiVi.HangSanXuat,
-                    NgayNhapHang = ct.PhieuNhap.NgayNhap,
+                    NgayNhapHang = ct.PhieuNhap.NgayNhap, // DataPropertyName của cột Ngày nhập phải là: NgayNhapHang
                     DonGiaNhap = ct.DonGiaNhap,
                     SoLuong = ct.SoLuongNhap,
                     ThanhTien = ct.DonGiaNhap * ct.SoLuongNhap
                 }).ToList();
 
-                // FIX LỖI: Tạm tắt AutoSize trước khi gán DataSource
+                // 🌟 QUAN TRỌNG: Tắt tính năng tự động sinh cột thừa
+                dgvChiPhiNhapHang.AutoGenerateColumns = false;
+
+                // Tạm tắt AutoSize trước khi gán DataSource cho mượt
                 dgvChiPhiNhapHang.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
                 dgvChiPhiNhapHang.DataSource = dsNhapHang;
-                dgvChiPhiNhapHang.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; // Bật lại sau khi xong
+                dgvChiPhiNhapHang.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
                 decimal tongNhap = dsNhapHang.Any() ? dsNhapHang.Sum(x => x.ThanhTien) : 0;
                 txtTongTienNhap.Text = tongNhap.ToString("N0") + " VNĐ";
