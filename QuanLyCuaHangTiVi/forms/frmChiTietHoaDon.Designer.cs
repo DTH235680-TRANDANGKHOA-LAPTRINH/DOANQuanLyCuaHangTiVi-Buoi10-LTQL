@@ -84,6 +84,7 @@
             lblTonKho = new Label();
             rdoChuyenKhoan = new RadioButton();
             groupBox1 = new GroupBox();
+            btnHuyBo = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvDanhSachHD).BeginInit();
             panelTraGop.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -365,7 +366,7 @@
             // label13
             // 
             label13.AutoSize = true;
-            label13.Location = new Point(455, 60);
+            label13.Location = new Point(455, 103);
             label13.Name = "label13";
             label13.Size = new Size(138, 25);
             label13.TabIndex = 57;
@@ -374,7 +375,7 @@
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new Point(455, 107);
+            label12.Location = new Point(455, 60);
             label12.Name = "label12";
             label12.Size = new Size(122, 25);
             label12.TabIndex = 58;
@@ -409,7 +410,7 @@
             // 
             // txtTenKhachHang
             // 
-            txtTenKhachHang.Location = new Point(597, 58);
+            txtTenKhachHang.Location = new Point(597, 101);
             txtTenKhachHang.Name = "txtTenKhachHang";
             txtTenKhachHang.Size = new Size(236, 31);
             txtTenKhachHang.TabIndex = 62;
@@ -437,7 +438,7 @@
             // 
             // txtSDT_KhachHang
             // 
-            txtSDT_KhachHang.Location = new Point(597, 104);
+            txtSDT_KhachHang.Location = new Point(597, 57);
             txtSDT_KhachHang.Name = "txtSDT_KhachHang";
             txtSDT_KhachHang.Size = new Size(236, 31);
             txtSDT_KhachHang.TabIndex = 66;
@@ -571,6 +572,7 @@
             // groupBox1
             // 
             groupBox1.BackColor = Color.FromArgb(224, 224, 224);
+            groupBox1.Controls.Add(btnHuyBo);
             groupBox1.Controls.Add(rdoChuyenKhoan);
             groupBox1.Controls.Add(lblTonKho);
             groupBox1.Controls.Add(rdoTraGop);
@@ -613,6 +615,19 @@
             groupBox1.TabIndex = 3;
             groupBox1.TabStop = false;
             groupBox1.Text = "Thông Tin Chi Tiết Hóa Đơn";
+            // 
+            // btnHuyBo
+            // 
+            btnHuyBo.BackColor = Color.FromArgb(255, 192, 128);
+            btnHuyBo.Image = (Image)resources.GetObject("btnHuyBo.Image");
+            btnHuyBo.ImageAlign = ContentAlignment.MiddleLeft;
+            btnHuyBo.Location = new Point(1611, 165);
+            btnHuyBo.Name = "btnHuyBo";
+            btnHuyBo.Size = new Size(125, 63);
+            btnHuyBo.TabIndex = 90;
+            btnHuyBo.Text = "Hủy Bỏ";
+            btnHuyBo.UseVisualStyleBackColor = false;
+            btnHuyBo.Click += btnHuyBo_Click;
             // 
             // frmChiTietHoaDon
             // 
@@ -685,5 +700,6 @@
         private Label lblTonKho;
         private RadioButton rdoChuyenKhoan;
         private GroupBox groupBox1;
+        private Button btnHuyBo;
     }
 }

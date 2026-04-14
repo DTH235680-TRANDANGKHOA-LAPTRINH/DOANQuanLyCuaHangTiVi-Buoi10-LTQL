@@ -19,7 +19,7 @@ namespace QuanLyCuaHangTiVi.DATA
         // Thêm = null! để tắt cảnh báo vàng
         public string MaPhieuNhap { get; set; } = null!;
 
-        [ForeignKey("MaPhieuNhap")]
+        [ForeignKey("MaPhieuNhap")]//giúp dễ dàng chui từ bảng con (ChiTietPhieuNhap) sang bảng cha (PhieuNhap) để lấy dữ liệu
         public virtual PhieuNhap PhieuNhap { get; set; } = null!;
 
         [StringLength(20)]
@@ -44,7 +44,7 @@ namespace QuanLyCuaHangTiVi.DATA
         {
             // Lấy Ngày Nhập từ bảng cha (PhieuNhap) sang
             get { return PhieuNhap != null ? PhieuNhap.NgayNhap : (DateTime?)null; }
-        } // <--- ĐÓNG NGOẶC CỦA NGÀY NHẬP Ở ĐÂY
+        } 
 
         [NotMapped]
         public string NguoiGiaoHang

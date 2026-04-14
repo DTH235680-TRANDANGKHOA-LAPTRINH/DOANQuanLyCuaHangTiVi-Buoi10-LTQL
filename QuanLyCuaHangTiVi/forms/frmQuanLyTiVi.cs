@@ -26,9 +26,9 @@ namespace QuanLyCuaHangTiVi.forms
         // ĐƯỜNG DẪN ẢNH: 
         string imagesFolder = Application.StartupPath.Replace("bin\\Debug\\net8.0-windows", "images\\");
 
-        // KHO LƯU ẢNH TẠM: Giải pháp dứt điểm lỗi "Out of Memory" khi cuộn DataGridView
+        // KHO LƯU ẢNH TẠM: Giải pháp dứt điểm lỗi "Out of Memory" khi cuộn DataGridView nó sẽ lưu tạm ảnh vào RAM (Dictionary) và gọi ra dùng lại.
         Dictionary<string, Image> khoAnhTam = new Dictionary<string, Image>();
-        private void BatTatChucNang(bool giaTri)
+        private void BatTatChucNang(bool giaTri)//Dùng để khóa/mở khóa các control trên giao diện
         {
             btnLuu.Enabled = giaTri;
             btnHuyBo.Enabled = giaTri;
@@ -53,9 +53,9 @@ namespace QuanLyCuaHangTiVi.forms
             cboHangSanXuat.Items.AddRange(new string[] { "Sony", "Samsung", "LG", "Toshiba", "Panasonic" });
         }
 
-        // ==========================================
+       
         // HÀM TẠO MÃ TỰ ĐỘNG
-        // ==========================================
+     
         private string TaoMaTiViTuDong()
         {
             // Lấy danh sách tất cả các Mã TiVi hiện có trong Database
@@ -252,7 +252,7 @@ namespace QuanLyCuaHangTiVi.forms
         
 
         private void btnXoa_Click(object sender, EventArgs e)
-        {
+        {//Xóa Tivi khỏi Database. Đồng thời, code có xử lý rất kỹ: Xóa luôn file ảnh vật lý tương ứng trong thư mục images và dọn dẹp ảnh trong khoAnhTam để giải phóng bộ nhớ.
             if (dgvDanhSachTiVi.CurrentRow != null)
             {
                 var tv = context.QuanLyTiVis.Find(txtMaTiVi.Text);
@@ -400,6 +400,8 @@ namespace QuanLyCuaHangTiVi.forms
 
         private void dgvDanhSachTiVi_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
+            //Hàm này chạy liên tục khi DataGridView vẽ các ô. Nó kiểm tra xem tên ảnh đã có trong khoAnhTam chưa. Nếu chưa thì đọc từ ổ cứng, nạp vào Dictionary.
+            // Nếu có rồi thì lấy trực tiếp từ RAM ra để hiển thị. Đây là cách tối ưu hiệu suất cực kỳ quan trọng đối với thao tác hiển thị ảnh trên dạng lưới.
             if (dgvDanhSachTiVi.Columns[e.ColumnIndex].Name == "CotHinhAnh" && e.RowIndex >= 0)
             {
                 var tv = dgvDanhSachTiVi.Rows[e.RowIndex].DataBoundItem as QuanLyTiVi;
@@ -431,7 +433,7 @@ namespace QuanLyCuaHangTiVi.forms
         }
 
         private void dgvDanhSachTiVi_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
+        {//Khi click vào một dòng, nó sẽ tìm file ảnh tương ứng trong thư mục và hiển thị lên khung picAnhMinhHoa ở phần nhập liệu.
             if (e.RowIndex >= 0)
             {
                 var tv = dgvDanhSachTiVi.Rows[e.RowIndex].DataBoundItem as QuanLyTiVi;

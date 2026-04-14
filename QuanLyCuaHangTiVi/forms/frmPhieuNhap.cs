@@ -142,7 +142,7 @@ namespace QuanLyCuaHangTiVi.forms
 
                     context.PhieuNhaps.Add(pn);
                 }
-                else // Trường hợp Sửa (RẤT GỌN VÌ KHÔNG ĐỔI MÃ)
+                else // Trường hợp Sửa 
                 {
                     var pnSua = context.PhieuNhaps.Find(txtMaPhieuNhap.Text.Trim());
                     if (pnSua != null)
@@ -174,10 +174,7 @@ namespace QuanLyCuaHangTiVi.forms
             this.Close();
         }
 
-        private void dgvChiTietPhieuNhap_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        {
-
-        }
+      
 
         private void btnSua_Click(object sender, EventArgs e)
         {

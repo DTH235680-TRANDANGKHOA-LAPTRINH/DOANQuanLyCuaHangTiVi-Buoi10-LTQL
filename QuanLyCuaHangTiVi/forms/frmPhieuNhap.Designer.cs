@@ -68,7 +68,7 @@
             dgvPhieuNhap.Size = new Size(1672, 294);
             dgvPhieuNhap.TabIndex = 4;
             dgvPhieuNhap.CellValueChanged += dgvChiTietPhieuNhap_CellValueChanged;
-            dgvPhieuNhap.DataError += dgvChiTietPhieuNhap_DataError;
+        
             // 
             // MaPhieuNhap
             // 

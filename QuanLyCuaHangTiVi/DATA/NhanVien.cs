@@ -18,7 +18,7 @@ namespace QuanLyCuaHangTiVi.DATA
         [StringLength(100)]
         public string HoTenNhanVien { get; set; }
 
-        // BỔ SUNG THÊM DÒNG NÀY ĐỂ LƯU NGÀY SINH
+      
         public DateTime NgaySinh { get; set; }
 
         [Required]

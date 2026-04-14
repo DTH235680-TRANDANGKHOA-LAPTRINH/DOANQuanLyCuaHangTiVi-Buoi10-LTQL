@@ -61,9 +61,8 @@ namespace QuanLyCuaHangTiVi.forms
             PhanQuyenNhanVien();
             BatTatChucNang(id != 0);
 
-            // ==========================================
             // CHẾ ĐỘ SỬA: LOAD HÓA ĐƠN CŨ VÀ KHÁCH HÀNG
-            // ==========================================
+
             if (id != 0)
             {
                 var hoaDon = context.HoaDons.FirstOrDefault(r => r.ID == id);
@@ -224,7 +223,7 @@ namespace QuanLyCuaHangTiVi.forms
             btnLuu.Enabled = (dangThaoTac && hoaDonChiTiet.Count > 0);
         }
 
-        // [FIX] Thêm hàm reset UI nhỏ để dọn dẹp các control nhập liệu sau khi thêm/xóa xong
+        // Thêm hàm reset UI nhỏ để dọn dẹp các control nhập liệu sau khi thêm/xóa xong
         private void ClearInputs()
         {
             txtSoLuong.Clear();
@@ -234,6 +233,32 @@ namespace QuanLyCuaHangTiVi.forms
             cboTenTiVi.Enabled = true;
             lblTonKho.Text = "";
             cboTenTiVi.Focus();
+        }
+        private string GenerateMaKhachHang(AppDbContext dbContext)
+        {
+            var dsMaKH = dbContext.KhachHangs.Select(k => k.MaKhachHang).ToList();
+
+            if (dsMaKH.Count == 0)
+            {
+                return "KH001";
+            }
+
+            int maxId = 0;
+            foreach (var ma in dsMaKH)
+            {
+                if (ma.StartsWith("KH") && ma.Length > 2)
+                {
+                    string soPhanDuoi = ma.Substring(2);
+                    if (int.TryParse(soPhanDuoi, out int so))
+                    {
+                        if (so > maxId)
+                        {
+                            maxId = so;
+                        }
+                    }
+                }
+            }
+            return "KH" + (maxId + 1).ToString("D3");
         }
         private void btnThem_Click(object sender, EventArgs e)
         {
@@ -250,7 +275,7 @@ namespace QuanLyCuaHangTiVi.forms
                 return;
             }
 
-            // [FIX] Tivi phải là số nguyên (int), không dùng decimal
+            //Tivi phải là số nguyên (int), không dùng decimal
             if (!int.TryParse(txtSoLuong.Text, out int soLuong) || soLuong <= 0)
             {
                 MessageBox.Show("Vui lòng nhập Số lượng hợp lệ (lớn hơn 0)!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -329,7 +354,7 @@ namespace QuanLyCuaHangTiVi.forms
                 BatTatChucNang(true);
                 TinhTienConNo();
 
-                // [FIX] Tái sử dụng hàm dọn dẹp
+                //Tái sử dụng hàm dọn dẹp
                 ClearInputs();
             }
             catch (Exception ex)
@@ -401,9 +426,9 @@ namespace QuanLyCuaHangTiVi.forms
                         {
                             string hinhThucThanhToan = rdoTraGop.Checked ? "Trả góp" : (rdoChuyenKhoan.Checked ? "Chuyển khoản" : "Tiền mặt");
 
-                            // ==========================================
-                            // BƯỚC 3.1: XỬ LÝ KHÁCH HÀNG
-                            // ==========================================
+
+                            // 3.1: XỬ LÝ KHÁCH HÀNG
+
                             if (string.IsNullOrEmpty(maKhachHangHienTai))
                             {
                                 if (string.IsNullOrWhiteSpace(txtTenKhachHang.Text) || string.IsNullOrWhiteSpace(txtSDT_KhachHang.Text))
@@ -414,7 +439,8 @@ namespace QuanLyCuaHangTiVi.forms
 
                                 KhachHang khMoi = new KhachHang
                                 {
-                                    MaKhachHang = "KH" + DateTime.Now.ToString("yyMMddHHmmss"),
+                                    // Gọi hàm GenerateMaKhachHang ở đây
+                                    MaKhachHang = GenerateMaKhachHang(db),
                                     TenKhachHang = txtTenKhachHang.Text,
                                     SoDienThoai = txtSDT_KhachHang.Text,
                                     CCCD = txtCCCD.Text,
@@ -427,7 +453,7 @@ namespace QuanLyCuaHangTiVi.forms
                             }
                             else
                             {
-                                // [FIX] Cập nhật thông tin khách hàng nếu người dùng có sửa trên màn hình
+                                // Cập nhật thông tin khách hàng nếu người dùng có sửa trên màn hình
                                 var khCu = db.KhachHangs.FirstOrDefault(k => k.MaKhachHang == maKhachHangHienTai);
                                 if (khCu != null)
                                 {
@@ -439,9 +465,9 @@ namespace QuanLyCuaHangTiVi.forms
                                 }
                             }
 
-                            // ==========================================
-                            // BƯỚC 3.2: XỬ LÝ HÓA ĐƠN CHÍNH
-                            // ==========================================
+
+                            //  3.2: XỬ LÝ HÓA ĐƠN CHÍNH
+
                             HoaDon hd;
                             if (this.id == 0) // LẬP MỚI
                             {
@@ -473,9 +499,9 @@ namespace QuanLyCuaHangTiVi.forms
                                 db.SaveChanges();
                             }
 
-                            // ==========================================
+
                             // BƯỚC 3.3: LƯU CHI TIẾT GIỎ HÀNG
-                            // ==========================================
+
                             decimal tongTienHoaDon = 0;
                             foreach (var item in hoaDonChiTiet)
                             {
@@ -489,21 +515,18 @@ namespace QuanLyCuaHangTiVi.forms
                                 });
                                 tongTienHoaDon += item.ThanhTien;
 
-                                // [Lưu ý] Chỗ trừ tồn kho nếu bạn đang sửa hóa đơn thì cần tính bù trừ số lượng cũ/mới để không bị sai tồn kho. 
-                                // Tạm thời giữ nguyên logic của bạn.
                                 var tivi = db.QuanLyTiVis.Find(item.MaTiVi);
                                 if (tivi != null) tivi.SoLuongTon -= item.SoLuongBan;
                             }
                             db.SaveChanges();
 
-                            // ==========================================
-                            // BƯỚC 3.4: XỬ LÝ TRẢ GÓP (FIX LỖI TẠI ĐÂY)
-                            // ==========================================
+
+                            //  3.4: XỬ LÝ TRẢ GÓP
+
                             if (rdoTraGop.Checked)
                             {
                                 decimal noGoc = tongTienHoaDon - traTruoc;
                                 if (noGoc < 0) noGoc = 0;
-                                // Chia 100m để đảm bảo tính toán decimal chuẩn xác
                                 decimal tienLai = noGoc * (laiSuat / 100m);
                                 decimal tongNo = noGoc + tienLai;
 
@@ -512,12 +535,11 @@ namespace QuanLyCuaHangTiVi.forms
 
                                 if (traGopTonTai != null)
                                 {
-                                    // [FIX] SỬA TRẢ GÓP THAY VÌ XÓA (Tránh mất ID gốc)
+                                    // SỬA TRẢ GÓP THAY VÌ XÓA
                                     traGopTonTai.LaiSuat = laiSuat;
                                     traGopTonTai.KyHanTra = kyHan;
                                     traGopTonTai.SoTienTraTruoc = traTruoc;
                                     traGopTonTai.SoTienConNo = tongNo;
-                                    // traGopTonTai.MaKhachHang = maKhachHangHienTai; // Mở comment nếu DB TraGop của bạn có cột MaKhachHang
 
                                     db.SaveChanges();
                                     idTraGopHienTai = traGopTonTai.ID;
@@ -529,7 +551,7 @@ namespace QuanLyCuaHangTiVi.forms
                                 }
                                 else
                                 {
-                                    // [FIX] TẠO TRẢ GÓP MỚI
+                                    // TẠO TRẢ GÓP MỚI
                                     TraGop tgMoi = new TraGop
                                     {
                                         MaHoaDon = this.id,
@@ -537,14 +559,13 @@ namespace QuanLyCuaHangTiVi.forms
                                         KyHanTra = kyHan,
                                         SoTienTraTruoc = traTruoc,
                                         SoTienConNo = tongNo
-                                        // MaKhachHang = maKhachHangHienTai // Mở comment nếu DB TraGop của bạn có cột MaKhachHang
                                     };
                                     db.TraGops.Add(tgMoi);
                                     db.SaveChanges();
                                     idTraGopHienTai = tgMoi.ID;
                                 }
 
-                                // [FIX] TÍNH TOÁN RÕ RÀNG TIỀN GỐC/LÃI ĐỂ LÊN FORM TRẢ GÓP ĐÚNG
+                                // TÍNH TOÁN RÕ RÀNG TIỀN GỐC/LÃI
                                 decimal tienGocMoiThang = Math.Round(noGoc / kyHan, 0);
                                 decimal tienLaiMoiThang = Math.Round(tienLai / kyHan, 0);
 
@@ -554,7 +575,6 @@ namespace QuanLyCuaHangTiVi.forms
                                     decimal gocKyNay = tienGocMoiThang;
                                     decimal laiKyNay = tienLaiMoiThang;
 
-                                    // Dồn số dư lẻ (nếu có do phép chia) vào kỳ đóng cuối cùng
                                     if (i == kyHan)
                                     {
                                         gocKyNay = noGoc - (tienGocMoiThang * (kyHan - 1));
@@ -567,27 +587,18 @@ namespace QuanLyCuaHangTiVi.forms
                                     {
                                         TraGopID = idTraGopHienTai,
                                         KyThu = i,
-
-                                        // Đổi 'NgayDenHan' thành 'NgayCanDong' cho khớp với Model
                                         NgayCanDong = ngayBatDau.AddMonths(i),
-
                                         SoTienGoc = gocKyNay,
                                         SoTienLai = laiKyNay,
-
-                                        // Đổi 'SoTienCanThu' thành 'TongTienDong' cho khớp với Model
                                         TongTienDong = canThuKyNay,
-
                                         SoTienDaDong = 0,
-
-                                        // ĐÃ XÓA dòng: TrangThai = "Chưa đóng"
-                                        // (Vì TrangThai tự động tính toán từ thuộc tính get trong model khi SoTienDaDong = 0)
                                     });
                                 }
                                 db.SaveChanges();
                             }
                             else
                             {
-                                // [FIX] Nếu đổi từ Trả góp -> Tiền mặt, phải xóa dữ liệu Trả góp cũ đi
+                                // Nếu đổi từ Trả góp -> Tiền mặt, phải xóa dữ liệu Trả góp cũ đi
                                 var traGopCu = db.TraGops.FirstOrDefault(t => t.MaHoaDon == this.id);
                                 if (traGopCu != null)
                                 {
@@ -715,7 +726,7 @@ namespace QuanLyCuaHangTiVi.forms
 
             string sdt = txtSDT_KhachHang.Text.Trim();
 
-            // [FIX] Thường SĐT có 10 số, nên check >= 10 cho an toàn
+            //Thường SĐT có 10 số, nên check >= 10 cho an toàn
             if (sdt.Length >= 10)
             {
                 var kh = context.KhachHangs.FirstOrDefault(k => k.SoDienThoai == sdt);
@@ -728,8 +739,7 @@ namespace QuanLyCuaHangTiVi.forms
                     dtpNgayThangNamSinh.Value = kh.NgayThangNamSinh;
                     maKhachHangHienTai = kh.MaKhachHang;
 
-                    // [FIX] Đã XÓA đoạn code Clear() txtLaiSuat, txtKyHanTra ở đây 
-                    // để bảo toàn dữ liệu nhân viên đã nhập ở phần Trả Góp.
+
                 }
                 else
                 {
@@ -750,6 +760,46 @@ namespace QuanLyCuaHangTiVi.forms
         private void txtLaiSuat_TextChanged(object sender, EventArgs e)
         {
             TinhTienConNo();
+        }
+
+        private void btnHuyBo_Click(object sender, EventArgs e)
+        {
+            if (this.id == 0)
+            {
+                // === 1. NẾU ĐANG LẬP HÓA ĐƠN MỚI: Xóa trắng toàn bộ giao diện ===
+
+                // Xóa thông tin khách hàng
+                txtSDT_KhachHang.Clear(); // Dùng Clear() SDT trước để không kích hoạt tìm kiếm ảo
+                txtTenKhachHang.Clear();
+                txtCCCD.Clear();
+                txtDiaChi.Clear();
+                dtpNgayThangNamSinh.Value = DateTime.Now;
+                maKhachHangHienTai = "";
+
+                // Xóa thông tin trả góp & hóa đơn
+                txtGhiChu.Clear();
+                rdoTienMat.Checked = true; // Tự động khóa panel trả góp do event CheckedChanged
+                txtLaiSuat.Clear();
+                txtKyHanTra.Clear();
+                txtSoTienTraTruoc.Clear();
+                txtSoTienConNo.Text = "0";
+
+                // Làm sạch giỏ hàng và phần nhập Tivi
+                hoaDonChiTiet.Clear();
+                ClearInputs();
+            }
+            else
+            {
+                // === 2. NẾU ĐANG SỬA HÓA ĐƠN: Khôi phục lại dữ liệu gốc từ DB ===
+
+                // Cố tình xóa trắng trước để tránh kẹt số liệu cũ khi Load lại
+                txtLaiSuat.Clear();
+                txtKyHanTra.Clear();
+                txtSoTienTraTruoc.Clear();
+
+                // Gọi lại Load để kéo lại dữ liệu từ Database (xóa bỏ các thay đổi chưa Lưu)
+                frmChiTietHoaDon_Load(sender, e);
+            }
         }
     }
 }

@@ -35,7 +35,7 @@ namespace QuanLyCuaHangTiVi.forms
                 TenKhachHang = r.KhachHang.TenKhachHang,
                 NgayLap = r.NgayLap,
 
-                // ---> THÊM DÒNG NÀY ĐỂ LẤY HÌNH THỨC THANH TOÁN TỪ DB <---
+                // DÒNG NÀY ĐỂ LẤY HÌNH THỨC THANH TOÁN TỪ DB 
                 HinhThucThanhToan = r.HinhThucThanhToan,
 
                 // Sử dụng (decimal)(ct.KhuyenMai ?? 0) để tránh lỗi null và sai kiểu dữ liệu
@@ -234,5 +234,7 @@ namespace QuanLyCuaHangTiVi.forms
                 }
             }
         }
+
+    
     }
 }

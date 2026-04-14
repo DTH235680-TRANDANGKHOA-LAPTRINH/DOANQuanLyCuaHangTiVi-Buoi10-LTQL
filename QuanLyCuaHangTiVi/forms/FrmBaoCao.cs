@@ -49,7 +49,7 @@ namespace QuanLyCuaHangTiVi.forms
             try
             {
                 // ==========================================
-                // 1. TÍNH DOANH THU (Đã đồng bộ logic với frmThongKeDoanhThu)
+                // 1. TÍNH DOANH THU 
                 // ==========================================
                 var listMaHoaDonTraGop = db.TraGops.Select(tg => tg.MaHoaDon).ToList();
 
@@ -86,42 +86,59 @@ namespace QuanLyCuaHangTiVi.forms
                 // ==========================================
                 // 2. TÍNH CHI PHÍ
                 // ==========================================
-                // 2.1 Giá vốn hàng bán
+                // 2.1 Giá vốn hàng bán (TỐI ƯU KHÔNG LỖI N+1, KHÔNG CẦN SỬA DB)
                 decimal tongGiaVon = 0;
-                foreach (var ct in dsHoaDon)
+                if (dsHoaDon.Any())
                 {
-                    var giaNhapHienTai = db.ChiTietPhieuNhaps
-                                          .Where(pn => pn.MaTiVi == ct.MaTiVi)
-                                          .OrderByDescending(pn => pn.MaCTPN)
-                                          .Select(pn => pn.DonGiaNhap)
-                                          .FirstOrDefault();
-                    tongGiaVon += (decimal)ct.SoLuongBan * giaNhapHienTai;
+                    var listMaTiVi = dsHoaDon.Select(ct => ct.MaTiVi).Distinct().ToList();
+
+                    var lichSuNhap = db.ChiTietPhieuNhaps
+                        .Where(pn => listMaTiVi.Contains(pn.MaTiVi))
+                        .Select(pn => new {
+                            MaTiVi = pn.MaTiVi,
+                            NgayNhap = pn.PhieuNhap.NgayNhap,
+                            DonGiaNhap = pn.DonGiaNhap
+                        }).ToList();
+
+                    foreach (var ct in dsHoaDon)
+                    {
+                        DateTime ngayBan = ct.HoaDon.NgayLap;
+
+                        var giaNhapLichSu = lichSuNhap
+                            .Where(pn => pn.MaTiVi == ct.MaTiVi && pn.NgayNhap <= ngayBan)
+                            .OrderByDescending(pn => pn.NgayNhap)
+                            .Select(pn => pn.DonGiaNhap)
+                            .FirstOrDefault();
+
+                        if (giaNhapLichSu == 0)
+                        {
+                            giaNhapLichSu = lichSuNhap
+                                .Where(pn => pn.MaTiVi == ct.MaTiVi)
+                                .OrderBy(pn => pn.NgayNhap)
+                                .Select(pn => pn.DonGiaNhap)
+                                .FirstOrDefault();
+                        }
+
+                        tongGiaVon += (decimal)ct.SoLuongBan * giaNhapLichSu;
+                    }
                 }
 
-                // 2.2 Tiền lương 
-                decimal luongThang = db.NhanViens.Sum(nv => (decimal?)nv.Luong) ?? 0;
+                // 2.2 Tiền lương (Sửa logic ảo)
+                decimal tongLuongMotThang = db.NhanViens.Any() ? db.NhanViens.Sum(x => (decimal?)x.Luong ?? 0) : 0;
                 decimal tongLuong = 0;
 
-                if (thang == 0) // Cả năm
+                if (thang == 0)
                 {
-                    var cacThangBanHang = db.HoaDonChiTiets
-                                            .Where(ct => ct.HoaDon.NgayLap.Year == nam)
-                                            .Select(ct => ct.HoaDon.NgayLap.Month)
-                                            .ToList();
-
-                    var cacThangCoChiPhi = db.ChiPhiVanHanhs
-                                             .Where(cp => cp.Nam == nam)
-                                             .Select(cp => cp.Thang)
-                                             .ToList();
-
-                    int soThangHoatDong = cacThangBanHang.Concat(cacThangCoChiPhi).Distinct().Count();
-                    if (soThangHoatDong == 0) soThangHoatDong = 1;
-
-                    tongLuong = luongThang * soThangHoatDong;
+                    if (nam < DateTime.Now.Year)
+                        tongLuong = tongLuongMotThang * 12;
+                    else if (nam == DateTime.Now.Year)
+                        tongLuong = tongLuongMotThang * DateTime.Now.Month;
+                    else
+                        tongLuong = 0;
                 }
-                else // Từng tháng
+                else
                 {
-                    tongLuong = luongThang;
+                    tongLuong = tongLuongMotThang;
                 }
 
                 // 2.3 Vận hành
@@ -129,7 +146,7 @@ namespace QuanLyCuaHangTiVi.forms
                 if (thang > 0) queryVanHanh = queryVanHanh.Where(cp => cp.Thang == thang);
 
                 decimal tongVanHanh = queryVanHanh.AsEnumerable()
-                                                 .Sum(cp => (decimal?)cp.TongChiPhiVanHanh) ?? 0;
+                                                  .Sum(cp => (decimal?)cp.TongChiPhiVanHanh) ?? 0;
 
                 decimal tongChiPhi = tongGiaVon + tongLuong + tongVanHanh;
                 txtTongChiPhi.Text = tongChiPhi.ToString("N0") + " VNĐ";

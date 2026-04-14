@@ -15,7 +15,7 @@ namespace QuanLyCuaHangTiVi.DATA
         [StringLength(20, ErrorMessage = "Mã TiVi không được quá 20 ký tự")]
         public string MaTiVi { get; set; }
 
-        [Required]
+        [Required]// bắt buộc nhập không được bỏ trống
         [StringLength(100)]
         public string TenTiVi { get; set; }
 
@@ -24,10 +24,10 @@ namespace QuanLyCuaHangTiVi.DATA
 
         public DateTime NgayTao { get; set; } = DateTime.Now;
 
-        [Column(TypeName = "decimal(18, 0)")]
+        [Column(TypeName = "decimal(18, 0)")]//18 chữ số và 0 thập phân
         public decimal DonGiaBan { get; set; }
 
-        [Column(TypeName = "decimal(18, 2)")]
+        [Column(TypeName = "decimal(18, 2)")]//18 chữ số và 2 thập phân vd:10.58%
         public decimal KhuyenMai { get; set; } // % khuyến mãi
 
         public int SoLuongTon { get; set; }
@@ -36,7 +36,7 @@ namespace QuanLyCuaHangTiVi.DATA
         public string AnhMinhHoa { get; set; }
 
         // --- Logic hiển thị (Không lưu vào database - NotMapped) ---
-        [NotMapped]
+        [NotMapped]//đừng tạo cột cho thuộc tính này trong cơ sở dữ liệu
         public string TrangThai
         {
             get
@@ -59,7 +59,7 @@ namespace QuanLyCuaHangTiVi.DATA
         }
 
         // Quan hệ
-        public virtual ICollection<HoaDonChiTiet> HoaDonChiTiets { get; set; }
+        public virtual ICollection<HoaDonChiTiet> HoaDonChiTiets { get; set; }// kết nối 1 vs nhiều vd: 1 tivi có thể xuất hiện trên nhiều chi tiết hóa đơn
         public virtual ICollection<ChiTietPhieuNhap> ChiTietPhieuNhaps { get; set; }
     }
 }

@@ -239,7 +239,7 @@
             txtTenDangNhap.Name = "txtTenDangNhap";
             txtTenDangNhap.Size = new Size(150, 31);
             txtTenDangNhap.TabIndex = 10;
-            txtTenDangNhap.TextChanged += txtDonGiaBan_TextChanged;
+            
             // 
             // txtHoTenNhanVien
             // 

@@ -305,7 +305,7 @@ namespace QuanLyCuaHangTiVi.forms
                     int maHD = (int)cboMaHoaDon.SelectedValue;
                     decimal soTienNo = decimal.Parse(txtSoTienConNo.Text);
 
-                    // [FIX LỖI CHIA TIỀN]: Chia đều các tháng, gánh số lẻ vào tháng cuối
+                    // Chia đều các tháng, gánh số lẻ vào tháng cuối
                     decimal tongMoiThang = Math.Round(soTienNo / kyHan, 0);
                     decimal tienThangCuoi = soTienNo - (tongMoiThang * (kyHan - 1));
 
@@ -313,7 +313,8 @@ namespace QuanLyCuaHangTiVi.forms
                     int savedTraGopID = -1;
 
                     if (isThem)
-                    {
+                    {//Một hóa đơn bán hàng chỉ được phép có duy nhất một hợp đồng trả góp đi kèm. 
+                      //Nếu nhân viên lỡ tay chọn lại một hóa đơn đã làm trả góp hôm qua, hệ thống lập tức báo lỗi đỏ, chặn việc tạo ra 2 hợp đồng đè lên nhau gây thất thoát tiền bạc.
                         if (db.TraGops.Any(tg => tg.MaHoaDon == maHD))
                         {
                             MessageBox.Show("Hóa đơn này đã có hợp đồng trả góp. Vui lòng chọn hóa đơn khác!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -505,7 +506,7 @@ namespace QuanLyCuaHangTiVi.forms
             if (string.IsNullOrEmpty(txtID.Text)) return;
             int currentTraGopID = int.Parse(txtID.Text);
 
-            // [BẢN VÁ LỖI]: Lấy ID trực tiếp từ Cell ẩn trên DataGridView thay vì ép kiểu DataBoundItem
+            // Lấy ID trực tiếp từ Cell ẩn trên DataGridView thay vì ép kiểu DataBoundItem
             int idChiTiet = Convert.ToInt32(dgvChiTiet.CurrentRow.Cells["ID"].Value);
 
             // Lấy thông tin Kỳ đang chọn từ cơ sở dữ liệu
@@ -520,9 +521,9 @@ namespace QuanLyCuaHangTiVi.forms
             string nguoiNop = string.IsNullOrWhiteSpace(txtNguoiNop.Text) ? "Chủ hợp đồng" : txtNguoiNop.Text;
             decimal soTienDu = soTienKhachDua;
 
-            // =========================================================
-            // BƯỚC 1: RÓT TIỀN VÀO KỲ ĐANG CHỌN
-            // =========================================================
+          
+            // 1: RÓT TIỀN VÀO KỲ ĐANG CHỌN
+          
             // Tính tiền phạt trễ hạn (nếu đóng trễ và chưa đóng đủ)
             if (ngayKhachNop > kyDangChon.NgayCanDong.Date && kyDangChon.SoTienDaDong < (kyDangChon.TongTienDong + kyDangChon.SoTienPhat))
             {
@@ -539,9 +540,9 @@ namespace QuanLyCuaHangTiVi.forms
                 soTienDu -= tienDapVao;
             }
 
-            // =========================================================
+          
             // BƯỚC 2: NẾU DƯ TIỀN, QUÉT VÀ RÓT VÀO CÁC KỲ TIẾP THEO
-            // =========================================================
+       
             if (soTienDu > 0)
             {
                 var cacKyKhac = db.ChiTietTraGops
@@ -570,9 +571,8 @@ namespace QuanLyCuaHangTiVi.forms
                 }
             }
 
-            // =========================================================
-            // BƯỚC 3: NẾU VẪN CÒN DƯ, DỒN HẾT VÀO KỲ CUỐI CÙNG
-            // =========================================================
+           
+            //  3: NẾU VẪN CÒN DƯ, DỒN HẾT VÀO KỲ CUỐI CÙNG
             if (soTienDu > 0)
             {
                 var kyCuoi = db.ChiTietTraGops
@@ -589,9 +589,9 @@ namespace QuanLyCuaHangTiVi.forms
                 MessageBox.Show($"Khách thanh toán dư {soTienDu:N0} VNĐ. Tiền thừa đã được tự động cộng dồn vào kỳ cuối!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
-            // =========================================================
-            // BƯỚC 4: LƯU DB VÀ LÀM MỚI GIAO DIỆN
-            // =========================================================
+          
+            // 4: LƯU DB VÀ LÀM MỚI GIAO DIỆN
+          
             try
             {
                 db.SaveChanges();

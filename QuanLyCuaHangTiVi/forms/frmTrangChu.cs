@@ -139,7 +139,7 @@ namespace QuanLyCuaHangTiVi.forms
 
 
 
-        // --- MỞ FORM CON TRONG PANEL ---
+        //MỞ FORM CON TRONG PANEL 
         private void MoFormCon<T>() where T : Form, new()
         {
             // Tìm xem form loại T đã được mở trong panelContent chưa

@@ -18,7 +18,7 @@ namespace QuanLyCuaHangTiVi.DATA
         [StringLength(100)]
         public string NguoiGiaoHang { get; set; } // Ai giao hàng đến
 
-        // BỔ SUNG CỘT NGÀY NHẬP VÀO ĐÂY
+        
         public DateTime NgayNhap { get; set; }
 
         

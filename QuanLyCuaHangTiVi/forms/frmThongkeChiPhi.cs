@@ -52,20 +52,17 @@ namespace QuanLyCuaHangTiVi.forms
 
                 var dsNhapHang = queryNhap.Select(ct => new
                 {
-                    ID = ct.MaCTPN,                    // Đảm bảo DataPropertyName của cột ID là: ID
+                    ID = ct.MaCTPN,
                     MaPhieuNhap = ct.MaPhieuNhap,
                     TenTiVi = ct.QuanLyTiVi.TenTiVi,
                     HangSanXuat = ct.QuanLyTiVi.HangSanXuat,
-                    NgayNhapHang = ct.PhieuNhap.NgayNhap, // DataPropertyName của cột Ngày nhập phải là: NgayNhapHang
+                    NgayNhapHang = ct.PhieuNhap.NgayNhap,
                     DonGiaNhap = ct.DonGiaNhap,
                     SoLuong = ct.SoLuongNhap,
                     ThanhTien = ct.DonGiaNhap * ct.SoLuongNhap
                 }).ToList();
 
-                // 🌟 QUAN TRỌNG: Tắt tính năng tự động sinh cột thừa
                 dgvChiPhiNhapHang.AutoGenerateColumns = false;
-
-                // Tạm tắt AutoSize trước khi gán DataSource cho mượt
                 dgvChiPhiNhapHang.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
                 dgvChiPhiNhapHang.DataSource = dsNhapHang;
                 dgvChiPhiNhapHang.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -82,32 +79,23 @@ namespace QuanLyCuaHangTiVi.forms
                     nv.Luong
                 }).ToList();
 
-                // FIX LỖI: Tương tự cho bảng nhân viên
                 dgvChiPhiLuongNhanVien.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
                 dgvChiPhiLuongNhanVien.DataSource = dsNhanVien;
                 dgvChiPhiLuongNhanVien.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-                decimal tongLuongMotThang = dsNhanVien.Any() ? dsNhanVien.Sum(x => x.Luong) : 0;
+                decimal tongLuongMotThang = dsNhanVien.Any() ? dsNhanVien.Sum(x => (decimal?)x.Luong ?? 0) : 0;
                 decimal tongLuong = 0;
 
-                if (thang == 0) // Cả năm
+                if (thang == 0) // Xem cả năm
                 {
-                    var cacThangBanHang = db.HoaDonChiTiets
-                                            .Where(ct => ct.HoaDon.NgayLap.Year == nam)
-                                            .Select(ct => ct.HoaDon.NgayLap.Month)
-                                            .ToList();
-
-                    var cacThangCoChiPhi = db.ChiPhiVanHanhs
-                                             .Where(cp => cp.Nam == nam)
-                                             .Select(cp => cp.Thang)
-                                             .ToList();
-
-                    int soThangHoatDong = cacThangBanHang.Concat(cacThangCoChiPhi).Distinct().Count();
-                    if (soThangHoatDong == 0) soThangHoatDong = 1;
-
-                    tongLuong = tongLuongMotThang * soThangHoatDong;
+                    if (nam < DateTime.Now.Year)
+                        tongLuong = tongLuongMotThang * 12;
+                    else if (nam == DateTime.Now.Year)
+                        tongLuong = tongLuongMotThang * DateTime.Now.Month;
+                    else
+                        tongLuong = 0;
                 }
-                else // Từng tháng
+                else // Xem từng tháng
                 {
                     tongLuong = tongLuongMotThang;
                 }
@@ -122,7 +110,7 @@ namespace QuanLyCuaHangTiVi.forms
                     var chiPhiThang = db.ChiPhiVanHanhs.FirstOrDefault(cp => cp.Thang == thang && cp.Nam == nam);
                     if (chiPhiThang != null)
                     {
-                        chiPhiID_HienTai = chiPhiThang.ID; // Gán ID để sửa được
+                        chiPhiID_HienTai = chiPhiThang.ID;
                         txtTienDien.Text = chiPhiThang.TienDien.ToString("G29");
                         txtTienNuoc.Text = chiPhiThang.TienNuoc.ToString("G29");
                         txtTienMatBang.Text = chiPhiThang.TienMatBang.ToString("G29");
@@ -163,11 +151,9 @@ namespace QuanLyCuaHangTiVi.forms
             }
             catch (Exception ex)
             {
-                // Chỉ hiện thông báo lỗi, không làm crash App
                 MessageBox.Show("Có lỗi xảy ra: " + ex.Message);
             }
         }
-
         private void btnSua_Click(object sender, EventArgs e)
         {
             if (chiPhiID_HienTai == 0)

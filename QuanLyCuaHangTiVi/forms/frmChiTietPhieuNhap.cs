@@ -23,7 +23,7 @@ namespace QuanLyCuaHangTiVi.forms
 
         }
         // --- HÀM BỔ TRỢ GIAO DIỆN ---
-        private void BatTatChucNang(bool giaTri)
+        private void BatTatChucNang(bool giaTri)//(Bật/Tắt các nút)
         {
             btnLuu.Enabled = giaTri;
             btnHuyBo.Enabled = giaTri;
@@ -46,7 +46,7 @@ namespace QuanLyCuaHangTiVi.forms
             btnThoat.Enabled = !giaTri;
         }
 
-        private void LoadComboBox()
+        private void LoadComboBox()//(Tải danh sách lựa chọn)
         {
             // Lấy danh sách Người Giao Hàng từ bảng Phiếu Nhập (Distinct để không bị trùng tên)
             var dsNguoiGiao = context.PhieuNhaps.Select(p => p.NguoiGiaoHang).Distinct().ToList();
@@ -57,7 +57,7 @@ namespace QuanLyCuaHangTiVi.forms
             cboMaTiVi.ValueMember = "MaTiVi";
         }
 
-        private void BindingDuLieu()
+        private void BindingDuLieu()//(Đổ dữ liệu từ lưới lên TextBox)
         {
             txtMaCTPN.DataBindings.Clear();
             txtMaPhieuNhap.DataBindings.Clear();
@@ -80,7 +80,8 @@ namespace QuanLyCuaHangTiVi.forms
         }
 
         private void TinhThanhTien()
-        {
+        {//Nếu không tách hàm,sẽ phải copy-paste công thức tính toán (Số lượng * Đơn giá) vào ít nhất 2 chỗ. 
+            //Khi tách ra thành 1 hàm riêng, chỉ cần gọi tên nó ra TinhThanhTien() là xong.
             if (decimal.TryParse(txtSoLuong.Text, out decimal sl) && decimal.TryParse(txtDonGiaNhap.Text, out decimal dg))
             {
                 txtThanhTien.Text = (sl * dg).ToString("N0");
@@ -91,7 +92,7 @@ namespace QuanLyCuaHangTiVi.forms
             }
         }
 
-        // --- XỬ LÝ SỰ KIỆN RÀNG BUỘC NHẬP SỐ (GIỐNG FORM QUẢN LÝ TIVI) ---
+        // XỬ LÝ SỰ KIỆN RÀNG BUỘC NHẬP SỐ
         private void ChiNhapSo_KeyPress(object sender, KeyPressEventArgs e)
         {
             // Cho phép các phím điều khiển (Backspace) và các phím số từ 0-9
@@ -230,7 +231,7 @@ namespace QuanLyCuaHangTiVi.forms
                 {
                     ChiTietPhieuNhap ctpn = new ChiTietPhieuNhap();
 
-                    // THAY ĐỔI Ở ĐÂY: Dùng txtMaPhieuNhap thay vì cboMaPhieuNhap
+                    
                     ctpn.MaPhieuNhap = txtMaPhieuNhap.Text;
                     ctpn.MaTiVi = cboMaTiVi.SelectedValue.ToString();
                     ctpn.SoLuongNhap = soLuong;
@@ -253,7 +254,7 @@ namespace QuanLyCuaHangTiVi.forms
                             tivi.SoLuongTon = tivi.SoLuongTon - ctSua.SoLuongNhap + soLuong;
                         }
 
-                        // THAY ĐỔI Ở ĐÂY CŨNG VẬY
+                       
                         ctSua.MaPhieuNhap = txtMaPhieuNhap.Text;
                         ctSua.MaTiVi = cboMaTiVi.SelectedValue.ToString();
                         ctSua.SoLuongNhap = soLuong;

@@ -62,6 +62,7 @@
             groupBox1.TabIndex = 3;
             groupBox1.TabStop = false;
             groupBox1.Text = "Hóa Đơn";
+        
             // 
             // btnXuatHoaDon
             // 

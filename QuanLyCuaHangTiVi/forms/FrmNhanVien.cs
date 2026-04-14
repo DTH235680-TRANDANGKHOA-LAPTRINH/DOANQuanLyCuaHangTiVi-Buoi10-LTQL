@@ -43,10 +43,7 @@ namespace QuanLyCuaHangTiVi.forms
             btnXoa.Enabled = !dangThaoTac;
             btnThoat.Enabled = !dangThaoTac;
         }
-        private void txtDonGiaBan_TextChanged(object sender, EventArgs e)
-        {
 
-        }
 
         private void FrmNhanVien_Load(object sender, EventArgs e)
         {
@@ -328,7 +325,7 @@ namespace QuanLyCuaHangTiVi.forms
         }
 
         private void dgvDanhSachNhanVien_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
+        {//Khi bạn bấm vào một dòng trên bảng, nó sẽ lấy tên file ảnh của nhân viên đó, tìm đường dẫn trong ổ cứng và hiển thị lên khung picAnhNhanVien.
             if (e.RowIndex >= 0)
             {
                 var nv = dgvDanhSachNhanVien.Rows[e.RowIndex].DataBoundItem as NhanVien;
@@ -349,7 +346,8 @@ namespace QuanLyCuaHangTiVi.forms
         }
 
         private void dgvDanhSachNhanVien_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
+        {// khi muốn hiện trực tiếp hình ảnh thu nhỏ ngay bên trong một cột của bảng DataGridView.
+            // Hàm này chạy khi bảng đang được vẽ ra, nó đọc file ảnh từ ổ cứng, chuyển thành dạng Stream và gán vào giá trị của ô (Cell) để hiển thị thành hình ảnh trực quan trên lưới.
             if (dgvDanhSachNhanVien.Columns[e.ColumnIndex].Name == "CotHinhAnh" && e.RowIndex >= 0)
             {
                 var nv = dgvDanhSachNhanVien.Rows[e.RowIndex].DataBoundItem as NhanVien;
