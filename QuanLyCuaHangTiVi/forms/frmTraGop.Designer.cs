@@ -357,7 +357,7 @@
             groupBox2.Controls.Add(dgvTraGop);
             groupBox2.Location = new Point(0, 296);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(1618, 408);
+            groupBox2.Size = new Size(1564, 408);
             groupBox2.TabIndex = 2;
             groupBox2.TabStop = false;
             groupBox2.Text = "Danh Sách Trả Góp";
@@ -376,7 +376,7 @@
             dgvTraGop.Name = "dgvTraGop";
             dgvTraGop.RowHeadersWidth = 62;
             dgvTraGop.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvTraGop.Size = new Size(1612, 378);
+            dgvTraGop.Size = new Size(1558, 378);
             dgvTraGop.TabIndex = 3;
             dgvTraGop.CellFormatting += dgvTraGop_CellFormatting;
             dgvTraGop.SelectionChanged += dgvTraGop_SelectionChanged;

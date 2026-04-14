@@ -97,7 +97,15 @@ namespace QuanLyCuaHangTiVi.forms
             BatTatChucNang(false);
             LoadComboBoxHang();
 
-            var listTiVi = context.QuanLyTiVis.ToList();
+            // ==========================================
+            // CẬP NHẬT CHỖ NÀY: Sắp xếp danh sách TiVi
+            // ==========================================
+            var listTiVi = context.QuanLyTiVis
+                                  .OrderBy(t => t.MaTiVi.Length)
+                                  .ThenBy(t => t.MaTiVi)
+                                  .ToList();
+            // ==========================================
+
             BindingSource bindingSource = new BindingSource();
             bindingSource.DataSource = listTiVi;
 
@@ -156,6 +164,17 @@ namespace QuanLyCuaHangTiVi.forms
             txtKhuyenMai.TextChanged += CapNhatGia_TextChanged;
 
             txtMaTiVi.Leave += TxtMaTiVi_Leave;
+        }
+        private void frmQuanLyTiVi_VisibleChanged(object sender, EventArgs e)
+        {
+            if (this.Visible)
+            {
+                // Khởi tạo lại db context để quét sạch cache cũ
+                context = new AppDbContext();
+
+                // Gọi lại hàm Load để kéo dữ liệu mới nhất và xếp đúng vị trí
+                frmQuanLyTiVi_Load(sender, e);
+            }
         }
         private void TxtMaTiVi_Leave(object sender, EventArgs e)
         {

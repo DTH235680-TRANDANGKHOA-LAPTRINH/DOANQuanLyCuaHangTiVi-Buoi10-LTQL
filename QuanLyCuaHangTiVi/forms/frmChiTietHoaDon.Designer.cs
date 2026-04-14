@@ -621,9 +621,9 @@
             btnHuyBo.BackColor = Color.FromArgb(255, 192, 128);
             btnHuyBo.Image = (Image)resources.GetObject("btnHuyBo.Image");
             btnHuyBo.ImageAlign = ContentAlignment.MiddleLeft;
-            btnHuyBo.Location = new Point(1611, 165);
+            btnHuyBo.Location = new Point(1625, 160);
             btnHuyBo.Name = "btnHuyBo";
-            btnHuyBo.Size = new Size(125, 63);
+            btnHuyBo.Size = new Size(117, 50);
             btnHuyBo.TabIndex = 90;
             btnHuyBo.Text = "Hủy Bỏ";
             btnHuyBo.UseVisualStyleBackColor = false;

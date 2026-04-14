@@ -78,8 +78,14 @@ namespace QuanLyCuaHangTiVi.forms
         {
             BatTatChucNang(false);
 
-            // Tải dữ liệu từ CSDL
-            var danhSachKH = db.KhachHangs.ToList();
+            // ==========================================
+            // CẬP NHẬT CHỖ NÀY: Sắp xếp danh sách trước khi ToList()
+            // ==========================================
+            var danhSachKH = db.KhachHangs
+                               .OrderBy(k => k.MaKhachHang.Length)
+                               .ThenBy(k => k.MaKhachHang)
+                               .ToList();
+            // ==========================================
 
             BindingSource bindingSource = new BindingSource();
             bindingSource.DataSource = danhSachKH;
@@ -124,6 +130,18 @@ namespace QuanLyCuaHangTiVi.forms
             txtSoDienThoai.Leave += txtSoDienThoai_Leave;
             txtCCCD.Leave -= txtCCCD_Leave;
             txtCCCD.Leave += txtCCCD_Leave;
+        }
+        // Bổ sung thêm sự kiện này để mỗi lần hiển thị lại form, nó sẽ làm mới DB và xếp lại
+        private void frmKhachHang_VisibleChanged(object sender, EventArgs e)
+        {
+            if (this.Visible)
+            {
+                // Khởi tạo lại db context để quét sạch cache cũ, kéo dữ liệu mới tinh từ Form Hóa Đơn sang
+                db = new AppDbContext();
+
+                // Gọi lại hàm Load để đổ lại dữ liệu đã sắp xếp
+                frmKhachHang_Load(sender, e);
+            }
         }
         private void ChiNhapSo_KeyPress(object sender, KeyPressEventArgs e)
         {

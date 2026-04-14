@@ -155,7 +155,7 @@
             // cboQuyenHan
             // 
             cboQuyenHan.FormattingEnabled = true;
-            cboQuyenHan.Items.AddRange(new object[] { "Quản Lý", "Nhân Viên Xuất Sắc", "Nhân Viên Trả Góp", "Nhân Viên " });
+            cboQuyenHan.Items.AddRange(new object[] { "Quản lý", "Nhân viên nhập hàng", "Nhân viên trả góp", "Nhân viên" });
             cboQuyenHan.Location = new Point(781, 17);
             cboQuyenHan.Name = "cboQuyenHan";
             cboQuyenHan.Size = new Size(182, 33);
@@ -239,7 +239,6 @@
             txtTenDangNhap.Name = "txtTenDangNhap";
             txtTenDangNhap.Size = new Size(150, 31);
             txtTenDangNhap.TabIndex = 10;
-            
             // 
             // txtHoTenNhanVien
             // 
